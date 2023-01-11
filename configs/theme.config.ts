@@ -2,7 +2,7 @@
 import { createTheme, NextUIProvider } from "@nextui-org/react"
 
 // 2. Call `createTheme` and pass your custom theme values
-export const theme = createTheme({
+export const themeConfig = createTheme({
     type: "dark", // it could be "light" or "dark"
     theme: {
         colors: {
