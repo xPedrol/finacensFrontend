@@ -1,0 +1,20 @@
+@import "breakpoints";
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.title{
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+@include md{
+    .container{
+        height: 87vh;
+    }
+}
+.card{
+    max-width: 600px;
+}

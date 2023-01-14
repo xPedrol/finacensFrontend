@@ -1,20 +1,15 @@
-import {styled} from "@nextui-org/react";
 import DefaultNavbar from "./Navbar.component";
+import {Container} from "@chakra-ui/react";
 
-const Box = styled("div", {
-    maxWidth: "1350px",
-    width: "100%",
-    marginInline: "auto",
-});
 const DefaultLayout = ({children}: any) => {
     return (
         <>
             <DefaultNavbar/>
-            <Box>
+            <Container maxW="container.xl">
                 <main>
                     {children}
                 </main>
-            </Box>
+            </Container>
         </>
     );
 };

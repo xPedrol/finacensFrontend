@@ -15,3 +15,19 @@ export class User implements IUser {
         this.password = user.password;
     }
 }
+
+export interface ILoginUser {
+    email: string;
+    password: string;
+}
+
+export interface IRegisterUser {
+    email: string;
+    password: string;
+    name: string;
+}
+
+export interface ILoginResponse {
+    user: IUser;
+    token: string;
+}

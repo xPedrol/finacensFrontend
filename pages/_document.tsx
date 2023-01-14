@@ -1,28 +1,22 @@
-// pages/_document.js
+import {Head, Html, Main, NextScript} from 'next/document';
 import React from "react";
-import Document, { Html, Head, Main, NextScript, DocumentContext} from "next/document";
-import {CssBaseline} from "@nextui-org/react";
 
-class MyDocument extends Document {
-    static async getInitialProps(ctx: DocumentContext) {
-        const initialProps = await Document.getInitialProps(ctx);
-        return {
-            ...initialProps,
-            styles: React.Children.toArray([initialProps.styles]),
-        };
-    }
-
-    render() {
-        return (
-            <Html lang="en">
-                <Head>{CssBaseline.flush()}</Head>
-                <body>
-                <Main />
-                <NextScript />
-                </body>
-            </Html>
-        );
-    }
+export default function Document() {
+    return (
+        <Html lang="pt">
+            <Head>
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={''}/>
+                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap"
+                      rel="stylesheet"/>
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800;900&display=swap"
+                      rel="stylesheet"/>
+            </Head>
+            <body>
+            {/* 👇 Here's the script */}
+            <Main/>
+            <NextScript/>
+            </body>
+        </Html>
+    );
 }
-
-export default MyDocument;
