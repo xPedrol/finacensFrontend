@@ -1,6 +1,4 @@
 import {
-    Alert,
-    AlertIcon,
     Box,
     Button,
     Flex,
@@ -18,58 +16,48 @@ import DefaultLayout from "../components/Layout.component";
 import Seo from "../components/Seo.component";
 import {useForm} from "react-hook-form";
 import {apiLogin} from "../services/auth.service";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {setCookie} from "nookies";
 import {defaultOptions} from "../configs/cookies.config";
-import {GetServerSideProps} from "next";
+import CustomAlert from "../components/ClosableAlert.component";
 
-const avatars = [
-    {
-        name: 'Ryan Florence',
-        url: 'https://bit.ly/ryan-florence',
-    },
-    {
-        name: 'Segun Adebayo',
-        url: 'https://bit.ly/sage-adebayo',
-    },
-    {
-        name: 'Kent Dodds',
-        url: 'https://bit.ly/kent-c-dodds',
-    },
-    {
-        name: 'Prosper Otemuyiwa',
-        url: 'https://bit.ly/prosper-baba',
-    },
-    {
-        name: 'Christian Nwamba',
-        url: 'https://bit.ly/code-beast',
-    },
-];
 type LoginProps = {
     email: string;
     password: string;
 }
 export default function Login() {
-    const {register, handleSubmit, watch, formState: {errors}} = useForm<LoginProps>();
+    const {register, handleSubmit, formState: {errors}} = useForm<LoginProps>();
     const router = useRouter();
-    const [loginError, setLoginError] = useState<boolean>(false);
+    const [loginError, setLoginError] = useState<string | null>(null);
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
+    const [registered, setRegistered] = useState<boolean>(false);
     const onSubmit = async (data: LoginProps) => {
+        setLoginError(null);
         setLoginLoading(true);
         const res = await apiLogin(data).catch((err) => {
-            if (err) {
-                setLoginError(true);
+            if (err && err.response && err.response.data && err.response.data.showError) {
+                console.log('iiiiii')
+                setLoginError(err.response.data.message);
+            } else {
+                setLoginError('Something went wrong. Please try again later.');
             }
         });
         const token = res?.data.token;
         if (token) {
             setCookie(null, process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME as string, token, defaultOptions);
-            router.push('/');
+            router.push('/').then(() => setLoginLoading(false));
+        }else{
+            setLoginLoading(false);
         }
-        setLoginLoading(false);
+
         console.log(res);
     };
+    useEffect(() => {
+        if (router.query.registered) {
+            setRegistered(true);
+        }
+    }, []);
     return (
         <DefaultLayout>
             <Seo title={'Login'} description={'Login page'}/>
@@ -77,10 +65,15 @@ export default function Login() {
                   flexDirection={'column'}
                   justifyContent={'center'}>
                 {loginError &&
-                    <Alert status="error" mb={'20px'} maxW={{base: 'lg'}} borderRadius={'lg'}>
-                        <AlertIcon/>
-                        Invalid login credentials. Please check your email and password and try again.
-                    </Alert>
+                    <Box mb={'20px'} maxW={{base: 'lg'}} w={'100%'}>
+                        <CustomAlert status={'error'} isClosable={true} description={loginError}/>
+                    </Box>
+                }
+                {registered &&
+                    <Box mb={'20px'} maxW={{base: 'lg'}} w={'100%'}>
+                        <CustomAlert status={'success'} isClosable={true}
+                                     description={' Congratulations, your registration was successful! Please login to access your account.'}/>
+                    </Box>
                 }
                 <Stack
                     bg={'gray.50'}
@@ -151,7 +144,7 @@ export default function Login() {
                                 boxShadow: 'xl',
                             }}
                             isLoading={loginLoading}
-                            loadingText="Submitting">
+                            loadingText="Logging...">
                             Log in
                         </Button>
                     </Box>
@@ -183,4 +176,4 @@ export const Blur = (props: IconProps) => {
     );
 };
 
-export {getServerSideProps} from './_app'
+export {getServerSideProps} from './_app';

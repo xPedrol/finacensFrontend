@@ -31,7 +31,6 @@ export const AuthProvider = ({children}: any) => {
                 } else {
                     setUser(null);
                 }
-                setIsLoading(false);
             }).catch(() => {
                 setUser(null);
                 toast({
@@ -41,6 +40,7 @@ export const AuthProvider = ({children}: any) => {
                 });
             });
         }
+        setIsLoading(false);
     }, []);
 
     return (
