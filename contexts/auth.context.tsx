@@ -6,6 +6,7 @@ import axiosClient from "../configs/httpRequest.config";
 import {defaultOptions} from "../configs/cookies.config";
 import {useToast} from "@chakra-ui/react";
 import {useRouter} from "next/router";
+import LoadingPage from "../components/LoadingPage.component";
 
 const authContext = createContext<IAuthContext>({} as IAuthContext);
 
@@ -31,21 +32,25 @@ export const AuthProvider = ({children}: any) => {
                 } else {
                     setUser(null);
                 }
-            }).catch(() => {
+            }).catch((err) => {
                 setUser(null);
                 toast({
                     title: `Erro ao carregar usuário`,
                     status: 'error',
                     isClosable: true,
                 });
-            });
+                if (err && err.response && err.response.status === 403) {
+                    logout();
+                }
+            }).finally(() => setIsLoading(false));
+        } else {
+            router.push('/login');
         }
-        setIsLoading(false);
     }, []);
 
     return (
         <authContext.Provider value={{user, setUser, isLoading, logout}}>
-            {children}
+            {isLoading ? <LoadingPage/> : children}
         </authContext.Provider>
     );
 };

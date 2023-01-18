@@ -11,14 +11,13 @@ import {
     FormControl,
     FormErrorMessage,
     Heading,
-    Input,
+    Input, InputGroup, InputRightElement,
     Stack,
     Text
 } from "@chakra-ui/react";
 import {useState} from "react";
 import {useRouter} from "next/router";
 
-const defaultErrorMessage = 'Invalid register credentials. Please check your email, name and password and try again.';
 type FormValues = {
     email: string;
     password: string;
@@ -29,6 +28,7 @@ const Register = () => {
     const {register, handleSubmit, formState: {errors}} = useForm<FormValues>();
     const [registerError, setRegisterError] = useState<string | null>(null);
     const [registerLoading, setRegisterLoading] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const router = useRouter();
     const onSubmit = async (data: any) => {
         setRegisterError(null);
@@ -119,33 +119,47 @@ const Register = () => {
                                 {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
                             </FormControl>
                             <FormControl isInvalid={!!errors.password}>
-                                <Input
-                                    placeholder="Password"
-                                    bg={'gray.100'}
-                                    border={0}
-                                    py={'25px'}
-                                    type={'password'}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                    {...register("password", {required: true})}
-                                />
+                                <InputGroup size="lg">
+                                    <Input
+                                        placeholder="Password"
+                                        bg={'gray.100'}
+                                        border={0}
+                                        type={showPassword ? 'text' : 'password'}
+                                        color={'gray.500'}
+                                        pr='4.5rem'
+                                        _placeholder={{
+                                            color: 'gray.500',
+                                        }}
+                                        {...register("password", {required: true})}
+                                    />
+                                    <InputRightElement width="4.5rem">
+                                        <Button h="1.75rem" size="sm" onClick={() => setShowPassword(!showPassword)}>
+                                            {showPassword ? 'Hide' : 'Show'}
+                                        </Button>
+                                    </InputRightElement>
+                                </InputGroup>
                                 {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
                             </FormControl>
                             <FormControl isInvalid={!!errors.confirmPassword}>
-                                <Input
-                                    placeholder="Confirm your password"
-                                    bg={'gray.100'}
-                                    type={'password'}
-                                    border={0}
-                                    py={'25px'}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                    {...register("confirmPassword", {required: true})}
-                                />
+                                <InputGroup size="lg">
+                                    <Input
+                                        placeholder="Confirm Password"
+                                        bg={'gray.100'}
+                                        border={0}
+                                        type={showPassword ? 'text' : 'password'}
+                                        color={'gray.500'}
+                                        pr='4.5rem'
+                                        _placeholder={{
+                                            color: 'gray.500',
+                                        }}
+                                        {...register("confirmPassword", {required: true})}
+                                    />
+                                    <InputRightElement width="4.5rem">
+                                        <Button h="1.75rem" size="sm" onClick={() => setShowPassword(!showPassword)}>
+                                            {showPassword ? 'Hide' : 'Show'}
+                                        </Button>
+                                    </InputRightElement>
+                                </InputGroup>
                                 {errors.confirmPassword && <FormErrorMessage>This field is required</FormErrorMessage>}
                             </FormControl>
                         </Stack>

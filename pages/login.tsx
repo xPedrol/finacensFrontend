@@ -7,7 +7,7 @@ import {
     Heading,
     Icon,
     IconProps,
-    Input,
+    Input, InputGroup, InputRightElement,
     Stack,
     Text,
     useBreakpointValue,
@@ -32,12 +32,12 @@ export default function Login() {
     const [loginError, setLoginError] = useState<string | null>(null);
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
     const [registered, setRegistered] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const onSubmit = async (data: LoginProps) => {
         setLoginError(null);
         setLoginLoading(true);
         const res = await apiLogin(data).catch((err) => {
             if (err && err.response && err.response.data && err.response.data.showError) {
-                console.log('iiiiii')
                 setLoginError(err.response.data.message);
             } else {
                 setLoginError('Something went wrong. Please try again later.');
@@ -47,7 +47,7 @@ export default function Login() {
         if (token) {
             setCookie(null, process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME as string, token, defaultOptions);
             router.push('/').then(() => setLoginLoading(false));
-        }else{
+        } else {
             setLoginLoading(false);
         }
 
@@ -102,12 +102,11 @@ export default function Login() {
                         <Stack spacing={4}>
 
                             <FormControl isInvalid={!!errors.email}>
-                                <Input
+                                <Input size={'lg'}
                                     placeholder="Email"
                                     type={'email'}
                                     bg={'gray.100'}
                                     border={0}
-                                    py={'25px'}
                                     color={'gray.500'}
                                     _placeholder={{
                                         color: 'gray.500',
@@ -117,18 +116,25 @@ export default function Login() {
                                 {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
                             </FormControl>
                             <FormControl isInvalid={!!errors.password}>
-                                <Input
-                                    placeholder="Password"
-                                    bg={'gray.100'}
-                                    border={0}
-                                    type={'password'}
-                                    py={'25px'}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                    {...register("password", {required: true})}
-                                />
+                                <InputGroup size="lg">
+                                    <Input
+                                        placeholder="Password"
+                                        bg={'gray.100'}
+                                        border={0}
+                                        type={showPassword ? 'text' : 'password'}
+                                        color={'gray.500'}
+                                        pr='4.5rem'
+                                        _placeholder={{
+                                            color: 'gray.500',
+                                        }}
+                                        {...register("password", {required: true})}
+                                    />
+                                    <InputRightElement width="4.5rem">
+                                        <Button h="1.75rem" size="sm" onClick={() => setShowPassword(!showPassword)}>
+                                            {showPassword ? 'Hide' : 'Show'}
+                                        </Button>
+                                    </InputRightElement>
+                                </InputGroup>
                                 {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
                             </FormControl>
                         </Stack>

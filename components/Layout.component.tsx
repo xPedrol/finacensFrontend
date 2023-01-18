@@ -10,6 +10,7 @@ const DefaultLayout = ({children}: any) => {
                     {children}
                 </main>
             </Container>
+            {/*<DefaultFooter/>*/}
         </>
     );
 };

@@ -31,9 +31,9 @@ export default function DefaultNavbar() {
                 minH={'80px'}
                 py={{base: 2}}
                 px={{base: 4}}
-                borderBottom={1}
+                // borderBottom={1}
                 borderStyle={'solid'}
-                borderColor={useColorModeValue('gray.200', 'gray.900')}
+                borderColor={useColorModeValue('gray.100', 'gray.900')}
                 align={'center'}>
                 <Container as={Flex} maxW={'container.xl'} align={'center'} h={'100%'}>
                     <Flex
@@ -57,11 +57,11 @@ export default function DefaultNavbar() {
                             fontFamily={'heading'} fontWeight={'900'} fontSize={'25px'} letterSpacing={'2px'}
                             textTransform={'uppercase'}
                             color={useColorModeValue('white', 'white')}>
-                            Logo
+                            Finances
                         </Text>
 
                         <Flex display={{base: 'none', md: 'flex'}} ml={10} align={'center'}>
-                            <DesktopNav/>
+                            {/*<DesktopNav/>*/}
                         </Flex>
                     </Flex>
                     {
