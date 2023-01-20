@@ -28,9 +28,10 @@ import {BsArrowLeft} from "react-icons/bs";
 import PageHeader from "../../components/PageHeader.component";
 import {useForm} from "react-hook-form";
 import {AiOutlinePlus} from "react-icons/ai";
-import CategoryModal from "../../components/CategoryModal.component";
-import {apiCategories} from "../../services/category.service";
+import TagModal from "../../components/TagModal.component";
+import {apiTags} from "../../services/tag.service";
 import dayjs from "dayjs";
+import {categories, EnumCategory} from "../../enum/Category.enum";
 
 const pageBreadcrumb = [
     {title: "Home", link: "/"},
@@ -51,9 +52,10 @@ const pageButtons = [
 
 type FormData = {
     amount: number;
-    categoryId: string;
+    tagId: string;
     description: string;
     date: string;
+    category: EnumCategory;
 };
 const ExpensesUpdate = () => {
     const router = useRouter();
@@ -65,6 +67,10 @@ const ExpensesUpdate = () => {
         reset,
         formState: {errors},
     } = useForm<FormData>();
+    const closeTagModal = ()=>{
+        onClose();
+        refetchTags();
+    }
     const toast = useToast();
     const {
         data: expense,
@@ -72,24 +78,26 @@ const ExpensesUpdate = () => {
         isFetched: expenseFetched,
     } = useQuery(
         ["expenses", router.query?.id],
-        () => apiExpense(router.query?.id as string),
+        () => apiExpense(router.query?.id as string).then((res) => res.data),
         {
             enabled: !creating,
             onSuccess: (data) => {
                 reset({
-                    amount: data.data.amount,
-                    categoryId: data.data.categoryId,
-                    description: data.data.description,
-                    date: dayjs(data.data.date).format("YYYY-MM-DD"),
+                    amount: data.amount,
+                    tagId: data.tagId,
+                    description: data.description,
+                    date: dayjs(data.date).format("YYYY-MM-DD"),
+                    category: data.category,
                 });
             },
         }
     );
     const {
-        data: categories,
-        isLoading: categoriesLoading,
-        isFetched: categoriesFetched,
-    } = useQuery(["categories"], () => apiCategories());
+        data: tags,
+        isLoading: tagsLoading,
+        isFetched: tagsFetched,
+        refetch: refetchTags,
+    } = useQuery(["tags"], () => apiTags().then((res) => res.data));
 
     const onSubmit = async (data: FormData) => {
         let request =
@@ -132,7 +140,7 @@ const ExpensesUpdate = () => {
             />
             <Box as={"form"} onSubmit={handleSubmit(onSubmit)}>
                 <Grid templateColumns="repeat(12, 1fr)" gap={6}>
-                    <GridItem colSpan={{base: 12, md: 4}}>
+                    <GridItem colSpan={{base: 12, md: 3}}>
                         <FormControl isInvalid={!!errors.amount}>
                             <FormLabel>Amount</FormLabel>
                             <InputGroup size={"lg"}>
@@ -146,7 +154,7 @@ const ExpensesUpdate = () => {
                             <FormErrorMessage>Email is required.</FormErrorMessage>
                         </FormControl>
                     </GridItem>
-                    <GridItem colSpan={{base: 12, md: 4}}>
+                    <GridItem colSpan={{base: 12, md: 3}}>
                         <FormControl isInvalid={!!errors.date}>
                             <FormLabel>Date</FormLabel>
                             <InputGroup size={"lg"}>
@@ -156,19 +164,19 @@ const ExpensesUpdate = () => {
                             <FormErrorMessage>Email is required.</FormErrorMessage>
                         </FormControl>
                     </GridItem>
-                    <GridItem colSpan={{base: 12, md: 4}}>
-                        <FormControl isInvalid={!!errors.categoryId}>
-                            <FormLabel>Category</FormLabel>
+                    <GridItem colSpan={{base: 12, md: 3}}>
+                        <FormControl isInvalid={!!errors.tagId}>
+                            <FormLabel>Tag</FormLabel>
                             <InputGroup size={"lg"}>
                                 <Select
                                     size={"lg"}
-                                    {...register("categoryId", {required: true})}
+                                    {...register("tagId", {required: true})}
                                     placeholder="Select option..."
                                 >
-                                    {categories?.data &&
-                                        categories.data.map((category) => (
-                                            <option key={category.id} value={category.id}>
-                                                {category.name}
+                                    {Array.isArray(tags) &&
+                                        tags.map((tag) => (
+                                            <option key={tag.id} value={tag.id}>
+                                                {tag.name}
                                             </option>
                                         ))}
                                 </Select>
@@ -182,6 +190,26 @@ const ExpensesUpdate = () => {
                                         Novo
                                     </Button>
                                 </InputRightElement>
+                            </InputGroup>
+                            <FormErrorMessage>Email is required.</FormErrorMessage>
+                        </FormControl>
+                    </GridItem>
+                    <GridItem colSpan={{base: 12, md: 3}}>
+                        <FormControl isInvalid={!!errors.tagId}>
+                            <FormLabel>Category</FormLabel>
+                            <InputGroup size={"lg"}>
+                                <Select
+                                    size={"lg"}
+                                    {...register("category", {required: true})}
+                                    placeholder="Select option..."
+                                >
+                                    {
+                                        categories.map((category) => (
+                                            <option key={category} value={category}>
+                                                {category}
+                                            </option>
+                                        ))}
+                                </Select>
                             </InputGroup>
                             <FormErrorMessage>Email is required.</FormErrorMessage>
                         </FormControl>
@@ -205,7 +233,7 @@ const ExpensesUpdate = () => {
                     </GridItem>
                 </Grid>
             </Box>
-            <CategoryModal isOpen={isOpen} onClose={onClose}/>
+            <TagModal isOpen={isOpen} onClose={closeTagModal}/>
         </DefaultLayout>
     );
 };

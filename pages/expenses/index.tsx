@@ -6,7 +6,6 @@ import {Button, Divider, Grid, GridItem, Tag, Td, Tr} from "@chakra-ui/react";
 import {useQuery} from "react-query";
 import {apiExpenses} from "../../services/expense.service";
 import Link from "next/link";
-import {Link as ChakraLink} from "@chakra-ui/react";
 import Loading from "../../components/LoadingSpinner.component";
 import NoData from "../../components/NoData.component";
 import {AiOutlinePlus} from "react-icons/ai";
@@ -14,6 +13,7 @@ import PageHeader from "../../components/PageHeader.component";
 import {IExpense} from "../../models/Expense.model";
 import dayjs from "dayjs";
 import ExpenseCard from "../../components/ExpenseCard.component";
+import {apiExpensesStatistic} from "../../services/expenseStatistic.service";
 
 const pageSubtitle =
     "Organizar despesas permite que as pessoas tenham uma visão\n" +
@@ -33,9 +33,10 @@ const pageButtons = [
     },
 ];
 const tableColumns = [
-    {title: "Valor", key: "value"},
-    {title: "Data", key: "date"},
-    {title: "Categoria", key: "category"},
+    {title: "Value", key: "value"},
+    {title: "Date", key: "date"},
+    {title: "Category", key: "category"},
+    {title: "Tag", key: "tag"},
     {title: "", key: "actions"},
 ];
 const Index = () => {
@@ -43,7 +44,8 @@ const Index = () => {
         data: expenses,
         isLoading,
         isFetched,
-    } = useQuery("expenses", apiExpenses);
+    } = useQuery("expenses", () => apiExpenses().then((res) => res.data));
+    const {data: expensesStatistic} = useQuery("expensesStatistic", () => apiExpensesStatistic().then((res) => res.data));
     return (
         <DefaultLayout>
             <PageHeader
@@ -54,23 +56,31 @@ const Index = () => {
             />
             <Divider mb={"30px"}/>
             <Seo title={"Expenses"} description={"Expenses page"}/>
-            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'}>
-                <GridItem colSpan={{base: 12, lg: 12}}>
-                    <ExpenseCard/>
+            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'}>
+                <GridItem colSpan={12}>
+                    {expensesStatistic &&
+                        <ExpenseCard gains={expensesStatistic.gains} losses={expensesStatistic.losses}/>}
                 </GridItem>
             </Grid>
-            {isLoading && <Loading/>}
-            {!isLoading && expenses?.data && expenses.data.length > 0 ? (
+            {isLoading ? <Loading/> : expenses && expenses.length > 0 ? (
                 <DefaultTable columns={tableColumns} variant={"striped"}>
-                    {expenses.data.map((expense: IExpense) => (
+                    {expenses.map((expense: IExpense) => (
                         <Tr key={expense.id} fontSize={'15px'}>
-                            <Td>R$ {expense?.amount}</Td>
+                            <Td>{expense.amount.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                            })}</Td>
                             <Td>
                                 {expense ? dayjs(expense?.date)?.format("DD/MM/YYYY") : (
                                     <Tag colorScheme={"red"}>Não definido</Tag>
                                 )}
                             </Td>
-                            <Td>{expense?.category?.name}</Td>
+                            <Td textTransform={'capitalize'}>{expense.category}</Td>
+                            <Td>
+                                {expense.tag ?
+                                    <Tag size={'md'} variant="solid" bg={expense.tag.color}>{expense.tag.name}</Tag> :
+                                    <Tag colorScheme={"red"}>Não definido</Tag>}
+                            </Td>
                             <Td>
                                 <Button
                                     fontWeight={500}

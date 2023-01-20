@@ -1,16 +1,16 @@
-import {Box, Flex, SimpleGrid, Stat, StatLabel, StatNumber, useColorModeValue,} from '@chakra-ui/react';
+import {Box, Flex, SimpleGrid, Skeleton, Stat, StatLabel, StatNumber, useColorModeValue,} from '@chakra-ui/react';
 import {ReactNode} from 'react';
-import {BsDiamondHalf, BsXDiamond} from 'react-icons/bs';
-import {BiDiamond} from "react-icons/bi";
+import {MdOutlineAttachMoney, MdOutlineMoneyOffCsred} from "react-icons/md";
 
 interface StatsCardProps {
     title: string;
-    stat: string;
+    stat: string | number | undefined;
     icon: ReactNode;
+    isGain: boolean;
 }
 
 function StatsCard(props: StatsCardProps) {
-    const {title, stat, icon} = props;
+    const {title, stat, icon,isGain} = props;
     return (
         <Stat
             px={{base: 2, md: 4}}
@@ -24,8 +24,11 @@ function StatsCard(props: StatsCardProps) {
                     <StatLabel fontWeight={'medium'} isTruncated>
                         {title}
                     </StatLabel>
-                    <StatNumber fontSize={'2xl'} fontWeight={'medium'}>
-                        {stat}
+                    <StatNumber fontSize={'xl'} fontWeight={'bold'} fontFamily={'Poppins'} color={isGain?'green.400':'red.400'}>
+                        {stat?stat.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                        }):'---'}
                     </StatNumber>
                 </Box>
                 <Box
@@ -39,24 +42,23 @@ function StatsCard(props: StatsCardProps) {
     );
 }
 
-const ExpenseCard = () => {
+type Props = {
+    gains: number;
+    losses: number;
+}
+const ExpenseCard = ({gains, losses}: Props) => {
     return (
-        <Box maxW="6xl" mx={'auto'}>
-            <SimpleGrid columns={{base: 1, md: 3}} spacing={{base: 5, lg: 8}}>
-                <StatsCard
-                    title={'Despesas'}
-                    stat={'5,000'}
-                    icon={<BsXDiamond size={'3em'}/>}
+        <Box maxW="4xl" mx={'auto'}>
+            <SimpleGrid columns={{base: 1, md: 2}} spacing={{base: 5, lg: 8}}>
+                <StatsCard isGain={true}
+                    title={'Gain'}
+                    stat={gains}
+                    icon={<MdOutlineAttachMoney size={'3em'}/>}
                 />
-                <StatsCard
-                    title={'Servers'}
-                    stat={'1,000'}
-                    icon={<BiDiamond size={'3em'}/>}
-                />
-                <StatsCard
-                    title={'Datacenters'}
-                    stat={'7'}
-                    icon={<BsDiamondHalf size={'3em'}/>}
+                <StatsCard isGain={false}
+                    title={'Loss'}
+                    stat={losses}
+                    icon={<MdOutlineMoneyOffCsred size={'3em'}/>}
                 />
             </SimpleGrid>
         </Box>

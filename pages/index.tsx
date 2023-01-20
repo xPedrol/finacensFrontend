@@ -26,7 +26,7 @@ export default function Home() {
       <Container maxW="container.xl" mt={"-100px"}>
         <Flex justifyContent={"center"} flexDirection={"column"}>
           <HomeCards />
-          <Statistics />
+          {/*<Statistics />*/}
         </Flex>
       </Container>
     </>
