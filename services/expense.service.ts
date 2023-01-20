@@ -1,23 +1,32 @@
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 import axiosClient from "../configs/httpRequest.config";
-import {IExpense} from "../models/Expense.model";
+import { IExpense } from "../models/Expense.model";
 
 export const apiExpenses = async (): Promise<AxiosResponse<IExpense[]>> => {
-    return axiosClient.get<IExpense[]>(`/expenses`);
+  return axiosClient.get<IExpense[]>(`/expenses`);
 };
 
-export const apiExpense = async (id: string): Promise<AxiosResponse<IExpense>> => {
-    return axiosClient.get<IExpense>(`/expenses/${id}`);
+export const apiExpense = async (
+  id: string
+): Promise<AxiosResponse<IExpense>> => {
+  return axiosClient.get<IExpense>(`/expenses/${id}`);
 };
 
-export const apiCreateExpense = async (expense: IExpense): Promise<AxiosResponse<IExpense>> => {
-    return axiosClient.post<IExpense>(`/expenses/create`, expense);
+export const apiCreateExpense = async (
+  expense: IExpense
+): Promise<AxiosResponse<IExpense>> => {
+  return axiosClient.post<IExpense>(`/expenses/create`, expense);
 };
 
-export const apiUpdateExpense = async (id: string, expense: IExpense): Promise<AxiosResponse<IExpense>> => {
-    return axiosClient.put<IExpense>(`/expenses/${id}`, expense);
+export const apiUpdateExpense = async (
+  id: string,
+  expense: IExpense
+): Promise<AxiosResponse<IExpense>> => {
+  return axiosClient.put<IExpense>(`/expenses/${id}`, expense);
 };
 
-export const apiDeleteExpense = async (id: string): Promise<AxiosResponse<IExpense>> => {
-    return axiosClient.delete<IExpense>(`/expenses/${id}`);
+export const apiDeleteExpense = async (
+  id: string
+): Promise<AxiosResponse<IExpense>> => {
+  return axiosClient.delete<IExpense>(`/expenses/${id}`);
 };

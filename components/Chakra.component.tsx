@@ -1,34 +1,34 @@
 // e.g. src/Chakra.js
 // a) import `ChakraProvider` component as well as the storageManagers
 import {
-    ChakraProvider,
-    cookieStorageManagerSSR,
-    localStorageManager,
-} from '@chakra-ui/react';
-import {themeConfig} from "../configs/theme.config";
+  ChakraProvider,
+  cookieStorageManagerSSR,
+  localStorageManager,
+} from "@chakra-ui/react";
+import { themeConfig } from "../configs/theme.config";
 
-const Chakra = ({cookies, children}: any) => {
-    // b) Pass `colorModeManager` prop
-    const colorModeManager =
-        typeof cookies === 'string'
-            ? cookieStorageManagerSSR(cookies)
-            : localStorageManager;
-    return (
-        <ChakraProvider colorModeManager={colorModeManager} theme={themeConfig}>
-            {children}
-        </ChakraProvider>
-    );
+const Chakra = ({ cookies, children }: any) => {
+  // b) Pass `colorModeManager` prop
+  const colorModeManager =
+    typeof cookies === "string"
+      ? cookieStorageManagerSSR(cookies)
+      : localStorageManager;
+  return (
+    <ChakraProvider colorModeManager={colorModeManager} theme={themeConfig}>
+      {children}
+    </ChakraProvider>
+  );
 };
 
 // also export a reusable function getServerSideProps
-export function getServerSideProps({req}: any) {
-    return {
-        props: {
-            // first time users will not have any cookies and you may not return
-            // undefined here, hence ?? is necessary
-            cookies: req.headers.cookie ?? '',
-        },
-    };
+export function getServerSideProps({ req }: any) {
+  return {
+    props: {
+      // first time users will not have any cookies and you may not return
+      // undefined here, hence ?? is necessary
+      cookies: req.headers.cookie ?? "",
+    },
+  };
 }
 
 export default Chakra;

@@ -1,9 +1,7 @@
-import {AuthProvider} from "../contexts/auth.context";
+import { AuthProvider } from "../contexts/auth.context";
 
 const Notes = () => {
-    return (
-        <>aaaaa</>
-    );
+  return <>aaaaa</>;
 };
 
 Notes.provider = AuthProvider;

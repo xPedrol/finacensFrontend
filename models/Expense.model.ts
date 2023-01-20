@@ -1,10 +1,12 @@
-import {Dayjs} from "dayjs";
-import {ICategory} from "./Category.model";
+import { Dayjs } from "dayjs";
+import { ICategory } from "./Category.model";
 
 export interface IExpense {
-    id: string;
-    amount: number;
-    category: ICategory;
-    categoryId: string;
-    createdAt: Dayjs;
+  id?: string;
+  amount: number;
+  category?: ICategory;
+  categoryId: string;
+  createdAt?: Dayjs;
+  date?: Dayjs;
+  description?: string;
 }
