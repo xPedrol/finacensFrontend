@@ -77,8 +77,8 @@ const ExpensesUpdate = () => {
         isLoading: expenseLoading,
         isFetched: expenseFetched,
     } = useQuery(
-        ["expenses", router.query?.id],
-        () => apiExpense(router.query?.id as string).then((res) => res.data),
+        ["expenses", router.query?.expenseId],
+        () => apiExpense(router.query?.expenseId as string).then((res) => res.data),
         {
             enabled: !creating,
             onSuccess: (data) => {
@@ -101,9 +101,9 @@ const ExpensesUpdate = () => {
 
     const onSubmit = async (data: FormData) => {
         let request =
-            !creating && router.query?.id
-                ? apiUpdateExpense(router.query.id as string, data)
-                : apiCreateExpense(data);
+            !creating && router.query?.expenseId
+                ? apiUpdateExpense(router.query.id as string, data as any)
+                : apiCreateExpense(data as any);
         request
             .then(() => {
                 router.push("/expenses").then(() =>
@@ -123,7 +123,7 @@ const ExpensesUpdate = () => {
             });
     };
     useEffect(() => {
-        if (router.query.id !== "new") {
+        if (router.query.expenseId !== "new") {
             setCreating(false);
         }
     }, []);

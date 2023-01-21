@@ -58,7 +58,7 @@ const Feature = ({ title, text, icon, link }: FeatureProps) => {
 
 export default function HomeCards() {
   return (
-    <Box p={4}>
+    <Box>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
         <Feature
           icon={<Icon as={FcBullish} w={10} h={10} />}

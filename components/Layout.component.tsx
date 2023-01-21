@@ -1,5 +1,5 @@
 import DefaultNavbar from "./Navbar.component";
-import { Container } from "@chakra-ui/react";
+import {Box, Container} from "@chakra-ui/react";
 
 const DefaultLayout = ({ children }: any) => {
   return (
@@ -8,6 +8,7 @@ const DefaultLayout = ({ children }: any) => {
       <Container maxW="container.xl">
         <main>{children}</main>
       </Container>
+        <Box mt={'30px'}></Box>
       {/*<DefaultFooter/>*/}
     </>
   );

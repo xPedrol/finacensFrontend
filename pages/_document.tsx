@@ -11,10 +11,7 @@ export default function Document() {
           href="https://fonts.gstatic.com"
           crossOrigin={""}
         />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap"
-          rel="stylesheet"
-        />
+          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
         <link
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800;900&display=swap"
           rel="stylesheet"

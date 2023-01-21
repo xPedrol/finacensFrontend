@@ -2,9 +2,9 @@ import {AuthProvider} from "../../contexts/auth.context";
 import DefaultLayout from "../../components/Layout.component";
 import DefaultTable from "../../components/Table.component";
 import Seo from "../../components/Seo.component";
-import {Button, Divider, Grid, GridItem, Tag, Td, Tr} from "@chakra-ui/react";
+import {Button, Divider, Grid, GridItem, Stack, Tag, Td, Tr, useToast, Wrap, WrapItem} from "@chakra-ui/react";
 import {useQuery} from "react-query";
-import {apiExpenses} from "../../services/expense.service";
+import {apiDeleteExpense, apiExpenses} from "../../services/expense.service";
 import Link from "next/link";
 import Loading from "../../components/LoadingSpinner.component";
 import NoData from "../../components/NoData.component";
@@ -12,8 +12,19 @@ import {AiOutlinePlus} from "react-icons/ai";
 import PageHeader from "../../components/PageHeader.component";
 import {IExpense} from "../../models/Expense.model";
 import dayjs from "dayjs";
-import ExpenseCard from "../../components/ExpenseCard.component";
+import StatisticCard from "../../components/StatisticCard.component";
 import {apiExpensesStatistic} from "../../services/expenseStatistic.service";
+import {FiTrash} from "react-icons/fi";
+import {FaRegPaperPlane} from "react-icons/fa";
+import {useEffect} from "react";
+import currentFormat from "../../utils/currentFormat.utils";
+import {
+    MdOutlineAccountBalance,
+    MdOutlineAccountBalanceWallet,
+    MdOutlineAttachMoney,
+    MdOutlineMoneyOffCsred
+} from "react-icons/md";
+import balance from "../../utils/numbersBalance.utils";
 
 const pageSubtitle =
     "Organizar despesas permite que as pessoas tenham uma visão\n" +
@@ -39,13 +50,40 @@ const tableColumns = [
     {title: "Tag", key: "tag"},
     {title: "", key: "actions"},
 ];
-const Index = () => {
+const ExpenseIndex = () => {
     const {
         data: expenses,
         isLoading,
         isFetched,
+        refetch: refetchExpenses,
     } = useQuery("expenses", () => apiExpenses().then((res) => res.data));
-    const {data: expensesStatistic} = useQuery("expensesStatistic", () => apiExpensesStatistic().then((res) => res.data));
+    const {
+        data: expensesStatistic,
+        refetch: refetchExpensesStatistic
+    } = useQuery("expensesStatistic", () => apiExpensesStatistic().then((res) => res.data));
+    const toast = useToast();
+    const deleteExpense = (id: string) => {
+        apiDeleteExpense(id).then((res) => {
+            toast({
+                title: "Expense deleted",
+                description: "Expense deleted successfully",
+                status: "success",
+                isClosable: true,
+            });
+            refetchExpenses();
+            refetchExpensesStatistic();
+        }).catch((err) => {
+            toast({
+                title: "Error",
+                description: "Error deleting expense",
+                status: "error",
+                isClosable: true,
+            });
+        });
+    };
+    useEffect(() => {
+
+    }, [expensesStatistic]);
     return (
         <DefaultLayout>
             <PageHeader
@@ -54,13 +92,26 @@ const Index = () => {
                 breadcrumb={pageBreadcrumb}
                 buttons={pageButtons}
             />
-            <Divider mb={"30px"}/>
             <Seo title={"Expenses"} description={"Expenses page"}/>
-            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'}>
-                <GridItem colSpan={12}>
-                    {expensesStatistic &&
-                        <ExpenseCard gains={expensesStatistic.gains} losses={expensesStatistic.losses}/>}
-                </GridItem>
+            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'} maxW={'6xl'}>
+                {expensesStatistic &&
+                    <>
+                        <GridItem colSpan={4}>
+                            <StatisticCard stat={currentFormat(expensesStatistic.gains)} status={'gain'} title={'Gains'}
+                                           icon={MdOutlineAttachMoney}/>
+                        </GridItem>
+                        <GridItem colSpan={4}>
+                            <StatisticCard stat={currentFormat(expensesStatistic.losses)} status={'loss'} title={'Loss'}
+                                           icon={MdOutlineMoneyOffCsred}/>
+                        </GridItem>
+                        <GridItem colSpan={4}>
+                            <StatisticCard
+                                stat={currentFormat(balance([expensesStatistic.gains, -expensesStatistic.losses]))}
+                                status={'balance'} title={'Balance'}
+                                icon={MdOutlineAccountBalance}/>
+                        </GridItem>
+                    </>
+                }
             </Grid>
             {isLoading ? <Loading/> : expenses && expenses.length > 0 ? (
                 <DefaultTable columns={tableColumns} variant={"striped"}>
@@ -82,16 +133,30 @@ const Index = () => {
                                     <Tag colorScheme={"red"}>Não definido</Tag>}
                             </Td>
                             <Td>
-                                <Button
-                                    fontWeight={500}
-                                    colorScheme={"blue"}
-                                    variant={"outline"}
-                                    size={"xs"}
-                                    href={`/expenses/${expense.id}`}
-                                    as={Link}
-                                >
-                                    Acessar
-                                </Button>
+                                <Wrap>
+                                    <WrapItem>
+                                        <Button
+                                            fontWeight={500}
+                                            colorScheme={"blue"}
+                                            variant={"outline"}
+                                            size={"sm"}
+                                            href={`/expenses/${expense.id}`}
+                                            as={Link}
+                                        >
+                                            <FaRegPaperPlane/>
+                                        </Button>
+                                    </WrapItem>
+                                    <WrapItem>
+                                        <Button onClick={() => deleteExpense(expense.id as string)}
+                                                fontWeight={500}
+                                                colorScheme={"red"}
+                                                variant={"outline"}
+                                                size={"sm"}
+                                        >
+                                            <FiTrash/>
+                                        </Button>
+                                    </WrapItem>
+                                </Wrap>
                             </Td>
                         </Tr>
                     ))}
@@ -102,5 +167,5 @@ const Index = () => {
         </DefaultLayout>
     );
 };
-Index.provider = AuthProvider;
-export default Index;
+ExpenseIndex.provider = AuthProvider;
+export default ExpenseIndex;
