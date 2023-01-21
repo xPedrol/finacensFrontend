@@ -8,7 +8,7 @@ type Props = {
     icon: IconType;
 }
 const StatisticCard = ({title, stat, status, icon}: Props) => {
-    const handleColor = (): string => {
+    const handleColor = (): string  => {
         switch (status) {
             case 'gain':
                 return 'green.400';
@@ -40,6 +40,7 @@ const StatisticCard = ({title, stat, status, icon}: Props) => {
                         {title}
                     </StatLabel>
                     <StatNumber fontSize={'xl'} fontWeight={'bold'} fontFamily={'Poppins'}
+                        // @ts-ignore
                                 color={handleColor}>
                         {stat ?? '---'}
                     </StatNumber>
