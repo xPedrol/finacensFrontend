@@ -43,6 +43,7 @@ const Profile = () => {
                 breadcrumb={pageBreadcrumb}
                 buttons={pageButtons}
             />
+            
             <Box as={"form"} onSubmit={handleSubmit(onSubmit)}>
                 <Grid templateColumns="repeat(12, 1fr)" gap={6}>
                     <GridItem colSpan={{base: 12, md: 6}}>
