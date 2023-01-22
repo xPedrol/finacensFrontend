@@ -11,6 +11,7 @@ import {BsArrowLeft} from "react-icons/bs";
 import PageHeader from "../../components/PageHeader.component";
 import {EnumCategory} from "../../enum/Category.enum";
 import UpdateExpenseForm from "../../components/UpdateExpenseForm.component";
+import {useForm} from "react-hook-form";
 
 const pageBreadcrumb = [
     {title: "Home", link: "/"},
@@ -41,7 +42,7 @@ const ExpensesUpdate = () => {
 
     const [creating, setCreating] = useState<boolean>(true);
 
-
+    const form = useForm<FormData>();
     const toast = useToast();
     const {
         data: expense,
@@ -100,7 +101,7 @@ const ExpensesUpdate = () => {
                 breadcrumb={pageBreadcrumb}
                 buttons={pageButtons}
             />
-            <UpdateExpenseForm expense={expense} onSubmit={onSubmit} creating={creating}/>
+            <UpdateExpenseForm expense={expense} form={form} creating={creating}/>
 
         </DefaultLayout>
     );
