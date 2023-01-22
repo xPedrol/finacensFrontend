@@ -2,10 +2,9 @@ import {AuthProvider} from "../../contexts/auth.context";
 import DefaultLayout from "../../components/Layout.component";
 import DefaultTable from "../../components/Table.component";
 import Seo from "../../components/Seo.component";
-import {Button, Divider, Grid, GridItem, Stack, Tag, Td, Tr, useToast, Wrap, WrapItem} from "@chakra-ui/react";
+import {Button, Grid, GridItem, Icon, Tag, Td, Tr, useDisclosure, useToast, Wrap, WrapItem} from "@chakra-ui/react";
 import {useQuery} from "react-query";
 import {apiDeleteExpense, apiExpenses} from "../../services/expense.service";
-import Link from "next/link";
 import Loading from "../../components/LoadingSpinner.component";
 import NoData from "../../components/NoData.component";
 import {AiOutlinePlus} from "react-icons/ai";
@@ -16,15 +15,12 @@ import StatisticCard from "../../components/StatisticCard.component";
 import {apiExpensesStatistic} from "../../services/expenseStatistic.service";
 import {FiTrash} from "react-icons/fi";
 import {FaRegPaperPlane} from "react-icons/fa";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import currentFormat from "../../utils/currentFormat.utils";
-import {
-    MdOutlineAccountBalance,
-    MdOutlineAccountBalanceWallet,
-    MdOutlineAttachMoney,
-    MdOutlineMoneyOffCsred
-} from "react-icons/md";
+import {MdOutlineAccountBalance, MdOutlineAttachMoney, MdOutlineMoneyOffCsred} from "react-icons/md";
 import balance from "../../utils/numbersBalance.utils";
+import UpdateExpenseModal from "../../components/UpdateExpenseModal.component";
+import Link from "next/link";
 
 const pageSubtitle =
     "Organizar despesas permite que as pessoas tenham uma visão\n" +
@@ -35,14 +31,7 @@ const pageBreadcrumb = [
     {title: "Home", link: "/"},
     {title: "Expenses", link: "/expenses"},
 ];
-const pageButtons = [
-    {
-        title: "Adicionar",
-        link: "/expenses/new",
-        colorSchema: "blue",
-        icon: AiOutlinePlus,
-    },
-];
+
 const tableColumns = [
     {title: "Value", key: "value"},
     {title: "Date", key: "date"},
@@ -51,12 +40,26 @@ const tableColumns = [
     {title: "", key: "actions"},
 ];
 const ExpenseIndex = () => {
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const openModal = (id: string) => {
+        expenseId.current = id;
+        onOpen();
+    };
+    const onCloseModal = (props?: any) => {
+        onClose();
+        expenseId.current = null;
+        if (props?.success) {
+            refetchExpenses();
+            refetchExpensesStatistic();
+        }
+    };
     const {
         data: expenses,
         isLoading,
         isFetched,
         refetch: refetchExpenses,
     } = useQuery("expenses", () => apiExpenses().then((res) => res.data));
+    const expenseId = useRef<string | null>(null);
     const {
         data: expensesStatistic,
         refetch: refetchExpensesStatistic
@@ -90,8 +93,18 @@ const ExpenseIndex = () => {
                 title={"Expenses"}
                 subtitle={pageSubtitle}
                 breadcrumb={pageBreadcrumb}
-                buttons={pageButtons}
-            />
+                buttons={undefined}
+            >
+                <Button
+                    onClick={() => openModal('new')}
+                    size={"sm"}
+                    colorScheme={'blue'}
+                    variant="outline"
+                >
+                    <Icon boxSize={"18px"} me={"5px"} as={AiOutlinePlus}></Icon>
+                    Adicionar
+                </Button>
+            </PageHeader>
             <Seo title={"Expenses"} description={"Expenses page"}/>
             <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'} maxW={'6xl'}>
                 {expensesStatistic &&
@@ -135,13 +148,23 @@ const ExpenseIndex = () => {
                             <Td>
                                 <Wrap>
                                     <WrapItem>
+                                        {/*<Button*/}
+                                        {/*    fontWeight={500}*/}
+                                        {/*    colorScheme={"blue"}*/}
+                                        {/*    variant={"outline"}*/}
+                                        {/*    size={"sm"}*/}
+                                        {/*    href={`/expenses/${expense.id}`}*/}
+                                        {/*    as={Link}*/}
+                                        {/*>*/}
+                                        {/*    <FaRegPaperPlane/>*/}
+                                        {/*</Button>*/}
+
                                         <Button
                                             fontWeight={500}
                                             colorScheme={"blue"}
                                             variant={"outline"}
                                             size={"sm"}
-                                            href={`/expenses/${expense.id}`}
-                                            as={Link}
+                                            onClick={() => openModal(expense.id as string)}
                                         >
                                             <FaRegPaperPlane/>
                                         </Button>
@@ -164,6 +187,7 @@ const ExpenseIndex = () => {
             ) : (
                 <NoData/>
             )}
+            <UpdateExpenseModal expenseId={expenseId.current} onClose={onCloseModal} isOpen={isOpen}/>
         </DefaultLayout>
     );
 };

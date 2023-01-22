@@ -18,6 +18,7 @@ const styles = {
   global: (props: StyleFunctionProps) => ({
     body: {
       fontFamily: "body",
+      fontWeight: 500,
       color: mode("gray.800", "whiteAlpha.900")(props),
       bg: mode("white", "gray.900")(props),
       lineHeight: "base",
@@ -46,7 +47,7 @@ const Input = defineStyleConfig({
     lg: {
       field: {
         fontSize: "15px",
-        borderRadius: "0",
+        // borderRadius: "0",
       },
     },
   },
@@ -62,14 +63,14 @@ const Textarea = defineStyleConfig({
   sizes: {
     lg: {
       fontSize: "15px",
-      borderRadius: "0",
+      // borderRadius: "0",
     },
   },
 });
 const Card: any = defineStyleConfig({
   baseStyle: {
     container: {
-      borderRadius: "0",
+      // borderRadius: "0",
     },
   },
 });
@@ -79,9 +80,9 @@ export const themeConfig = extendTheme({
   config,
   styles,
   components: {
-    Input,
     FormLabel,
     Select: Input,
     Textarea,
+    Input
   },
 });

@@ -16,17 +16,18 @@ import {FiTrash} from "react-icons/fi";
 import {FaRegPaperPlane} from "react-icons/fa";
 import {AiFillStar, AiOutlineStar} from "react-icons/ai";
 import {apiDeleteNote, apiToggleFavorite} from "../services/note.service";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Link from "next/link";
 import {INote} from "../models/Note.model";
 
 type NoteCardProps = {
-    note:INote;
+    note: INote;
     refetchNotes: () => void;
+    openModal: (id: string) => void;
 }
-const NoteCard = ({note,refetchNotes}: NoteCardProps) => {
+const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
     const toast = useToast();
-    const [isFavorite, setIsFavorite] = useState<boolean>(note.favorite || false);
+    const [isFavorite, setIsFavorite] = useState<boolean>(false);
     const toggleFavorite = () => {
         apiToggleFavorite(note.id as string).then((res) => {
             setIsFavorite(!isFavorite);
@@ -57,8 +58,11 @@ const NoteCard = ({note,refetchNotes}: NoteCardProps) => {
             });
         });
     };
+    useEffect(() => {
+        setIsFavorite(note.favorite || false);
+    }, [note]);
     return (
-        <Card maxW="sm" borderBottom={'3px solid'} borderBottomColor={note.color}>
+        <Card borderBottom={'3px solid'} borderBottomColor={note.color}>
             <CardBody>
                 <Stack spacing="3">
                     <Flex justify={'space-between'} align={'center'}>
@@ -79,7 +83,7 @@ const NoteCard = ({note,refetchNotes}: NoteCardProps) => {
             {/*<Divider color={'gray.300'} w={'93%'} mx={'auto'}/>*/}
             <CardFooter justify={'flex-end'} p={'13px'}>
                 <ButtonGroup spacing="2" size={'sm'} variant={'outline'}>
-                    <Button colorScheme="blue" as={Link} href={`/notes/${note.id as string}`}>
+                    <Button colorScheme="blue" onClick={() => openModal(note.id as string)}>
                         <FaRegPaperPlane/>
                     </Button>
                     <Button colorScheme="red" onClick={deleteNote}>
