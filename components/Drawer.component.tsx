@@ -26,6 +26,7 @@ import {formatNumbersBalanceDate} from "../utils/formatDate.utils";
 import currencyFormat, {getCurrencyColor} from "../utils/currentFormat.utils";
 import UpdateGoalModal from "./UpdateGoalModal.component";
 import {apiGoalByDate} from "../services/goal.service";
+import NoData from "./NoData.component";
 
 type DrawerProps = {
     isOpen: boolean;
@@ -69,8 +70,8 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
                             Aqui é possivel acompanhar cronologicamente as suas atividades e suas metas.
                         </Alert>
                         <Flex align={'center'} justify={'space-between'} mt={'20px'}>
-                            <Heading size="sm" textTransform="uppercase">
-                                Metas
+                            <Heading size="xs" textTransform="uppercase">
+                                Expenses and Goals
                             </Heading>
                             <Button size={'xs'} onClick={() => openModal('new')}>Novo</Button>
                         </Flex>
@@ -78,62 +79,71 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
                         <Stack divider={<StackDivider/>} spacing="4">
                             {
                                 monthsBalanceLoading ?
-                                    <Loading/> : monthsBalance && monthsBalance?.map((month, index) => (
-                                    <Box key={month.date}>
-                                        <Flex justify={'space-between'} align={'center'} mb={'10px'}>
-                                            <Text fontSize={'14px'}>
-                                                {formatNumbersBalanceDate(month.date)}
-                                            </Text>
-                                            <Tooltip label={'Sua meta'}>
-                                                <Text fontSize={'14px'}
-                                                      color={month.amount > 0 ? 'green.400' : 'red.400'}>
-                                                    {currencyFormat(month.amount)}
-                                                </Text>
-                                            </Tooltip>
-                                        </Flex>
-                                        <GoalStack date={month.date} expenseAmount={month.amount}/>
-                                    </Box>
-                                ))
+                                    <Loading/> :
+                                    monthsBalance && monthsBalance.length > 0 ? (
+                                            monthsBalance?.map((month) => (
+                                                    <Box key={month.date}>
+                                                        <Flex justify={'space-between'} align={'center'} mb={'10px'}>
+                                                            <Text fontSize={'14px'}>
+                                                                {formatNumbersBalanceDate(month.date)}
+                                                            </Text>
+                                                            <Tooltip label={'Saldo atual'}>
+                                                                <Text fontSize={'14px'}
+                                                                      color={month.amount > 0 ? 'gray.500' : 'red.400'}>
+                                                                    {currencyFormat(month.amount)}
+                                                                </Text>
+                                                            </Tooltip>
+                                                        </Flex>
+                                                        <GoalStack month={month}/>
+                                                    </Box>
+                                                )
+                                            )) :
+                                        <NoData message={'Sem despesas cadastradas'}/>
                             }
+                        </Stack>
+                        <Flex align={'center'} justify={'space-between'} mt={'30px'}>
+                            <Heading size="xs" textTransform="uppercase">
+                                Next notes
+                            </Heading>
+                        </Flex>
+                        <Divider mt={'10px'} mb={'10px'}/>
+                        <Stack divider={<StackDivider/>} spacing="4">
                         </Stack>
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>
-            <UpdateGoalModal goalId={goal.current} onClose={closeModal} isOpen={isOpenModal}/>
+            {isOpenModal && goal.current &&
+                <UpdateGoalModal goalId={goal.current} onClose={closeModal} isOpen={isOpenModal}/>}
         </>
     );
 };
 
 type GoalStackProps = {
-    date: string;
-    expenseAmount: number;
+    month: { date: string, amount: number }
 }
-const GoalStack = ({date, expenseAmount}: GoalStackProps) => {
-    const {data: goal} = useQuery(['goal', date], () => apiGoalByDate(date).then(res => res.data));
+const GoalStack = ({month}: GoalStackProps) => {
+    const {data: goal} = useQuery(['goal', month.date], () => apiGoalByDate(month.date).then(res => res.data));
     const [percentage, setPercentage] = useState<number>(0);
     useEffect(() => {
         if (goal) {
-            const percentage = expenseAmount / goal.amount;
+            const percentage = month.amount / goal.amount;
             if (percentage < 0) {
                 setPercentage(100);
             } else {
-                const value = 100 - (percentage * 100);
-                console.log(percentage)
-                console.log(value)
+                const value = (percentage * 100);
                 setPercentage(value);
             }
         }
-    }, [goal]);
+    }, [month, goal]);
     return (
         <>
             {goal ?
                 <>
-                    <Tooltip label={'20% da meta foi gasta'}>
-                        <Progress value={percentage} size="xs" colorScheme="pink"/>
-                    </Tooltip>
+                    <Progress value={percentage} size="xs" colorScheme="blue"/>
                     <Text fontSize="sm" mt={'5px'}>
                         Sua meta é gastar até <Text as={'span'}
-                                                  color={getCurrencyColor(goal.amount)}>{currencyFormat(goal.amount)}</Text>. {percentage.toFixed(2)}% da meta foi gasta.
+                                                    color={getCurrencyColor(goal.amount)}>{currencyFormat(goal.amount)}</Text> — {percentage.toFixed(2)}%
+                        da meta foi gasta.
                     </Text>
                 </>
                 :

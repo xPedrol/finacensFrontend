@@ -1,6 +1,6 @@
 const currentFormat = (value: number | undefined) => {
     if (typeof value === 'number') {
-        return value.toLocaleString('pt-BR', {
+        return Math.abs(value).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL',
         });

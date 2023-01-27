@@ -85,7 +85,6 @@ const ExpenseIndex = () => {
         });
     };
     useEffect(() => {
-
     }, [expensesStatistic]);
     return (
         <DefaultLayout>

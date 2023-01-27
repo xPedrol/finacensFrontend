@@ -7,5 +7,5 @@ export interface INote {
   createdAt: Dayjs;
   date?: Dayjs;
   color?: string;
-  favorite?: boolean;
+  fixed?: boolean;
 }

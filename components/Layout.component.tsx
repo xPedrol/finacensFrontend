@@ -47,7 +47,7 @@ const DefaultLayout = ({children}: any) => {
                 </Box>
             </Container>
             <Box mt={'30px'}></Box>
-            <DefaultDrawer isOpen={isOpen} onOpen={openDrawer} onClose={closeDrawer}/>
+            {isOpen && <DefaultDrawer isOpen={isOpen} onOpen={openDrawer} onClose={closeDrawer}/>}
             {/*<DefaultFooter/>*/}
         </>
     );

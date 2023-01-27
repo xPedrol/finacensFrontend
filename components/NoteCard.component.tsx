@@ -15,7 +15,7 @@ import {
 import {FiTrash} from "react-icons/fi";
 import {FaRegPaperPlane} from "react-icons/fa";
 import {AiFillStar, AiOutlineStar} from "react-icons/ai";
-import {apiDeleteNote, apiToggleFavorite} from "../services/note.service";
+import {apiDeleteNote, apiToggleFixed} from "../services/note.service";
 import {useEffect, useState} from "react";
 import Link from "next/link";
 import {INote} from "../models/Note.model";
@@ -27,10 +27,10 @@ type NoteCardProps = {
 }
 const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
     const toast = useToast();
-    const [isFavorite, setIsFavorite] = useState<boolean>(false);
-    const toggleFavorite = () => {
-        apiToggleFavorite(note.id as string).then((res) => {
-            setIsFavorite(!isFavorite);
+    const [isFixed, setIsFixed] = useState<boolean>(false);
+    const toggleFixed = () => {
+        apiToggleFixed(note.id as string).then((res) => {
+            setIsFixed(!isFixed);
         }).catch((err) => {
             toast({
                 title: 'Error',
@@ -59,7 +59,7 @@ const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
         });
     };
     useEffect(() => {
-        setIsFavorite(note.favorite || false);
+        setIsFixed(note.fixed || false);
     }, [note]);
     return (
         <Card borderBottom={'3px solid'} borderBottomColor={note.color}>
@@ -67,8 +67,8 @@ const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
                 <Stack spacing="3">
                     <Flex justify={'space-between'} align={'center'}>
                         <Heading size="md">{note.title}</Heading>
-                        <Box onClick={toggleFavorite}>
-                            {!isFavorite ? <Icon as={AiOutlineStar} boxSize={'25px'} color={'yellow.300'}
+                        <Box onClick={toggleFixed}>
+                            {!isFixed ? <Icon as={AiOutlineStar} boxSize={'25px'} color={'yellow.300'}
                                                  cursor={'pointer'}></Icon> :
                                 <Icon as={AiFillStar} boxSize={'25px'} color={'yellow.300'} cursor={'pointer'}></Icon>}
                         </Box>

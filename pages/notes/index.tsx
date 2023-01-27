@@ -23,7 +23,6 @@ const pageBreadcrumb = [
 const NotesIndex = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const openModal = (id: string) => {
-        console.log('openModal', id)
         noteId.current = id;
         onOpen();
     };

@@ -27,7 +27,7 @@ type FormData = {
     title: string;
     description: string;
     color: string;
-    favorite: boolean;
+    fixed: boolean;
     date: Dayjs;
 }
 const UpdateNoteForm = ({note, creating, form}: PageData) => {
@@ -41,12 +41,11 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
         if (!note) {
             reset({});
         } else {
-            console.log('note', note)
             reset({
                title: note.title,
                 description: note.description,
                 color: note.color,
-                favorite: note.favorite,
+                fixed: note.fixed,
                 date: dayjs(note.date).format("YYYY-MM-DD")
             });
         }
@@ -105,8 +104,8 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                 </Skeleton>
             </GridItem>
             <GridItem colSpan={12} as={Flex} justifyContent={"space-between"} alignItems={'flex-start'}>
-                <Checkbox size="lg" colorScheme="blue" {...register("favorite", {required: false})}>
-                    <Text fontSize={'15px'}>Favorito</Text>
+                <Checkbox size="lg" colorScheme="blue" {...register("fixed", {required: false})}>
+                    <Text fontSize={'15px'}>Fixed</Text>
                 </Checkbox>
             </GridItem>
         </Grid>

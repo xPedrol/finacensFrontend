@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }: any) => {
   };
   const toast = useToast();
   useEffect(() => {
-    console.log("auth");
     const tokenKey = process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME as string;
     const cookies = parseCookies(null, defaultOptions);
     if (cookies[tokenKey]) {

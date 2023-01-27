@@ -26,7 +26,6 @@ const UpdateGoalForm = ({goal, creating, form}: PageData) => {
         if (!goal) {
             reset({});
         } else {
-            console.log('note', goal);
             reset({
                 amount: goal.amount,
                 date: dayjs(goal.date).format("YYYY-MM-DD")

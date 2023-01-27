@@ -47,7 +47,7 @@ export default function Home() {
                             </GridItem>
                             <GridItem colSpan={{base:12,md:6,lg:3}}>
                                 <StatisticCard
-                                    stat={currentFormat(balance([expensesStatistic.gains, -expensesStatistic.losses]))}
+                                    stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
                                     status={'balance'} title={'Balance'}
                                     icon={MdOutlineAccountBalance}/>
                             </GridItem>

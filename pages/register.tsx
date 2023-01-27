@@ -56,7 +56,6 @@ const Register = () => {
         setRegisterError("Something went wrong. Please try again later.");
       }
     });
-    console.log(user);
     if (user) {
       router
         .push("/login?registered=true")

@@ -30,10 +30,10 @@ export const apiDeleteNote = async (
 ): Promise<AxiosResponse<INote>> => {
     return axiosClient.delete<INote>(`/notes/${id}`);
 };
-export const apiToggleFavorite = async (
+export const apiToggleFixed = async (
     id: string
 ): Promise<AxiosResponse<INote>> => {
-    return axiosClient.put<INote>(`/notes/${id}/favorite`);
+    return axiosClient.put<INote>(`/notes/${id}/fixed`);
 };
 
 export const apiCountNotes = async (): Promise<AxiosResponse<{_count:number}>> => {

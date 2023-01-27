@@ -27,7 +27,7 @@ type FormData = {
     title: string;
     description: string;
     color: string;
-    favorite: boolean;
+    fixed: boolean;
     date: Dayjs;
 }
 const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
@@ -53,7 +53,6 @@ const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
         }
     );
     useEffect(() => {
-        console.log('dasdasda', noteId)
         if (noteId && noteId !== "new") {
             setCreating(false);
         } else {

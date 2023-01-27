@@ -50,7 +50,6 @@ const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
         }
     );
     useEffect(() => {
-        console.log('dasdasda', goalId)
         if (goalId && goalId !== "new") {
             setCreating(false);
         } else {

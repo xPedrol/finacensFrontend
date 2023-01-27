@@ -47,7 +47,7 @@ type FormData = {
     title: string;
     description: string;
     color: string;
-    favorite: boolean;
+    fixed: boolean;
     date: Dayjs;
 }
 const NotesUpdate = () => {
@@ -87,7 +87,7 @@ const NotesUpdate = () => {
                     title: data.title,
                     description: data.description,
                     color: data.color,
-                    favorite: data.favorite,
+                    fixed: data.fixed,
                     date: dayjs(data.date).format("YYYY-MM-DD"),
                 });
             },
@@ -163,8 +163,8 @@ const NotesUpdate = () => {
                         </Skeleton>
                     </GridItem>
                     <GridItem colSpan={12} as={Flex} justifyContent={"space-between"} alignItems={'flex-start'}>
-                        <Checkbox size="lg" colorScheme="blue" {...register("favorite", {required: false})}>
-                            <Text fontSize={'15px'}>Favorito</Text>
+                        <Checkbox size="lg" colorScheme="blue" {...register("fixed", {required: false})}>
+                            <Text fontSize={'15px'}>Fixed</Text>
                         </Checkbox>
                         <Button colorScheme="blue" size="md" type={"submit"} disabled={!isLoaded}>
                             Save
