@@ -16,7 +16,7 @@ export const getCurrencyColor = (value: number | undefined) => {
         } else if (value > 0) {
             return 'green.400';
         } else {
-            return 'gray.200';
+            return 'gray.400';
         }
     } else {
         return 'gray.200';

@@ -16,7 +16,7 @@ import {
     Stack,
     StackDivider,
     Text,
-    Tooltip, useDisclosure
+    Tooltip, useDisclosure, Wrap, WrapItem
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
 import {useQuery} from "react-query";
@@ -27,6 +27,10 @@ import currencyFormat, {getCurrencyColor} from "../utils/currentFormat.utils";
 import UpdateGoalModal from "./UpdateGoalModal.component";
 import {apiGoalByDate} from "../services/goal.service";
 import NoData from "./NoData.component";
+import {IExpensesByMonth} from "../models/ExpensesByMonth.model";
+import {apiNotes} from "../services/note.service";
+import {INote} from "../models/Note.model";
+import dayjs from "dayjs";
 
 type DrawerProps = {
     isOpen: boolean;
@@ -50,6 +54,17 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
         isLoading: monthsBalanceLoading,
         refetch: monthsBalanceRefetch,
     } = useQuery('monthsBalance', () => apiMonthsBalance().then(res => res.data), {
+        enabled: isOpen
+    });
+    const {
+        data: notes,
+        error: notesErrors,
+        isLoading: notesLoading,
+        refetch: notesRefetch
+    } = useQuery('notes', () => apiNotes({
+        page: 0,
+        limit: 5,
+    }).then(res => res.data), {
         enabled: isOpen
     });
     useEffect(() => {
@@ -87,12 +102,30 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
                                                             <Text fontSize={'14px'}>
                                                                 {formatNumbersBalanceDate(month.date)}
                                                             </Text>
-                                                            <Tooltip label={'Saldo atual'}>
-                                                                <Text fontSize={'14px'}
-                                                                      color={month.amount > 0 ? 'gray.500' : 'red.400'}>
-                                                                    {currencyFormat(month.amount)}
-                                                                </Text>
-                                                            </Tooltip>
+                                                            <Wrap gap={2}>
+                                                                <WrapItem>
+                                                                    <Tooltip label={'Ganhos'}>
+                                                                        <Text fontSize={'12px'} as={'span'}
+                                                                              color={'green.400'}>
+                                                                            {currencyFormat(month.gains)}
+                                                                        </Text>
+                                                                    </Tooltip>
+                                                                    <Text fontSize={'12px'} mx={'5px'} as={'span'}>-</Text>
+                                                                    <Tooltip label={'Despesas'}>
+                                                                        <Text fontSize={'12px'} as={'span'}
+                                                                              color={'red.400'}>
+                                                                            {currencyFormat(month.losses)}
+                                                                        </Text>
+                                                                    </Tooltip>
+                                                                    <Text fontSize={'12px'} mx={'5px'} as={'span'}>=</Text>
+                                                                    <Tooltip label={'Saldo Final'}>
+                                                                        <Text fontSize={'12px'} as={'span'}
+                                                                              color={getCurrencyColor(month.amount)}>
+                                                                            {currencyFormat(month.amount)}
+                                                                        </Text>
+                                                                    </Tooltip>
+                                                                </WrapItem>
+                                                            </Wrap>
                                                         </Flex>
                                                         <GoalStack month={month}/>
                                                     </Box>
@@ -108,6 +141,11 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
                         </Flex>
                         <Divider mt={'10px'} mb={'10px'}/>
                         <Stack divider={<StackDivider/>} spacing="4">
+                            {notesLoading ? <Loading/> : notes && notes.length > 0 ? (
+                                notes?.map((note) => (
+                                    <NoteStack notes={note} key={note.id}/>
+                                ))
+                            ) : <NoData message={'Sem notas cadastradas'}/>}
                         </Stack>
                     </DrawerBody>
                 </DrawerContent>
@@ -119,15 +157,16 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
 };
 
 type GoalStackProps = {
-    month: { date: string, amount: number }
+    month: IExpensesByMonth
 }
 const GoalStack = ({month}: GoalStackProps) => {
     const {data: goal} = useQuery(['goal', month.date], () => apiGoalByDate(month.date).then(res => res.data));
     const [percentage, setPercentage] = useState<number>(0);
     useEffect(() => {
         if (goal) {
-            const percentage = month.amount / goal.amount;
-            if (percentage < 0) {
+            const percentage = Math.abs(month.losses / goal.amount);
+            console.log(percentage);
+            if (percentage > 100) {
                 setPercentage(100);
             } else {
                 const value = (percentage * 100);
@@ -140,9 +179,9 @@ const GoalStack = ({month}: GoalStackProps) => {
             {goal ?
                 <>
                     <Progress value={percentage} size="xs" colorScheme="blue"/>
-                    <Text fontSize="sm" mt={'5px'}>
+                    <Text fontSize="13px" mt={'5px'}>
                         Sua meta é gastar até <Text as={'span'}
-                                                    color={getCurrencyColor(goal.amount)}>{currencyFormat(goal.amount)}</Text> — {percentage.toFixed(2)}%
+                                                    color={getCurrencyColor(goal.amount)}>{currencyFormat(goal.amount)}</Text> — {percentage}%
                         da meta foi gasta.
                     </Text>
                 </>
@@ -151,6 +190,21 @@ const GoalStack = ({month}: GoalStackProps) => {
                     Você não tem uma meta para este mês
                 </Text>
             }
+        </>
+    );
+};
+
+type NoteStackProps = {
+    notes: INote
+}
+const NoteStack = ({notes}: NoteStackProps) => {
+    return (
+        <>
+            <Flex align={'center'} justify={'space-between'}>
+                <Text fontSize={'14px'}>{notes.title}</Text>
+                <Text fontSize={'14px'} color={'gray.400'}>{dayjs(notes.date).format('DD/MM/YYYY')}</Text>
+            </Flex>
+            <Text fontSize={'13px'}>{notes.description}</Text>
         </>
     );
 };

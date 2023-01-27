@@ -8,7 +8,7 @@ type Props = {
     icon: IconType;
 }
 const StatisticCard = ({title, stat, status, icon}: Props) => {
-    const handleColor = (): string  => {
+    const handleColor = (): string => {
         switch (status) {
             case 'gain':
                 return 'green.400';
@@ -16,12 +16,6 @@ const StatisticCard = ({title, stat, status, icon}: Props) => {
                 return 'red.400';
             case 'note':
                 return 'gray.400';
-            case 'balance':
-                if ((stat as string).includes('-')) {
-                    return 'red.400';
-                } else {
-                    return 'green.400';
-                }
             default:
                 return 'gray.400';
         }

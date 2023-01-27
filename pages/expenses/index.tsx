@@ -2,7 +2,21 @@ import {AuthProvider} from "../../contexts/auth.context";
 import DefaultLayout from "../../components/Layout.component";
 import DefaultTable from "../../components/Table.component";
 import Seo from "../../components/Seo.component";
-import {Button, Grid, GridItem, Icon, Tag, Td, Tr, useDisclosure, useToast, Wrap, WrapItem} from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    Grid,
+    GridItem,
+    Icon,
+    Select,
+    Tag,
+    Td,
+    Tr,
+    useDisclosure,
+    useToast,
+    Wrap,
+    WrapItem
+} from "@chakra-ui/react";
 import {useQuery} from "react-query";
 import {apiDeleteExpense, apiExpenses} from "../../services/expense.service";
 import Loading from "../../components/LoadingSpinner.component";
@@ -15,12 +29,11 @@ import StatisticCard from "../../components/StatisticCard.component";
 import {apiExpensesStatistic} from "../../services/expenseStatistic.service";
 import {FiTrash} from "react-icons/fi";
 import {FaRegPaperPlane} from "react-icons/fa";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import currentFormat from "../../utils/currentFormat.utils";
 import {MdOutlineAccountBalance, MdOutlineAttachMoney, MdOutlineMoneyOffCsred} from "react-icons/md";
 import balance from "../../utils/numbersBalance.utils";
 import UpdateExpenseModal from "../../components/UpdateExpenseModal.component";
-import Link from "next/link";
 
 const pageSubtitle =
     "Organizar despesas permite que as pessoas tenham uma visão\n" +
@@ -35,12 +48,13 @@ const pageBreadcrumb = [
 const tableColumns = [
     {title: "Value", key: "value"},
     {title: "Date", key: "date"},
-    {title: "Category", key: "category"},
     {title: "Tag", key: "tag"},
     {title: "", key: "actions"},
 ];
 const ExpenseIndex = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const [options, setOptions] = useState<{ label: string, value: string }[]>([]);
+    const period = useRef<string>('');
     const openModal = (id: string) => {
         expenseId.current = id;
         onOpen();
@@ -58,12 +72,26 @@ const ExpenseIndex = () => {
         isLoading,
         isFetched,
         refetch: refetchExpenses,
-    } = useQuery("expenses", () => apiExpenses().then((res) => res.data));
+    } = useQuery(["expenses"], () => apiExpenses(period.current).then((res) => res.data), {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: true,
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        enabled: false,
+    });
     const expenseId = useRef<string | null>(null);
     const {
         data: expensesStatistic,
         refetch: refetchExpensesStatistic
-    } = useQuery("expensesStatistic", () => apiExpensesStatistic().then((res) => res.data));
+    } = useQuery(["expensesStatistic"], () => apiExpensesStatistic(period.current).then((res) => res.data), {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: true,
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        enabled: false,
+    });
     const toast = useToast();
     const deleteExpense = (id: string) => {
         apiDeleteExpense(id).then((res) => {
@@ -85,7 +113,31 @@ const ExpenseIndex = () => {
         });
     };
     useEffect(() => {
-    }, [expensesStatistic]);
+        const year = dayjs().year();
+        const newOptions = [];
+        if (options.length === 0) {
+            for (let i = 0; i < 12; i++) {
+                const month = String(i + 1).padStart(2, "0");
+                newOptions.push({
+                    label: `${month}/${year}`,
+                    value: `${i + 1}-01-${year}`
+                });
+            }
+        } else {
+            newOptions.push(...options);
+        }
+        if (!period.current) {
+            period.current = (`${dayjs().month() + 1}-01-${dayjs().year()}`);
+        }
+        setOptions(newOptions);
+        refetchExpenses();
+        refetchExpensesStatistic();
+    }, []);
+    const onPeriodChange = (nPeriod: string) => {
+        period.current = nPeriod;
+        refetchExpenses();
+        refetchExpensesStatistic();
+    };
     return (
         <DefaultLayout>
             <PageHeader
@@ -105,6 +157,17 @@ const ExpenseIndex = () => {
                 </Button>
             </PageHeader>
             <Seo title={"Expenses"} description={"Expenses page"}/>
+            <Flex justify={'center'} align={'center'}>
+                <Select maxW={'xl'} placeholder={'Select a date...'} value={period.current}
+                        onChange={(e) => onPeriodChange(e.target.value)}
+                        variant="filled">
+                    {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </Select>
+            </Flex>
             <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'} maxW={'6xl'}>
                 {expensesStatistic &&
                     <>
@@ -119,7 +182,8 @@ const ExpenseIndex = () => {
                         <GridItem colSpan={4}>
                             <StatisticCard
                                 stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
-                                status={'balance'} title={'Balance'}
+                                status={balance([expensesStatistic.gains, expensesStatistic.losses]) < 0 ? 'loss' : 'gain'}
+                                title={'Balance'}
                                 icon={MdOutlineAccountBalance}/>
                         </GridItem>
                     </>
@@ -138,7 +202,6 @@ const ExpenseIndex = () => {
                                     <Tag colorScheme={"red"}>Não definido</Tag>
                                 )}
                             </Td>
-                            <Td textTransform={'capitalize'}>{expense.category}</Td>
                             <Td>
                                 {expense.tag ?
                                     <Tag size={'md'} variant="solid" bg={expense.tag.color}>{expense.tag.name}</Tag> :

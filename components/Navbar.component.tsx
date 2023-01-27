@@ -1,26 +1,33 @@
 import {
+    Avatar,
     Box,
-    Flex,
-    Text,
-    IconButton,
     Button,
-    Stack,
     Collapse,
+    Container,
+    Flex,
+    Hide,
     Icon,
+    IconButton,
     Link as ChakraLink,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuItem,
+    MenuList,
     Popover,
-    PopoverTrigger,
     PopoverContent,
-    useColorModeValue,
+    PopoverTrigger,
+    Stack,
+    Text,
     useBreakpointValue,
+    useColorModeValue,
     useDisclosure,
-    Container, Avatar, MenuList, MenuItem, MenuDivider, MenuButton, Menu,
 } from "@chakra-ui/react";
 import {HiOutlineMenu} from "react-icons/hi";
-import {GrClose} from "react-icons/gr";
 import Link from "next/link";
 import {useAuth} from "../contexts/auth.context";
 import {FaChevronDown} from "react-icons/fa";
+import {MdClear} from "react-icons/md";
 
 export default function DefaultNavbar() {
     const {isOpen, onToggle} = useDisclosure();
@@ -48,9 +55,9 @@ export default function DefaultNavbar() {
                             onClick={onToggle}
                             icon={
                                 isOpen ? (
-                                    <Icon w={5} h={5} as={GrClose}></Icon>
+                                    <Icon w={10} h={10} color={'gray.400'} as={MdClear}></Icon>
                                 ) : (
-                                    <Icon w={6} h={6} as={HiOutlineMenu}></Icon>
+                                    <Icon w={9} h={9} color={'gray.400'} as={HiOutlineMenu}></Icon>
                                 )
                             }
                             variant={"ghost"}
@@ -89,6 +96,7 @@ export default function DefaultNavbar() {
                         >
                             <Button
                                 as={Link}
+                                display={{base: "none", md: "inline-flex"}}
                                 fontSize={"sm"}
                                 fontWeight={400}
                                 variant={"link"}
@@ -118,25 +126,27 @@ export default function DefaultNavbar() {
                             direction={"row"}
                             spacing={6}
                         >
-                            <Menu>
-                                <MenuButton
-                                    as={Button}
-                                    rounded={'full'}
-                                    variant={'link'}
-                                    cursor={'pointer'}
-                                    minW={0}>
-                                    <Avatar cursor={'pointer'} _hover={{
-                                        border: "2px solid",
-                                        borderColor: "gray.500"
-                                    }
-                                    } size="md" name="Kent Dodds" src="https://bit.ly/kent-c-dodds"/>
-                                </MenuButton>
-                                <MenuList>
-                                    <MenuItem>Profile</MenuItem>
-                                    <MenuDivider />
-                                    <MenuItem onClick={auth.logout}>Logout</MenuItem>
-                                </MenuList>
-                            </Menu>
+                            <Hide below="sm">
+                                <Menu>
+                                    <MenuButton
+                                        as={Button}
+                                        rounded={'full'}
+                                        variant={'link'}
+                                        cursor={'pointer'}
+                                        minW={0}>
+                                        <Avatar cursor={'pointer'} _hover={{
+                                            border: "2px solid",
+                                            borderColor: "gray.500"
+                                        }
+                                        } size="md" name="Kent Dodds" src="https://bit.ly/kent-c-dodds"/>
+                                    </MenuButton>
+                                    <MenuList>
+                                        <MenuItem>Profile</MenuItem>
+                                        <MenuDivider/>
+                                        <MenuItem onClick={auth.logout}>Logout</MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </Hide>
                         </Stack>
                     )}
                 </Container>
@@ -242,15 +252,27 @@ const DesktopSubNav = ({label, href, subLabel}: NavItem) => {
 };
 
 const MobileNav = () => {
+    const auth = useAuth();
     return (
         <Stack
             bg={useColorModeValue("white", "gray.800")}
             p={4}
             display={{md: "none"}}
         >
-            {NAV_ITEMS.map((navItem) => (
-                <MobileNavItem key={navItem.label} {...navItem} />
-            ))}
+            {NAV_ITEMS.map((navItem:NavItem) =>
+                navItem.auth && auth.user && <MobileNavItem key={navItem.label} {...navItem} />
+            )}
+            {auth.user ? (
+                <>
+                    <MobileNavItem label={"Profile"} href={"/profile"}/>
+                    <MobileNavItem label={"Logout"} href={"/logout"}/>
+                </>
+            ) : (
+                <>
+                    <MobileNavItem label={"Sign Up"} href={"/register"}/>
+                    <MobileNavItem label={"Login"} href={"/login"}/>
+                </>
+            )}
         </Stack>
     );
 };
@@ -315,11 +337,13 @@ interface NavItem {
     subLabel?: string;
     children?: Array<NavItem>;
     href?: string;
+    auth?: boolean;
 }
 
 const NAV_ITEMS: Array<NavItem> = [
     {
         label: "Expenses",
+        auth: true,
         children: [
             {
                 label: "Expenses List",
@@ -335,6 +359,7 @@ const NAV_ITEMS: Array<NavItem> = [
     },
     {
         label: "Notes",
+        auth: true,
         children: [
             {
                 label: "Notes List",
