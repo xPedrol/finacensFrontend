@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 import { setCookie } from "nookies";
 import { defaultOptions } from "../configs/cookies.config";
 import CustomAlert from "../components/ClosableAlert.component";
+import CustomFormErrorMessage from "../components/CustomFormErrorMessage.component";
 
 type LoginProps = {
   email: string;
@@ -145,7 +146,7 @@ export default function Login() {
                   {...register("email", { required: true })}
                 />
                 {errors.email && (
-                  <FormErrorMessage>This field is required</FormErrorMessage>
+                  <CustomFormErrorMessage/>
                 )}
               </FormControl>
               <FormControl isInvalid={!!errors.password}>
@@ -173,7 +174,7 @@ export default function Login() {
                   </InputRightElement>
                 </InputGroup>
                 {errors.password && (
-                  <FormErrorMessage>This field is required</FormErrorMessage>
+                    <CustomFormErrorMessage/>
                 )}
               </FormControl>
             </Stack>

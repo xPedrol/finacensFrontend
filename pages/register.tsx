@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import CustomFormErrorMessage from "../components/CustomFormErrorMessage.component";
 
 type FormValues = {
   email: string;
@@ -127,7 +128,7 @@ const Register = () => {
                   {...register("name", { required: true })}
                 />
                 {errors.name && (
-                  <FormErrorMessage>This field is required</FormErrorMessage>
+                    <CustomFormErrorMessage/>
                 )}
               </FormControl>
               <FormControl isInvalid={!!errors.email}>
@@ -144,7 +145,7 @@ const Register = () => {
                   {...register("email", { required: true })}
                 />
                 {errors.email && (
-                  <FormErrorMessage>This field is required</FormErrorMessage>
+                    <CustomFormErrorMessage/>
                 )}
               </FormControl>
               <FormControl isInvalid={!!errors.password}>
@@ -172,7 +173,7 @@ const Register = () => {
                   </InputRightElement>
                 </InputGroup>
                 {errors.password && (
-                  <FormErrorMessage>This field is required</FormErrorMessage>
+                    <CustomFormErrorMessage/>
                 )}
               </FormControl>
               <FormControl isInvalid={!!errors.confirmPassword}>
@@ -200,7 +201,7 @@ const Register = () => {
                   </InputRightElement>
                 </InputGroup>
                 {errors.confirmPassword && (
-                  <FormErrorMessage>This field is required</FormErrorMessage>
+                    <CustomFormErrorMessage/>
                 )}
               </FormControl>
             </Stack>

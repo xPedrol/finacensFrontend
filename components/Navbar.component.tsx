@@ -138,10 +138,14 @@ export default function DefaultNavbar() {
                                             border: "2px solid",
                                             borderColor: "gray.500"
                                         }
-                                        } size="md" name="Kent Dodds" src="https://bit.ly/kent-c-dodds"/>
+                                        } size="md" name={auth.user.name} src={auth.user.picture ?? undefined}/>
                                     </MenuButton>
                                     <MenuList>
-                                        <MenuItem>Profile</MenuItem>
+                                        <Link href={"/profile"}>
+                                            <MenuItem>
+                                                Profile
+                                            </MenuItem>
+                                        </Link>
                                         <MenuDivider/>
                                         <MenuItem onClick={auth.logout}>Logout</MenuItem>
                                     </MenuList>
@@ -259,7 +263,7 @@ const MobileNav = () => {
             p={4}
             display={{md: "none"}}
         >
-            {NAV_ITEMS.map((navItem:NavItem) =>
+            {NAV_ITEMS.map((navItem: NavItem) =>
                 navItem.auth && auth.user && <MobileNavItem key={navItem.label} {...navItem} />
             )}
             {auth.user ? (
@@ -344,33 +348,23 @@ const NAV_ITEMS: Array<NavItem> = [
     {
         label: "Expenses",
         auth: true,
-        children: [
-            {
-                label: "Expenses List",
-                subLabel: "View all your expenses",
-                href: "/expenses",
-            },
-            {
-                label: "New Expense",
-                subLabel: "Create a new expense",
-                href: "/expenses/new",
-            },
-        ],
+        href: "/expenses"
     },
     {
         label: "Notes",
         auth: true,
-        children: [
-            {
-                label: "Notes List",
-                subLabel: "View all your notes",
-                href: "/notes",
-            },
-            {
-                label: "New Note",
-                subLabel: "Create a new note",
-                href: "/notes/new",
-            },
-        ],
+        href: "/notes",
+        // children: [
+        //     {
+        //         label: "Notes List",
+        //         subLabel: "View all your notes",
+        //         href: "/notes",
+        //     },
+        //     {
+        //         label: "New Note",
+        //         subLabel: "Create a new note",
+        //         href: "/notes/new",
+        //     },
+        // ],
     }
 ];

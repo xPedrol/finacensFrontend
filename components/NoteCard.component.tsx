@@ -5,20 +5,19 @@ import {
     Card,
     CardBody,
     CardFooter,
-    Divider,
     Flex,
     Heading,
     Icon,
     Stack,
-    Text, useToast
+    Text,
+    useToast
 } from "@chakra-ui/react";
 import {FiTrash} from "react-icons/fi";
 import {FaRegPaperPlane} from "react-icons/fa";
-import {AiFillStar, AiOutlineStar} from "react-icons/ai";
 import {apiDeleteNote, apiToggleFixed} from "../services/note.service";
 import {useEffect, useState} from "react";
-import Link from "next/link";
 import {INote} from "../models/Note.model";
+import {BsPin, BsPinFill} from "react-icons/bs";
 
 type NoteCardProps = {
     note: INote;
@@ -68,13 +67,13 @@ const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
                     <Flex justify={'space-between'} align={'center'}>
                         <Heading size="md">{note.title}</Heading>
                         <Box onClick={toggleFixed}>
-                            {!isFixed ? <Icon as={AiOutlineStar} boxSize={'25px'} color={'yellow.300'}
+                            {!isFixed ? <Icon as={BsPin} boxSize={'25px'} color={'gray.400'}
                                                  cursor={'pointer'}></Icon> :
-                                <Icon as={AiFillStar} boxSize={'25px'} color={'yellow.300'} cursor={'pointer'}></Icon>}
+                                <Icon as={BsPinFill} boxSize={'25px'} color={'gray.400'} cursor={'pointer'}></Icon>}
                         </Box>
                     </Flex>
                     {note.description &&
-                        <Text>
+                        <Text fontWeight={400}>
                             {note.description}
                         </Text>
                     }

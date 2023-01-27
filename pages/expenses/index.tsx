@@ -2,7 +2,9 @@ import {AuthProvider} from "../../contexts/auth.context";
 import DefaultLayout from "../../components/Layout.component";
 import DefaultTable from "../../components/Table.component";
 import Seo from "../../components/Seo.component";
+import styles from "../../styles/Pagination.module.scss";
 import {
+    Box,
     Button,
     Flex,
     Grid,
@@ -34,6 +36,7 @@ import currentFormat from "../../utils/currentFormat.utils";
 import {MdOutlineAccountBalance, MdOutlineAttachMoney, MdOutlineMoneyOffCsred} from "react-icons/md";
 import balance from "../../utils/numbersBalance.utils";
 import UpdateExpenseModal from "../../components/UpdateExpenseModal.component";
+import ReactPaginate from "react-paginate";
 
 const pageSubtitle =
     "Organizar despesas permite que as pessoas tenham uma visão\n" +
@@ -190,62 +193,84 @@ const ExpenseIndex = () => {
                 }
             </Grid>
             {isLoading ? <Loading/> : expenses && expenses.length > 0 ? (
-                <DefaultTable columns={tableColumns} variant={"striped"}>
-                    {expenses.map((expense: IExpense) => (
-                        <Tr key={expense.id} fontSize={'15px'}>
-                            <Td>{expense.amount.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL',
-                            })}</Td>
-                            <Td>
-                                {expense ? dayjs(expense?.date)?.format("DD/MM/YYYY") : (
-                                    <Tag colorScheme={"red"}>Não definido</Tag>
-                                )}
-                            </Td>
-                            <Td>
-                                {expense.tag ?
-                                    <Tag size={'md'} variant="solid" bg={expense.tag.color}>{expense.tag.name}</Tag> :
-                                    <Tag colorScheme={"red"}>Não definido</Tag>}
-                            </Td>
-                            <Td>
-                                <Wrap>
-                                    <WrapItem>
-                                        {/*<Button*/}
-                                        {/*    fontWeight={500}*/}
-                                        {/*    colorScheme={"blue"}*/}
-                                        {/*    variant={"outline"}*/}
-                                        {/*    size={"sm"}*/}
-                                        {/*    href={`/expenses/${expense.id}`}*/}
-                                        {/*    as={Link}*/}
-                                        {/*>*/}
-                                        {/*    <FaRegPaperPlane/>*/}
-                                        {/*</Button>*/}
+                <>
+                    <DefaultTable columns={tableColumns} variant={"striped"}>
+                        {expenses.map((expense: IExpense) => (
+                            <Tr key={expense.id} fontSize={'15px'}>
+                                <Td>{expense.amount.toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL',
+                                })}</Td>
+                                <Td>
+                                    {expense ? dayjs(expense?.date)?.format("DD/MM/YYYY") : (
+                                        <Tag colorScheme={"red"}>Não definido</Tag>
+                                    )}
+                                </Td>
+                                <Td>
+                                    {expense.tag ?
+                                        <Tag size={'md'} variant="solid" bg={expense.tag.color}>{expense.tag.name}</Tag> :
+                                        <Tag colorScheme={"red"}>Não definido</Tag>}
+                                </Td>
+                                <Td>
+                                    <Wrap>
+                                        <WrapItem>
+                                            {/*<Button*/}
+                                            {/*    fontWeight={500}*/}
+                                            {/*    colorScheme={"blue"}*/}
+                                            {/*    variant={"outline"}*/}
+                                            {/*    size={"sm"}*/}
+                                            {/*    href={`/expenses/${expense.id}`}*/}
+                                            {/*    as={Link}*/}
+                                            {/*>*/}
+                                            {/*    <FaRegPaperPlane/>*/}
+                                            {/*</Button>*/}
 
-                                        <Button
-                                            fontWeight={500}
-                                            colorScheme={"blue"}
-                                            variant={"outline"}
-                                            size={"sm"}
-                                            onClick={() => openModal(expense.id as string)}
-                                        >
-                                            <FaRegPaperPlane/>
-                                        </Button>
-                                    </WrapItem>
-                                    <WrapItem>
-                                        <Button onClick={() => deleteExpense(expense.id as string)}
+                                            <Button
                                                 fontWeight={500}
-                                                colorScheme={"red"}
+                                                colorScheme={"blue"}
                                                 variant={"outline"}
                                                 size={"sm"}
-                                        >
-                                            <FiTrash/>
-                                        </Button>
-                                    </WrapItem>
-                                </Wrap>
-                            </Td>
-                        </Tr>
-                    ))}
-                </DefaultTable>
+                                                onClick={() => openModal(expense.id as string)}
+                                            >
+                                                <FaRegPaperPlane/>
+                                            </Button>
+                                        </WrapItem>
+                                        <WrapItem>
+                                            <Button onClick={() => deleteExpense(expense.id as string)}
+                                                    fontWeight={500}
+                                                    colorScheme={"red"}
+                                                    variant={"outline"}
+                                                    size={"sm"}
+                                            >
+                                                <FiTrash/>
+                                            </Button>
+                                        </WrapItem>
+                                    </Wrap>
+                                </Td>
+                            </Tr>
+                        ))}
+                    </DefaultTable>
+                    <Flex mt={'20px'} justify={'flex-end'}>
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="Next"
+                            pageRangeDisplayed={5}
+                            pageCount={5}
+                            previousLabel={'Previous'}
+                            pageClassName={styles.pageItem}
+                            pageLinkClassName={styles.pageLink}
+                            previousClassName={styles.pageItem}
+                            previousLinkClassName={styles.pageLink}
+                            nextClassName={styles.pageItem}
+                            nextLinkClassName={styles.pageLink}
+                            breakClassName={styles.pageItem}
+                            breakLinkClassName={styles.pageLink}
+                            containerClassName={styles.pagination}
+                            activeClassName={styles.active}
+                            renderOnZeroPageCount={null}
+                        />
+                    </Flex>
+                </>
             ) : (
                 <NoData/>
             )}
