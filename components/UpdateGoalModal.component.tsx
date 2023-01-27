@@ -1,5 +1,6 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
 import {
     Box,
     Button,
@@ -12,67 +13,60 @@ import {
     ModalOverlay,
     useToast
 } from "@chakra-ui/react";
+import {Dayjs} from "dayjs";
+import UpdateGoalForm from "./UpdateGoalForm.component";
 import {useQuery} from "react-query";
-import {apiCreateExpense, apiExpense, apiUpdateExpense} from "../services/expense.service";
-import UpdateExpenseForm from "./UpdateExpenseForm.component";
-import {EnumCategory} from "../enum/Category.enum";
-import {useForm} from "react-hook-form";
-import currentFormat from "../utils/currentFormat.utils";
+import {apiCreateGoal, apiGoal, apiUpdateGoal} from "../services/goal.service";
 
 type PageProps = {
-    expenseId: string | null | undefined;
+    goalId: string | null | undefined;
     isOpen: boolean;
     onClose: (props?: any) => void;
 }
 type FormData = {
     amount: number;
-    tagId: string;
-    description: string;
-    date: string;
-    category?: EnumCategory;
-};
-const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
+    date: Dayjs;
+}
+const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
     const router = useRouter();
 
     const [creating, setCreating] = useState<boolean>(true);
     const form = useForm<FormData>();
 
     const toast = useToast();
+
     const {
-        data: expense,
-        isLoading: expenseLoading,
-        isFetched: expenseFetched,
+        data: goal,
+        isLoading: goalLoading,
+        isFetched: goalFetched,
     } = useQuery(
-        ["expense", expenseId],
-        () => apiExpense(expenseId as string).then((res) => res.data),
+        ["goal", goalId],
+        () => apiGoal(goalId as string).then((res) => res.data),
         {
-            enabled: !creating && !!expenseId,
+            enabled: !creating && !!goalId,
             onSuccess: (data) => {
 
             },
         }
     );
     useEffect(() => {
-        if (expenseId && expenseId !== "new") {
+        console.log('dasdasda', goalId)
+        if (goalId && goalId !== "new") {
             setCreating(false);
         } else {
             form.reset({});
             setCreating(true);
         }
-    }, [expenseId]);
+    }, [goalId]);
     const onSubmit = async (data: FormData) => {
-        if (data.category === EnumCategory.LOSS) {
-            data.amount = -Math.abs(data.amount);
-        }
-        delete data.category;
         let request =
-            !creating && expenseId
-                ? apiUpdateExpense(expenseId as string, data as any)
-                : apiCreateExpense(data as any);
+            !creating && goalId
+                ? apiUpdateGoal(goalId as string, data as any)
+                : apiCreateGoal(data as any);
         request
             .then(() => {
                 toast({
-                    title: "Expense saved successfully.",
+                    title: "Goal saved successfully.",
                     status: "success",
                     isClosable: true,
                 });
@@ -86,6 +80,7 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                 });
             });
     };
+
     return (
         <>
 
@@ -93,12 +88,12 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                 <ModalOverlay/>
                 <ModalContent>
                     <ModalHeader className={"usePoppins"} fontWeight={700}>
-                        {creating ? 'New' : ''} Expense {expense ? ` - ${currentFormat(expense.amount)}` : ''}
+                        {creating ? 'New' : ''} Goal {goal ? ` - ${goal.amount}` : ''}
                     </ModalHeader>
                     <ModalCloseButton/>
                     <Box as={"form"} onSubmit={form.handleSubmit(onSubmit)}>
                         <ModalBody>
-                            <UpdateExpenseForm form={form} expense={expense} creating={creating}/>
+                            <UpdateGoalForm form={form} goal={goal} creating={creating}/>
                         </ModalBody>
                         <ModalFooter>
                             <Button colorScheme="red" mr={3} onClick={onClose}>
@@ -115,4 +110,4 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
     );
 };
 
-export default UpdateExpenseModal;
+export default UpdateGoalModal;

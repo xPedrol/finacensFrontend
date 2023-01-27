@@ -30,7 +30,7 @@ type FormData = {
     tagId: string;
     description: string;
     date: string;
-    category: EnumCategory;
+    category?: EnumCategory;
 };
 const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -52,11 +52,11 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
             reset({});
         } else {
             reset({
-                amount: expense.amount,
+                amount: Math.abs(expense.amount),
                 tagId: expense.tagId,
                 description: expense.description,
                 date: dayjs(expense.date).format("YYYY-MM-DD"),
-                category: expense.category,
+                category: expense.amount > 0 ? EnumCategory.GAIN : EnumCategory.LOSS,
             });
         }
     }, [expense]);

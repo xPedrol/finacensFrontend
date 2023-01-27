@@ -119,7 +119,7 @@ const ExpenseIndex = () => {
                         </GridItem>
                         <GridItem colSpan={4}>
                             <StatisticCard
-                                stat={currentFormat(balance([expensesStatistic.gains, -expensesStatistic.losses]))}
+                                stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
                                 status={'balance'} title={'Balance'}
                                 icon={MdOutlineAccountBalance}/>
                         </GridItem>

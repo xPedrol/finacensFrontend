@@ -14,7 +14,7 @@ import {
     useColorModeValue,
     useBreakpointValue,
     useDisclosure,
-    Container,
+    Container, Avatar, MenuList, MenuItem, MenuDivider, MenuButton, Menu,
 } from "@chakra-ui/react";
 import {HiOutlineMenu} from "react-icons/hi";
 import {GrClose} from "react-icons/gr";
@@ -118,28 +118,25 @@ export default function DefaultNavbar() {
                             direction={"row"}
                             spacing={6}
                         >
-                            <Button
-                                as={Link}
-                                fontSize={"sm"}
-                                fontWeight={400}
-                                variant={"link"}
-                                href={"/profile"}
-                            >
-                                Profile
-                            </Button>
-                            <Button
-                                display={{base: "none", md: "inline-flex"}}
-                                onClick={auth.logout}
-                                fontSize={"sm"}
-                                fontWeight={600}
-                                color={"white"}
-                                colorScheme={"blue"}
-                                _hover={{
-                                    bg: "blue.700",
-                                }}
-                            >
-                                Logout
-                            </Button>
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    rounded={'full'}
+                                    variant={'link'}
+                                    cursor={'pointer'}
+                                    minW={0}>
+                                    <Avatar cursor={'pointer'} _hover={{
+                                        border: "2px solid",
+                                        borderColor: "gray.500"
+                                    }
+                                    } size="md" name="Kent Dodds" src="https://bit.ly/kent-c-dodds"/>
+                                </MenuButton>
+                                <MenuList>
+                                    <MenuItem>Profile</MenuItem>
+                                    <MenuDivider />
+                                    <MenuItem onClick={auth.logout}>Logout</MenuItem>
+                                </MenuList>
+                            </Menu>
                         </Stack>
                     )}
                 </Container>
@@ -288,7 +285,7 @@ const MobileNavItem = ({label, children, href}: NavItem) => {
                         h={4}
                     />
                 )}
-                
+
             </Flex>
 
             <Collapse in={isOpen} animateOpacity style={{marginTop: "0!important"}}>
@@ -302,7 +299,8 @@ const MobileNavItem = ({label, children, href}: NavItem) => {
                 >
                     {children &&
                         children.map((child) => (
-                            <ChakraLink as={Link} key={child.label} py={2} href={child.href} fontFamily={'Roboto Condensed'} fontWeight={500}>
+                            <ChakraLink as={Link} key={child.label} py={2} href={child.href}
+                                        fontFamily={'Roboto Condensed'} fontWeight={500}>
                                 {child.label}
                             </ChakraLink>
                         ))}
