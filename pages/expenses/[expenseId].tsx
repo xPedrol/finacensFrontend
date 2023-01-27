@@ -101,6 +101,7 @@ const ExpensesUpdate = () => {
                 breadcrumb={pageBreadcrumb}
                 buttons={pageButtons}
             />
+             {/*@ts-ignore*/}
             <UpdateExpenseForm expense={expense} form={form} creating={creating}/>
 
         </DefaultLayout>
