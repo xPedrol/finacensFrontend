@@ -37,6 +37,7 @@ import {MdOutlineAccountBalance, MdOutlineAttachMoney, MdOutlineMoneyOffCsred} f
 import balance from "../../utils/numbersBalance.utils";
 import UpdateExpenseModal from "../../components/UpdateExpenseModal.component";
 import ReactPaginate from "react-paginate";
+import {useRouter} from "next/router";
 
 const pageSubtitle =
     "Organizar despesas permite que as pessoas tenham uma visão\n" +
@@ -56,8 +57,10 @@ const tableColumns = [
 ];
 const ExpenseIndex = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const router = useRouter();
     const [options, setOptions] = useState<{ label: string, value: string }[]>([]);
     const period = useRef<string>('');
+    const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
     const openModal = (id: string) => {
         expenseId.current = id;
         onOpen();
@@ -75,7 +78,10 @@ const ExpenseIndex = () => {
         isLoading,
         isFetched,
         refetch: refetchExpenses,
-    } = useQuery(["expenses"], () => apiExpenses(period.current).then((res) => res.data), {
+    } = useQuery(["expenses"], () => apiExpenses({
+        date: period.current,
+        page: page.current
+    }).then((res) => res.data), {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
@@ -136,11 +142,31 @@ const ExpenseIndex = () => {
         refetchExpenses();
         refetchExpensesStatistic();
     }, []);
+    useEffect(() => {
+        console.log('listening',router.query);
+        refetchExpenses();
+    }, [router.query]);
     const onPeriodChange = (nPeriod: string) => {
         period.current = nPeriod;
         refetchExpenses();
         refetchExpensesStatistic();
     };
+    const handlePageClick = (event: any) => {
+        if(event.selected === page.current) return;
+        console.log('handleClick', event.selected)
+        page.current = event.selected;
+        router.push({
+            pathname: '/expenses',
+            query: {page: event.selected},
+        }, undefined, {shallow: true});
+    };
+    // const newOffset = (event.selected * itemsPerPage) % items.length;
+    // console.log(
+    //     `User requested page number ${event.selected}, which is offset ${newOffset}`
+    // );
+    // setItemOffset(newOffset);
+
+
     return (
         <DefaultLayout>
             <PageHeader
@@ -171,15 +197,18 @@ const ExpenseIndex = () => {
                     ))}
                 </Select>
             </Flex>
-            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'} maxW={'6xl'}>
+            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'}
+                  maxW={'6xl'}>
                 {expensesStatistic &&
                     <>
                         <GridItem colSpan={4}>
-                            <StatisticCard stat={currentFormat(expensesStatistic.gains)} status={'gain'} title={'Gains'}
+                            <StatisticCard stat={currentFormat(expensesStatistic.gains)} status={'gain'}
+                                           title={'Gains'}
                                            icon={MdOutlineAttachMoney}/>
                         </GridItem>
                         <GridItem colSpan={4}>
-                            <StatisticCard stat={currentFormat(expensesStatistic.losses)} status={'loss'} title={'Loss'}
+                            <StatisticCard stat={currentFormat(expensesStatistic.losses)} status={'loss'}
+                                           title={'Loss'}
                                            icon={MdOutlineMoneyOffCsred}/>
                         </GridItem>
                         <GridItem colSpan={4}>
@@ -208,7 +237,8 @@ const ExpenseIndex = () => {
                                 </Td>
                                 <Td>
                                     {expense.tag ?
-                                        <Tag size={'md'} variant="solid" bg={expense.tag.color}>{expense.tag.name}</Tag> :
+                                        <Tag size={'md'} variant="solid"
+                                             bg={expense.tag.color}>{expense.tag.name}</Tag> :
                                         <Tag colorScheme={"red"}>Não definido</Tag>}
                                 </Td>
                                 <Td>
@@ -254,8 +284,9 @@ const ExpenseIndex = () => {
                         <ReactPaginate
                             breakLabel="..."
                             nextLabel="Next"
-                            pageRangeDisplayed={5}
-                            pageCount={5}
+                            pageRangeDisplayed={3}
+                            pageCount={10}
+                            initialPage={page.current}
                             previousLabel={'Previous'}
                             pageClassName={styles.pageItem}
                             pageLinkClassName={styles.pageLink}
@@ -267,6 +298,8 @@ const ExpenseIndex = () => {
                             breakLinkClassName={styles.pageLink}
                             containerClassName={styles.pagination}
                             activeClassName={styles.active}
+                            onPageChange={handlePageClick}
+                            // @ts-ignore
                             renderOnZeroPageCount={null}
                         />
                     </Flex>

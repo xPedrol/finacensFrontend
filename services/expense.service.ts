@@ -2,9 +2,7 @@ import {AxiosResponse} from "axios";
 import axiosClient from "../configs/httpRequest.config";
 import {IExpense} from "../models/Expense.model";
 
-export const apiExpenses = async (date?: string): Promise<AxiosResponse<IExpense[]>> => {
-    const params: any = {};
-    if (date) params['date'] = date;
+export const apiExpenses = async (params?:any): Promise<AxiosResponse<IExpense[]>> => {
     return axiosClient.get<IExpense[]>(`/expenses`, {params});
 };
 
