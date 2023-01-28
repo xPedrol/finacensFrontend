@@ -143,8 +143,11 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic();
     }, []);
     useEffect(() => {
-        console.log('listening',router.query);
-        refetchExpenses();
+        console.log('listening',router.query.page, page.current);
+        if(router.query.page && page.current !== Number(router.query.page)) {
+            page.current = Number(router.query.page);
+            refetchExpenses();
+        }
     }, [router.query]);
     const onPeriodChange = (nPeriod: string) => {
         period.current = nPeriod;
@@ -152,9 +155,9 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic();
     };
     const handlePageClick = (event: any) => {
+        console.log('Pages: ',event.selected , page.current)
         if(event.selected === page.current) return;
         console.log('handleClick', event.selected)
-        page.current = event.selected;
         router.push({
             pathname: '/expenses',
             query: {page: event.selected},
@@ -280,33 +283,33 @@ const ExpenseIndex = () => {
                             </Tr>
                         ))}
                     </DefaultTable>
-                    <Flex mt={'20px'} justify={'flex-end'}>
-                        <ReactPaginate
-                            breakLabel="..."
-                            nextLabel="Next"
-                            pageRangeDisplayed={3}
-                            pageCount={10}
-                            initialPage={page.current}
-                            previousLabel={'Previous'}
-                            pageClassName={styles.pageItem}
-                            pageLinkClassName={styles.pageLink}
-                            previousClassName={styles.pageItem}
-                            previousLinkClassName={styles.pageLink}
-                            nextClassName={styles.pageItem}
-                            nextLinkClassName={styles.pageLink}
-                            breakClassName={styles.pageItem}
-                            breakLinkClassName={styles.pageLink}
-                            containerClassName={styles.pagination}
-                            activeClassName={styles.active}
-                            onPageChange={handlePageClick}
-                            // @ts-ignore
-                            renderOnZeroPageCount={null}
-                        />
-                    </Flex>
                 </>
             ) : (
                 <NoData/>
             )}
+            <Flex mt={'20px'} justify={'flex-end'}>
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="Next"
+                    pageRangeDisplayed={3}
+                    pageCount={10}
+                    forcePage={page.current}
+                    previousLabel={'Previous'}
+                    pageClassName={styles.pageItem}
+                    pageLinkClassName={styles.pageLink}
+                    previousClassName={styles.pageItem}
+                    previousLinkClassName={styles.pageLink}
+                    nextClassName={styles.pageItem}
+                    nextLinkClassName={styles.pageLink}
+                    breakClassName={styles.pageItem}
+                    breakLinkClassName={styles.pageLink}
+                    containerClassName={styles.pagination}
+                    activeClassName={styles.active}
+                    onPageChange={handlePageClick}
+                    // @ts-ignore
+                    renderOnZeroPageCount={null}
+                />
+            </Flex>
             <UpdateExpenseModal expenseId={expenseId.current} onClose={onCloseModal} isOpen={isOpen}/>
         </DefaultLayout>
     );
