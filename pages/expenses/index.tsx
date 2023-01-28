@@ -224,6 +224,7 @@ const ExpenseIndex = () => {
                     </>
                 }
             </Grid>
+            
             {isLoading ? <Loading/> : expenses && expenses.length > 0 ? (
                 <>
                     <DefaultTable columns={tableColumns} variant={"striped"}>
