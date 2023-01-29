@@ -21,7 +21,7 @@ const DefaultLayout = ({children}: any) => {
                 {auth.user && <Box position={'fixed'} bottom={'50%'} right={'0'} mb={'30px'} zIndex={998}>
                     <Tooltip label="Open sidebar">
                         <Button onClick={onOpen} bg={'gray.300'} borderRadius={'xl'} color={'gray.800'} variant={'solid'} borderBottomRightRadius={0} borderTopRightRadius={0}>
-                            <Icon boxSize={'30px'} as={IoIosArrowBack}/>
+                            <Icon boxSize={'15px'} as={IoIosArrowBack}/>
                         </Button>
                     </Tooltip>
                 </Box>}

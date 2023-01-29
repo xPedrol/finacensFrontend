@@ -87,27 +87,16 @@ const Register = () => {
           </Alert>
         )}
         <Stack
-          bg={"gray.50"}
           rounded={"xl"}
           p={{ base: 4, sm: 8, md: 8 }}
           spacing={{ base: 8 }}
           maxW={{ base: "lg" }}
         >
           <Stack spacing={4}>
-            <Heading
-              color={"gray.800"}
-              lineHeight={1.1}
-              fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
-            >
-              Join our team
-              <Text
-                as={"span"}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                bgClip="text"
-              >
-                !
-              </Text>
-            </Heading>
+            <Text fontSize={'32px'} fontWeight={800} letterSpacing={'-.049375rem'}>Sign up to
+              <Text as={'span'} bg={'gray.300'} ms={'5px'} p={'5px'} borderRadius={'xl'}>Finances</Text>
+              <Text as={'span'} bg={'gray.300'} ms={'5px'} py={'5px'} px={'20px'} borderRadius={'xl'}>!</Text>
+            </Text>
             <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}>
               Sign up now! Create a new account by providing your email, desired
               password, and name.
@@ -116,11 +105,8 @@ const Register = () => {
           <Box as={"form"} mt={10} onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <FormControl isInvalid={!!errors.name}>
-                <Input
+                <Input size={'md'}
                   placeholder="Name"
-                  bg={"gray.100"}
-                  border={0}
-                  py={"25px"}
                   color={"gray.500"}
                   _placeholder={{
                     color: "gray.500",
@@ -135,9 +121,7 @@ const Register = () => {
                 <Input
                   placeholder="Email"
                   type={"email"}
-                  bg={"gray.100"}
-                  border={0}
-                  py={"25px"}
+                  size={'md'}
                   color={"gray.500"}
                   _placeholder={{
                     color: "gray.500",
@@ -149,11 +133,9 @@ const Register = () => {
                 )}
               </FormControl>
               <FormControl isInvalid={!!errors.password}>
-                <InputGroup size="lg">
+                <InputGroup size={'md'}>
                   <Input
                     placeholder="Password"
-                    bg={"gray.100"}
-                    border={0}
                     type={showPassword ? "text" : "password"}
                     color={"gray.500"}
                     pr="4.5rem"
@@ -177,11 +159,9 @@ const Register = () => {
                 )}
               </FormControl>
               <FormControl isInvalid={!!errors.confirmPassword}>
-                <InputGroup size="lg">
+                <InputGroup size={'md'}>
                   <Input
                     placeholder="Confirm Password"
-                    bg={"gray.100"}
-                    border={0}
                     type={showPassword ? "text" : "password"}
                     color={"gray.500"}
                     pr="4.5rem"
@@ -214,12 +194,11 @@ const Register = () => {
               w={"full"}
               bgGradient={
                 registerLoading
-                  ? "linear(to-r, blue.400,blue.400)"
-                  : "linear(to-r, blue.400,blue.800)"
+                    ? "linear(to-r, gray.400,gray.400)"
+                    : "linear(to-r, gray.100,gray.500)"
               }
               color={"white"}
               _hover={{
-                bgGradient: "linear(to-l, blue.400,blue.800)",
                 boxShadow: "xl",
               }}
             >

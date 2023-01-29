@@ -1,9 +1,8 @@
 import {
     Avatar,
     Box,
-    Button,
+    Button, ButtonGroup,
     Collapse,
-    Container,
     Flex,
     Hide,
     Icon,
@@ -16,10 +15,11 @@ import {
     MenuList,
     Popover,
     PopoverContent,
-    PopoverTrigger, Show,
+    PopoverTrigger,
+    Show,
     Stack,
     Text,
-    useBreakpointValue, useColorMode,
+    useColorMode,
     useColorModeValue,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -32,10 +32,9 @@ import {useRouter} from "next/router";
 
 export default function DefaultNavbar() {
     const {isOpen, onToggle} = useDisclosure();
-    const {colorMode, toggleColorMode} = useColorMode();
+    const {toggleColorMode} = useColorMode();
     const auth = useAuth();
     const router = useRouter();
-    // @ts-ignore
     return (
         <Box>
             <Flex
@@ -49,7 +48,7 @@ export default function DefaultNavbar() {
                 justify={'center'}
                 flexDirection={'column'}
             >
-                <Flex justify={'space-between'} py={{base: 4}} pt={'30px'} px={{base:0,sm:'30px'}}>
+                <Flex justify={'space-between'} py={{base: 4}} pt={'30px'} px={{base: 0, sm: '30px'}}>
                     <Flex align={'center'}>
                         <Text textTransform={'uppercase'} fontFamily={'Poppins'} fontWeight={600}
                               fontSize={'16px'}>Finances</Text>
@@ -83,7 +82,10 @@ export default function DefaultNavbar() {
                             {auth?.isLoading ? (
                                 <Text>Loading...</Text>
                             ) : !auth || !auth.user ? (
-                                <Button as={Link} size={'sm'} href={'/login'}>Login</Button>
+                                    <>
+                                        <Button as={Link} size={'sm'} href={'/login'}>Login</Button>
+                                        <Button as={Link} size={'sm'} href={'/register'}>Register</Button>
+                                    </>
                             ) : (
                                 <Menu>
                                     <MenuButton
@@ -112,14 +114,15 @@ export default function DefaultNavbar() {
                         </Hide>
                     </Flex>
                 </Flex>
-                <Flex fontFamily={'Inter'} fontSize={'14px'} justify={{base:'space-around',sm:'flex-start'}}>
-                    {NAV_ITEMS.map((navItem) => (
-                        <Link href={navItem.href ?? '#'} key={navItem.label}>
-                            <Text
-                                borderBottom={router.pathname === navItem.href ? '2px solid black' : '2px solid transparent'}
-                                p={'10px'}>{navItem.label}</Text>
-                        </Link>
-                    ))}
+                <Flex fontFamily={'Inter'} fontSize={'14px'} justify={{base: 'space-around', sm: 'flex-start'}}>
+                    {NAV_ITEMS.map((navItem: NavItem) =>
+                        (navItem.auth && auth?.user) || !navItem.auth ?
+                            <Link href={navItem.href ?? '#'} key={navItem.label}>
+                                <Text
+                                    borderBottom={router.pathname === navItem.href ? '2px solid black' : '2px solid transparent'}
+                                    p={'10px'}>{navItem.label}</Text>
+                            </Link> : null
+                    )}
                 </Flex>
             </Flex>
             <Collapse in={isOpen} animateOpacity>
