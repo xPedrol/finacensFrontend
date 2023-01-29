@@ -84,8 +84,6 @@ const Profile = () => {
             <PageHeader
                 title={"Profile"}
                 subtitle={subtitle}
-                breadcrumb={pageBreadcrumb}
-                buttons={pageButtons}
             />
             <Box as={"form"} onSubmit={handleSubmit(onSubmit)} mx={'auto'} maxW={'2xl'}>
                 <Grid templateColumns="repeat(12, 1fr)" gap={6}>
