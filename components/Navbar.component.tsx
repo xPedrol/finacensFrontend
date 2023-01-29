@@ -16,10 +16,10 @@ import {
     MenuList,
     Popover,
     PopoverContent,
-    PopoverTrigger,
+    PopoverTrigger, Show,
     Stack,
     Text,
-    useBreakpointValue,
+    useBreakpointValue, useColorMode,
     useColorModeValue,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -28,105 +28,63 @@ import Link from "next/link";
 import {useAuth} from "../contexts/auth.context";
 import {FaChevronDown} from "react-icons/fa";
 import {MdClear} from "react-icons/md";
+import {useRouter} from "next/router";
 
 export default function DefaultNavbar() {
     const {isOpen, onToggle} = useDisclosure();
+    const {colorMode, toggleColorMode} = useColorMode();
     const auth = useAuth();
+    const router = useRouter();
+    // @ts-ignore
     return (
         <Box>
             <Flex
-                bg={useColorModeValue("gray.900", "gray.900")}
+                bg={useColorModeValue("white", "gray.800")}
                 color={useColorModeValue("gray.600", "white")}
-                minH={"80px"}
-                py={{base: 2}}
+                minH={'60px'}
                 px={{base: 4}}
-                // borderBottom={1}
-                borderStyle={"solid"}
-                borderColor={useColorModeValue("gray.100", "gray.900")}
-                align={"center"}
+                borderBottom={1}
+                borderStyle={'solid'}
+                borderColor={useColorModeValue("gray.200", "gray.900")}
+                justify={'center'}
+                flexDirection={'column'}
             >
-                <Container as={Flex} maxW={"container.xl"} align={"center"} h={"100%"}>
-                    <Flex
-                        flex={{base: 1, md: "auto"}}
-                        ml={{base: -2}}
-                        display={{base: "flex", md: "none"}}
-                    >
-                        <IconButton
-                            onClick={onToggle}
-                            icon={
-                                isOpen ? (
-                                    <Icon w={10} h={10} color={'gray.400'} as={MdClear}></Icon>
-                                ) : (
-                                    <Icon w={9} h={9} color={'gray.400'} as={HiOutlineMenu}></Icon>
-                                )
-                            }
-                            variant={"ghost"}
-                            aria-label={"Toggle Navigation"}
-                        />
+                <Flex justify={'space-between'} py={{base: 4}} pt={'30px'} px={{base:0,sm:'30px'}}>
+                    <Flex align={'center'}>
+                        <Text textTransform={'uppercase'} fontFamily={'Poppins'} fontWeight={600}
+                              fontSize={'16px'}>Finances</Text>
+                        <Hide below={'md'}>
+                            <svg data-testid="geist-icon" fill="none" height="32" shapeRendering="geometricPrecision"
+                                 style={{color: '#eaeaea'}}
+                                 stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1"
+                                 viewBox="0 0 24 24" width="32">
+                                <path d="M16.88 3.549L7.12 20.451"></path>
+                            </svg>
+                            <Text fontFamily={'Inter'}>pedrolucassantosferreira426@gmail.com</Text>
+                        </Hide>
                     </Flex>
-                    <Flex flex={{base: 1}} justify={{base: "center", md: "start"}}>
-                        <Text as={Link} href={"/"}
-                              textAlign={useBreakpointValue({base: "center", md: "left"})}
-                              fontFamily={"heading"}
-                              fontWeight={"900"}
-                              fontSize={"25px"}
-                              letterSpacing={"2px"}
-                              textTransform={"uppercase"}
-                              color={useColorModeValue("white", "white")}
-                        >
-                            Finances
-                        </Text>
-
-                        <Flex
-                            display={{base: "none", md: "flex"}}
-                            ml={10}
-                            align={"center"}
-                        >
-                            <DesktopNav/>
-                        </Flex>
-                    </Flex>
-                    {auth?.isLoading ? (
-                        <Text>Loading...</Text>
-                    ) : !auth?.user ? (
-                        <Stack
-                            flex={{base: 1, md: 0}}
-                            justify={"flex-end"}
-                            direction={"row"}
-                            spacing={6}
-                        >
-                            <Button
-                                as={Link}
-                                display={{base: "none", md: "inline-flex"}}
-                                fontSize={"sm"}
-                                fontWeight={400}
-                                variant={"link"}
-                                href={"/login"}
-                            >
-                                Sign In
-                            </Button>
-                            <Button
-                                as={Link}
-                                display={{base: "none", md: "inline-flex"}}
-                                fontSize={"sm"}
-                                fontWeight={600}
-                                color={"white"}
-                                colorScheme={"blue"}
-                                href={"/register"}
-                                _hover={{
-                                    bg: "blue.700",
-                                }}
-                            >
-                                Sign Up
-                            </Button>
-                        </Stack>
-                    ) : (
-                        <Stack
-                            flex={{base: 1, md: 0}}
-                            justify={"flex-end"}
-                            direction={"row"}
-                            spacing={6}
-                        >
-                            <Hide below="sm">
+                    <Flex align={'center'} gap={4}>
+                        <Show below={'md'}>
+                            <IconButton
+                                onClick={onToggle}
+                                icon={
+                                    isOpen ? (
+                                        <Icon w={8} h={8} color={'gray.400'} as={MdClear}></Icon>
+                                    ) : (
+                                        <Icon w={7} h={7} color={'gray.400'} as={HiOutlineMenu}></Icon>
+                                    )
+                                }
+                                variant={"ghost"}
+                                aria-label={"Toggle Navigation"}
+                            />
+                        </Show>
+                        <Hide below={'md'}>
+                            <Button size={'sm'} onClick={toggleColorMode}>Theme</Button>
+                            {auth?.isLoading ? (
+                                <Text>Loading...</Text>
+                            ) : !auth || !auth.user ? (
+                                <Button as={Link} size={'sm'} href={'/login'}>Login</Button>
+                            ) : (
                                 <Menu>
                                     <MenuButton
                                         as={Button}
@@ -138,7 +96,7 @@ export default function DefaultNavbar() {
                                             border: "2px solid",
                                             borderColor: "gray.500"
                                         }
-                                        } size="md" name={auth.user.name} src={auth.user.picture ?? undefined}/>
+                                        } size="sm" name={auth.user.name} src={auth.user.picture ?? undefined}/>
                                     </MenuButton>
                                     <MenuList>
                                         <Link href={"/profile"}>
@@ -150,12 +108,20 @@ export default function DefaultNavbar() {
                                         <MenuItem onClick={auth.logout}>Logout</MenuItem>
                                     </MenuList>
                                 </Menu>
-                            </Hide>
-                        </Stack>
-                    )}
-                </Container>
+                            )}
+                        </Hide>
+                    </Flex>
+                </Flex>
+                <Flex fontFamily={'Inter'} fontSize={'14px'} justify={{base:'space-around',sm:'flex-start'}}>
+                    {NAV_ITEMS.map((navItem) => (
+                        <Link href={navItem.href ?? '#'} key={navItem.label}>
+                            <Text
+                                borderBottom={router.pathname === navItem.href ? '2px solid black' : '2px solid transparent'}
+                                p={'10px'}>{navItem.label}</Text>
+                        </Link>
+                    ))}
+                </Flex>
             </Flex>
-
             <Collapse in={isOpen} animateOpacity>
                 <MobileNav/>
             </Collapse>
@@ -340,11 +306,16 @@ interface NavItem {
     label: string;
     subLabel?: string;
     children?: Array<NavItem>;
-    href?: string;
+    href: string;
     auth?: boolean;
 }
 
 const NAV_ITEMS: Array<NavItem> = [
+    {
+        label: "Home",
+        href: "/",
+        auth: true
+    },
     {
         label: "Expenses",
         auth: true,

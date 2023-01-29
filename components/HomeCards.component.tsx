@@ -24,7 +24,7 @@ const Feature = ({ title, text, icon, link }: FeatureProps) => {
     <Stack
       bg={"white"}
       p={"15px"}
-      borderRadius={"xl"}
+      borderRadius={"md"}
       zIndex={999}
       borderColor={"gray.200"}
       borderStyle={"solid"}
@@ -47,7 +47,7 @@ const Feature = ({ title, text, icon, link }: FeatureProps) => {
       <Text color={"gray.600"}>{text}</Text>
       {link && (
         <Box>
-          <Button as={Link} href={link} colorScheme={"blue"}>
+          <Button as={Link} href={link} colorScheme={"gray"} variant={'ghost'} size={'sm'}>
             Abrir
           </Button>
         </Box>

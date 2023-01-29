@@ -1,13 +1,9 @@
-import {AuthProvider, useAuth} from "../contexts/auth.context";
+import {AuthProvider} from "../contexts/auth.context";
 import DefaultLayout from "../components/Layout.component";
 import Seo from "../components/Seo.component";
-import {Box, Container, Divider, Flex, Grid, GridItem, Stack, Text, useToast} from "@chakra-ui/react";
-import styles from "../styles/Home.module.scss";
-import Image from "next/image";
-import HomeCards from "../components/HomeCards.component";
-import Statistics from "../components/Statistics.component";
+import {Box, Button, Flex, Grid, GridItem} from "@chakra-ui/react";
 import {useQuery} from "react-query";
-import {apiExpensesStatistic} from "../services/expenseStatistic.service";
+import {apiExpensesStatistic, apiMonthsBalance} from "../services/expenseStatistic.service";
 import StatisticCard from "../components/StatisticCard.component";
 import currentFormat from "../utils/currentFormat.utils";
 import {
@@ -18,15 +14,42 @@ import {
 } from "react-icons/md";
 import balance from "../utils/numbersBalance.utils";
 import {apiCountNotes} from "../services/note.service";
+import MyResponsiveBar from "../components/ChartTest.component";
+import PageHeader from "../components/PageHeader.component";
+import {useEffect, useState} from "react";
+import {months} from "../utils/formatDate.utils";
 
 export default function Home() {
+    const [formattedData, setFormattedData] = useState<{ month: string, value: string }[]>([]);
     const {
         data: expensesStatistic,
-        refetch: refetchExpensesStatistic
     } = useQuery("expensesStatistic", () => apiExpensesStatistic().then((res) => res.data));
     const {
         data: noteCount
     } = useQuery("countNotes", () => apiCountNotes().then((res) => res.data));
+    const {
+        data: monthsBalance,
+        refetch: refetchBalances,
+        isLoading: isLoadingBalances,
+        isRefetching: isRefetchingBalances
+    } = useQuery("monthsBalance", () => apiMonthsBalance().then((res) => res.data));
+    useEffect(() => {
+        const aux: { month: string, value: string }[] = [];
+        for (let i = 0; i < 12; i++) {
+            if (monthsBalance && monthsBalance[i]) {
+                aux.push({
+                    month: months[i],
+                    value: String(monthsBalance[i].amount)
+                });
+            } else {
+                aux.push({
+                    month: months[i],
+                    value: '0'
+                });
+            }
+        }
+        setFormattedData(aux);
+    }, [monthsBalance]);
     return (
         <>
             <DefaultLayout>
@@ -35,23 +58,23 @@ export default function Home() {
                       maxW={'6xl'}>
                     {expensesStatistic &&
                         <>
-                            <GridItem colSpan={{base:12,md:6,lg:3}}>
+                            <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard stat={currentFormat(expensesStatistic.gains)} status={'gain'}
                                                title={'Gains'}
                                                icon={MdOutlineAttachMoney}/>
                             </GridItem>
-                            <GridItem colSpan={{base:12,md:6,lg:3}}>
+                            <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard stat={currentFormat(expensesStatistic.losses)} status={'loss'}
                                                title={'Loss'}
                                                icon={MdOutlineMoneyOffCsred}/>
                             </GridItem>
-                            <GridItem colSpan={{base:12,md:6,lg:3}}>
+                            <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard
                                     stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
                                     status={'balance'} title={'Balance'}
                                     icon={MdOutlineAccountBalance}/>
                             </GridItem>
-                            <GridItem colSpan={{base:12,md:6,lg:3}}>
+                            <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard
                                     stat={noteCount?._count}
                                     status={'note'} title={'Notes'}
@@ -60,10 +83,28 @@ export default function Home() {
                         </>
                     }
                 </Grid>
-                <Flex justifyContent={"center"} flexDirection={"column"}>
-                    <HomeCards/>
-                    {/*<Statistics />*/}
-                </Flex>
+                <PageHeader
+                    title={"Ganhos e Despesas"}
+                    subtitle={"Ganhos e Despesas por mês"}
+                >
+                    <Button
+                        size={"sm"}
+                        colorScheme={'gray'}
+                        variant="outline"
+                        onClick={() => refetchBalances()}
+                        isLoading={isLoadingBalances || isRefetchingBalances}
+                    >
+                        Atualizar
+                    </Button>
+                </PageHeader>
+                {formattedData && formattedData.length > 0 &&
+                    <Box overflow={'auto'}>
+                        <Flex ms={{base: 0,md: '100px'}} h={'400px'} flexDirection={{base: 'column'}}
+                              minW={'1000px'}>
+                            <MyResponsiveBar data={formattedData} keys={["value"]} indexBy={"month"}/>
+                        </Flex>
+                    </Box>
+                }
             </DefaultLayout>
         </>
     );

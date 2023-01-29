@@ -2,38 +2,73 @@ import DefaultLayout from "../../components/Layout.component";
 import PageHeader from "../../components/PageHeader.component";
 import {Box, Button, Grid, GridItem, Icon, useDisclosure, useToast} from "@chakra-ui/react";
 import Seo from "../../components/Seo.component";
-import {AiOutlinePlus} from "react-icons/ai";
 import {useQuery} from "react-query";
-import {apiNotes} from "../../services/note.service";
+import {apiDeleteNote, apiNotes} from "../../services/note.service";
 import Loading from "../../components/LoadingSpinner.component";
 import {INote} from "../../models/Note.model";
 import NoData from "../../components/NoData.component";
 import NoteCard from "../../components/NoteCard.component";
 import {AuthProvider} from "../../contexts/auth.context";
-import {useRef} from "react";
+import {useRef, useState} from "react";
 import UpdateNoteModal from "../../components/UpdateNoteModal.component";
+import InfoModal from "../../components/InfoModal.component";
+import {AiOutlineInfoCircle} from "react-icons/ai";
+import AlertModal from "../../components/AlertModal.component";
 
-const pageSubtitle =
-    "Nessa página é possível armazenar informações relevantes e importantes de forma organizada e acessível. Ela pode ser utilizada para anotar ideias, tarefas, lembretes, entre outros conteúdos.";
+const info =
+    "Fazer anotações permite que as pessoas tenham um registro claro de suas ideias e tarefas, o que as ajuda a se organizar e a priorizar suas atividades. Isso leva a uma melhor gestão do tempo e aumenta a produtividade, ajudando as pessoas a alcançar seus objetivos pessoais e profissionais de maneira mais eficiente.";
 const pageBreadcrumb = [
     {title: "Home", link: "/"},
     {title: "Notes", link: "/notes"},
 ];
 
 const NotesIndex = () => {
+    const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
+    const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const selectedNote = useRef<string | null>(null);
     const openModal = (id: string) => {
-        noteId.current = id;
+        selectedNote.current = id;
         onOpen();
+    };
+
+    const openAlertModal = (id: string) => {
+        selectedNote.current = id;
+        onAlertModalOpen();
     };
     const onCloseModal = (props?: any) => {
         onClose();
-        noteId.current = null;
+        selectedNote.current = null;
         if (props?.success) {
             refetchNotes();
         }
     };
-    const noteId = useRef<string | null>(null);
+    const closeAlertModal = (next: any) => {
+        if (next === true && selectedNote.current) {
+            apiDeleteNote(selectedNote.current as string).then((res) => {
+                toast({
+                    title: "Note deleted",
+                    description: "Note deleted successfully",
+                    status: "success",
+                    isClosable: true,
+                });
+                refetchNotes();
+                onAlertModalClose();
+                selectedNote.current = null;
+            }).catch((err) => {
+                toast({
+                    title: "Error",
+                    description: "Error deleting note",
+                    status: "error",
+                    isClosable: true,
+                });
+            });
+        }else{
+            onAlertModalClose();
+            selectedNote.current = null;
+        }
+    };
 
     const {
         data: notes,
@@ -46,40 +81,38 @@ const NotesIndex = () => {
         <DefaultLayout>
             <PageHeader
                 title={"Notes"}
-                subtitle={pageSubtitle}
-                breadcrumb={pageBreadcrumb}
-                buttons={undefined}
             >
                 <Button
                     onClick={() => openModal('new')}
                     size={"sm"}
-                    colorScheme={'blue'}
+                    colorScheme={'gray'}
                     variant="outline"
                 >
-                    <Icon boxSize={"18px"} me={"5px"} as={AiOutlinePlus}></Icon>
                     Adicionar
+                </Button>
+                <Button size={"sm"}
+                        colorScheme={'gray'} onClick={onInfoModalOpen}
+                        variant="ghost">
+                    <Icon as={AiOutlineInfoCircle} boxSize={'17px'}/>
                 </Button>
             </PageHeader>
             <Seo title={"Notes"} description={"Notes page"}/>
-            {/*<Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'}>*/}
-            {/*    <GridItem colSpan={12}>*/}
-            {/*        {notesStatistic &&*/}
-            {/*            <NoteCard gains={notesStatistic.gains} losses={notesStatistic.losses}/>}*/}
-            {/*    </GridItem>*/}
-            {/*</Grid>*/}
             <Box mt={'30px'}></Box>
             {isLoading ? <Loading/> : notes && notes.length > 0 ? (
                 <Grid templateColumns={'repeat(12,1fr)'} gap={6}>
                     {notes.map((note: INote) => (
-                        <GridItem colSpan={{base:12,md:6,lg:4}} key={note.id}>
-                            <NoteCard refetchNotes={refetchNotes} openModal={openModal} note={note}/>
+                        <GridItem colSpan={{base: 12, md: 6, lg: 4}} key={note.id}>
+                            <NoteCard onAlertModalClose={onAlertModalClose} onAlertModalOpen={onAlertModalOpen} openAlertModal={openAlertModal}
+                                      refetchNotes={refetchNotes} openModal={openModal} note={note}/>
                         </GridItem>
                     ))}
                 </Grid>
             ) : (
-                <NoData/>
+                <NoData message={'Nenhuma anotação foi encontrada'}/>
             )}
-            <UpdateNoteModal noteId={noteId.current} onClose={onCloseModal} isOpen={isOpen}/>
+            <UpdateNoteModal noteId={selectedNote.current} onClose={onCloseModal} isOpen={isOpen}/>
+            <InfoModal info={info} title={'Notes'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
+            <AlertModal title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
         </DefaultLayout>
     );
 };

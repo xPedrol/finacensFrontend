@@ -13,12 +13,12 @@ const NoData = ({ message }: NoDataProps) => {
     >
       <Icon
         as={BiError}
-        boxSize={"37px"}
+        boxSize={"30px"}
         color={"yellow.400"}
         mb={"5px"}
         name={"warning"}
       />
-      <Text className={"useRobotoCondensed"} fontWeight={"bold"}>
+      <Text fontSize={'13px'}>
         {message ?? "O que você está procurando não foi encontrado"}
       </Text>
     </Flex>

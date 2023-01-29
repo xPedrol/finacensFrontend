@@ -5,7 +5,7 @@ const axiosClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 5000,
 });
-axiosClient.interceptors.request.use((config: AxiosRequestConfig) => {
+axiosClient.interceptors.request.use((config: any) => {
   const cookies = parseCookies();
   const tokenKey = process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME as string;
   if (cookies[tokenKey]) {

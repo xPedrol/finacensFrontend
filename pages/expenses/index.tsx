@@ -4,12 +4,10 @@ import DefaultTable from "../../components/Table.component";
 import Seo from "../../components/Seo.component";
 import styles from "../../styles/Pagination.module.scss";
 import {
-    Box,
     Button,
     Flex,
     Grid,
-    GridItem,
-    Icon,
+    GridItem, Icon,
     Select,
     Tag,
     Td,
@@ -23,7 +21,6 @@ import {useQuery} from "react-query";
 import {apiDeleteExpense, apiExpenses} from "../../services/expense.service";
 import Loading from "../../components/LoadingSpinner.component";
 import NoData from "../../components/NoData.component";
-import {AiOutlinePlus} from "react-icons/ai";
 import PageHeader from "../../components/PageHeader.component";
 import {IExpense} from "../../models/Expense.model";
 import dayjs from "dayjs";
@@ -38,12 +35,11 @@ import balance from "../../utils/numbersBalance.utils";
 import UpdateExpenseModal from "../../components/UpdateExpenseModal.component";
 import ReactPaginate from "react-paginate";
 import {useRouter} from "next/router";
+import InfoModal from "../../components/InfoModal.component";
+import {AiOutlineInfoCircle} from "react-icons/ai";
+import AlertModal from "../../components/AlertModal.component";
 
-const pageSubtitle =
-    "Organizar despesas permite que as pessoas tenham uma visão\n" +
-    "                                    geral de onde\n" +
-    "                                    estão gastando seu dinheiro, o que as ajuda a tomar decisões financeiras informadas e a\n" +
-    "                                    alcançar seus objetivos financeiros.";
+const info = "Ao organizar suas despesas, as pessoas ganham uma visão clara e detalhada de onde estão gastando seu dinheiro, o que lhes permite tomar decisões financeiras conscientes e bem informadas. Isso é crucial para alcançar metas financeiras, controlar gastos e manter a saúde financeira. Além disso, ao acompanhar suas despesas, é possível identificar áreas onde é possível economizar e fazer ajustes para atingir seus objetivos financeiros de maneira mais eficiente.";
 const pageBreadcrumb = [
     {title: "Home", link: "/"},
     {title: "Expenses", link: "/expenses"},
@@ -57,13 +53,43 @@ const tableColumns = [
 ];
 const ExpenseIndex = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
+    const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
     const router = useRouter();
     const [options, setOptions] = useState<{ label: string, value: string }[]>([]);
     const period = useRef<string>('');
     const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const selectedExpense = useRef<string | null>(null);
     const openModal = (id: string) => {
         expenseId.current = id;
         onOpen();
+    };
+    const closeAlertModal = (next: any) => {
+        if (next === true && selectedExpense.current) {
+            apiDeleteExpense(selectedExpense.current).then((res) => {
+                toast({
+                    title: "Expense deleted",
+                    description: "Expense deleted successfully",
+                    status: "success",
+                    isClosable: true,
+                });
+                refetchExpenses();
+                refetchExpensesStatistic();
+                onAlertModalClose();
+                selectedExpense.current = null;
+            }).catch((err) => {
+                toast({
+                    title: "Error",
+                    description: "Error deleting expense",
+                    status: "error",
+                    isClosable: true,
+                });
+            });
+        }else{
+            onAlertModalClose();
+            selectedExpense.current = null;
+        }
     };
     const onCloseModal = (props?: any) => {
         onClose();
@@ -103,23 +129,8 @@ const ExpenseIndex = () => {
     });
     const toast = useToast();
     const deleteExpense = (id: string) => {
-        apiDeleteExpense(id).then((res) => {
-            toast({
-                title: "Expense deleted",
-                description: "Expense deleted successfully",
-                status: "success",
-                isClosable: true,
-            });
-            refetchExpenses();
-            refetchExpensesStatistic();
-        }).catch((err) => {
-            toast({
-                title: "Error",
-                description: "Error deleting expense",
-                status: "error",
-                isClosable: true,
-            });
-        });
+        selectedExpense.current = id;
+        onAlertModalOpen();
     };
     useEffect(() => {
         const year = dayjs().year();
@@ -143,8 +154,8 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic();
     }, []);
     useEffect(() => {
-        console.log('listening',router.query.page, page.current);
-        if(router.query.page && page.current !== Number(router.query.page)) {
+        console.log('listening', router.query.page, page.current);
+        if (router.query.page && page.current !== Number(router.query.page)) {
             page.current = Number(router.query.page);
             refetchExpenses();
         }
@@ -155,44 +166,40 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic();
     };
     const handlePageClick = (event: any) => {
-        console.log('Pages: ',event.selected , page.current)
-        if(event.selected === page.current) return;
-        console.log('handleClick', event.selected)
+        console.log('Pages: ', event.selected, page.current);
+        if (event.selected === page.current) return;
+        console.log('handleClick', event.selected);
         router.push({
             pathname: '/expenses',
             query: {page: event.selected},
         }, undefined, {shallow: true});
     };
-    // const newOffset = (event.selected * itemsPerPage) % items.length;
-    // console.log(
-    //     `User requested page number ${event.selected}, which is offset ${newOffset}`
-    // );
-    // setItemOffset(newOffset);
 
 
     return (
         <DefaultLayout>
             <PageHeader
                 title={"Expenses"}
-                subtitle={pageSubtitle}
-                breadcrumb={pageBreadcrumb}
-                buttons={undefined}
             >
                 <Button
                     onClick={() => openModal('new')}
                     size={"sm"}
-                    colorScheme={'blue'}
+                    colorScheme={'gray'}
                     variant="outline"
                 >
-                    <Icon boxSize={"18px"} me={"5px"} as={AiOutlinePlus}></Icon>
                     Adicionar
+                </Button>
+                <Button size={"sm"}
+                        colorScheme={'gray'} onClick={onInfoModalOpen}
+                        variant="ghost">
+                    <Icon as={AiOutlineInfoCircle} boxSize={'17px'}/>
                 </Button>
             </PageHeader>
             <Seo title={"Expenses"} description={"Expenses page"}/>
-            <Flex justify={'center'} align={'center'}>
+            <Flex justify={'flex-end'} align={'center'}>
                 <Select maxW={'xl'} placeholder={'Select a date...'} value={period.current}
                         onChange={(e) => onPeriodChange(e.target.value)}
-                        variant="filled">
+                        variant="outline">
                     {options.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
@@ -200,21 +207,21 @@ const ExpenseIndex = () => {
                     ))}
                 </Select>
             </Flex>
-            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'}
-                  maxW={'6xl'}>
+
+            <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'}>
                 {expensesStatistic &&
                     <>
-                        <GridItem colSpan={4}>
+                        <GridItem colSpan={{base: 12, md: 6, lg: 4}}>
                             <StatisticCard stat={currentFormat(expensesStatistic.gains)} status={'gain'}
                                            title={'Gains'}
                                            icon={MdOutlineAttachMoney}/>
                         </GridItem>
-                        <GridItem colSpan={4}>
+                        <GridItem colSpan={{base: 12, md: 6, lg: 4}}>
                             <StatisticCard stat={currentFormat(expensesStatistic.losses)} status={'loss'}
                                            title={'Loss'}
                                            icon={MdOutlineMoneyOffCsred}/>
                         </GridItem>
-                        <GridItem colSpan={4}>
+                        <GridItem colSpan={{base: 12, md: 6, lg: 4}}>
                             <StatisticCard
                                 stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
                                 status={balance([expensesStatistic.gains, expensesStatistic.losses]) < 0 ? 'loss' : 'gain'}
@@ -224,10 +231,10 @@ const ExpenseIndex = () => {
                     </>
                 }
             </Grid>
-            
+
             {isLoading ? <Loading/> : expenses && expenses.length > 0 ? (
                 <>
-                    <DefaultTable columns={tableColumns} variant={"striped"}>
+                    <DefaultTable columns={tableColumns} variant={"simple"}>
                         {expenses.map((expense: IExpense) => (
                             <Tr key={expense.id} fontSize={'15px'}>
                                 <Td>{expense.amount.toLocaleString('pt-BR', {
@@ -261,8 +268,8 @@ const ExpenseIndex = () => {
 
                                             <Button
                                                 fontWeight={500}
-                                                colorScheme={"blue"}
-                                                variant={"outline"}
+                                                colorScheme={"gray"}
+                                                variant={"ghost"}
                                                 size={"sm"}
                                                 onClick={() => openModal(expense.id as string)}
                                             >
@@ -273,7 +280,7 @@ const ExpenseIndex = () => {
                                             <Button onClick={() => deleteExpense(expense.id as string)}
                                                     fontWeight={500}
                                                     colorScheme={"red"}
-                                                    variant={"outline"}
+                                                    variant={"ghost"}
                                                     size={"sm"}
                                             >
                                                 <FiTrash/>
@@ -288,7 +295,7 @@ const ExpenseIndex = () => {
             ) : (
                 <NoData/>
             )}
-            <Flex mt={'20px'} justify={'flex-end'}>
+            <Flex mt={'20px'} justify={{base:'center',sm:'flex-end'}}>
                 <ReactPaginate
                     breakLabel="..."
                     nextLabel="Next"
@@ -304,7 +311,7 @@ const ExpenseIndex = () => {
                     nextLinkClassName={styles.pageLink}
                     breakClassName={styles.pageItem}
                     breakLinkClassName={styles.pageLink}
-                    containerClassName={styles.pagination}
+                    containerClassName={`${styles.pagination} ${styles.paginationSm}`}
                     activeClassName={styles.active}
                     onPageChange={handlePageClick}
                     // @ts-ignore
@@ -312,6 +319,8 @@ const ExpenseIndex = () => {
                 />
             </Flex>
             <UpdateExpenseModal expenseId={expenseId.current} onClose={onCloseModal} isOpen={isOpen}/>
+            <InfoModal info={info} title={'Expenses'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
+            <AlertModal title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
         </DefaultLayout>
     );
 };

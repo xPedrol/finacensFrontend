@@ -9,7 +9,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay,
+    ModalOverlay, Text,
     useToast
 } from "@chakra-ui/react";
 import {useQuery} from "react-query";
@@ -92,8 +92,8 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
             <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
                 <ModalOverlay/>
                 <ModalContent>
-                    <ModalHeader className={"usePoppins"} fontWeight={700}>
-                        {creating ? 'New' : ''} Expense {expense ? ` - ${currentFormat(expense.amount)}` : ''}
+                    <ModalHeader>
+                        <Text fontSize={'18px'}>{creating ? 'New' : ''} Expense {expense ? ` - ${currentFormat(expense.amount)}` : ''}</Text>
                     </ModalHeader>
                     <ModalCloseButton/>
                     <Box as={"form"} onSubmit={form.handleSubmit(onSubmit)}>
@@ -101,10 +101,10 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                             <UpdateExpenseForm form={form} expense={expense} creating={creating}/>
                         </ModalBody>
                         <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={onClose}>
+                            <Button colorScheme="red" mr={3} onClick={onClose} size={'sm'} variant={'ghost'}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"blue"} type={"submit"}>
+                            <Button colorScheme={"gray"} type={"submit"} size={'sm'} variant={'ghost'}>
                                 Salvar
                             </Button>
                         </ModalFooter>

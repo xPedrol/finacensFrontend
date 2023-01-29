@@ -22,18 +22,18 @@ const StatisticCard = ({title, stat, status, icon}: Props) => {
     };
     return (
         <Stat
-            px={{base: 2, md: 4}}
-            py={'5'}
-            shadow={'xl'}
+            px={{base: 2, md: 2}}
+            py={'3'}
             border={'1px solid'}
-            borderColor={useColorModeValue('gray.800', 'gray.500')}
+            w={'100%'}
+            borderColor={useColorModeValue('gray.100', 'gray.500')}
             rounded={'lg'}>
             <Flex justifyContent={'space-between'}>
-                <Box pl={{base: 2, md: 4}}>
+                <Box ps={{base: 2, md: 4}}>
                     <StatLabel fontWeight={'medium'} isTruncated>
                         {title}
                     </StatLabel>
-                    <StatNumber fontSize={'xl'} fontWeight={'bold'} fontFamily={'Poppins'}
+                    <StatNumber fontSize={'lg'} fontWeight={'bold'} fontFamily={'Poppins'}
                         // @ts-ignore
                                 color={handleColor}>
                         {stat ?? '---'}
@@ -44,7 +44,7 @@ const StatisticCard = ({title, stat, status, icon}: Props) => {
                     color={useColorModeValue('gray.800', 'gray.200')}
                     alignContent={'center'}>
                     {icon &&
-                        <Icon boxSize={'40px'} as={icon}></Icon>
+                        <Icon boxSize={'25px'} as={icon}></Icon>
                     }
                 </Box>
             </Flex>

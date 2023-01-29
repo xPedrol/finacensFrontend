@@ -19,83 +19,38 @@ import {ReactNode} from "react";
 type PageHeaderProps = {
     title: string;
     subtitle?: string;
-    breadcrumb: { title: string; link: string }[];
-    buttons?: { title: string; link: string; icon: any; colorSchema: string }[];
     children?: ReactNode;
 };
 const PageHeader = ({
                         title,
-                        buttons,
-                        breadcrumb,
                         subtitle,
                         children
                     }: PageHeaderProps) => {
     return (
-        <Card mt={"10px"} mb={"10px"} bg={"gray.800"} size={"lg"}>
-            <CardBody>
-                <Grid templateColumns={"repeat(12,1fr)"}>
-                    <GridItem colSpan={{base: 12, lg: 9}}>
-                        <Stack flex={1} justify={{lg: "center"}}>
-                            <Box>
-                                <Text
-                                    fontFamily={"heading"}
-                                    fontWeight={700}
-                                    textTransform={"uppercase"}
-                                    fontSize={"xl"}
-                                    color={"gray.400"}
-                                >
-                                    {title}
-                                </Text>
-                                {breadcrumb && (
-                                    <Breadcrumb
-                                        color={"gray.500"}
-                                        fontFamily={"Roboto Condensed"}
-                                        fontWeight={700}
-                                    >
-                                        {breadcrumb.map((item, index) => (
-                                            <BreadcrumbItem key={item.link}>
-                                                <BreadcrumbLink as={Link} href={item.link}>
-                                                    {item.title}
-                                                </BreadcrumbLink>
-                                            </BreadcrumbItem>
-                                        ))}
-                                    </Breadcrumb>
-                                )}
-
-                                {subtitle && (
-                                    <Text fontSize={"md"} color={"gray.400"} fontWeight={500}>
-                                        {subtitle}
-                                    </Text>
-                                )}
-                            </Box>
-                        </Stack>
-                    </GridItem>
-                    <GridItem
-                        colSpan={{base: 12, lg: 3}}
-                        as={Flex}
-                        justifyContent={{base: "center", lg: "flex-end"}}
-                        alignItems={"center"}
+        <Flex justify={'space-between'} align={'center'} mt={'30px'} mb={'50px'}>
+            <Stack justify={{sm: "center"}} overflowY={'hidden'}>
+                <Box>
+                    <Text overflow={'hidden'} whiteSpace={'nowrap'} textOverflow={'ellipsis'}
+                          fontFamily={"heading"}
+                          fontWeight={600}
+                          fontSize={"18px"}
                     >
-                        {buttons ?
-                            buttons.map((button) => (
-                                <Button
-                                    key={button.link}
-                                    as={Link}
-                                    href={button.link}
-                                    size={"sm"}
-                                    colorScheme={button.colorSchema}
-                                    variant="outline"
-                                >
-                                    {button.icon && (
-                                        <Icon boxSize={"18px"} me={"5px"} as={button.icon}></Icon>
-                                    )}
-                                    {button.title}
-                                </Button>
-                            )) : children}
-                    </GridItem>
-                </Grid>
-            </CardBody>
-        </Card>
+                        {title}
+                    </Text>
+                    <Text whiteSpace={'nowrap'} overflow={'hidden'}
+                          fontWeight={400}
+                          fontSize={"14px"}
+                    >
+                        {subtitle && subtitle}
+
+                    </Text>
+                </Box>
+            </Stack>
+            <Stack flex={1} direction={'row'} justify={'flex-end'}>
+                {children}
+            </Stack>
+        </Flex>
+
     );
 };
 

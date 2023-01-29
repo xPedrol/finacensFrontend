@@ -1,18 +1,22 @@
-import {useForm, UseFormReturn} from "react-hook-form";
+import {UseFormReturn} from "react-hook-form";
 import {IExpense} from "../models/Expense.model";
 import {useEffect} from "react";
 import dayjs from "dayjs";
 import {categories, EnumCategory} from "../enum/Category.enum";
 import {
-    Box, Button, Flex,
-    FormControl, FormErrorMessage,
+    Button,
+    FormControl,
     FormLabel,
     Grid,
     GridItem,
     Input,
     InputGroup,
-    InputLeftAddon, InputRightElement, Select,
-    Skeleton, Textarea, useDisclosure
+    InputLeftAddon,
+    InputRightElement,
+    Select,
+    Skeleton,
+    Textarea,
+    useDisclosure
 } from "@chakra-ui/react";
 import {AiOutlinePlus} from "react-icons/ai";
 import {useQuery} from "react-query";
@@ -67,12 +71,12 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
     const isLoaded = creating || (!creating && !!expense);
     return (
         <>
-            <Grid templateColumns="repeat(12, 1fr)" gap={6}>
+            <Grid templateColumns="repeat(12, 1fr)" gap={4}>
                 <GridItem colSpan={{base: 12}}>
                     <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                         <FormControl isInvalid={!!errors.amount}>
                             <FormLabel>Amount</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 {/* eslint-disable-next-line react/no-children-prop */}
                                 <InputLeftAddon children="R$"/>
                                 <Input
@@ -88,7 +92,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                     <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                         <FormControl isInvalid={!!errors.date}>
                             <FormLabel>Date</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 {/* eslint-disable-next-line react/no-children-prop */}
                                 <Input type="date" {...register("date", {required: true})} />
                             </InputGroup>
@@ -100,9 +104,8 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                     <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                         <FormControl isInvalid={!!errors.tagId}>
                             <FormLabel>Tag</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 <Select
-                                    size={"lg"}
                                     {...register("tagId", {required: true})}
                                     placeholder="Select option..."
                                 >
@@ -113,11 +116,10 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                                             </option>
                                         ))}
                                 </Select>
-                                <InputRightElement width="6.5rem">
+                                <InputRightElement width="5rem">
                                     <Button
                                         h="1.75rem"
                                         size="sm"
-                                        leftIcon={<AiOutlinePlus/>}
                                         onClick={onOpen}
                                     >
                                         Novo
@@ -132,9 +134,8 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                     <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                         <FormControl isInvalid={!!errors.tagId}>
                             <FormLabel>Category</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 <Select
-                                    size={"lg"}
                                     {...register("category", {required: true})}
                                     placeholder="Select option..."
                                 >
@@ -155,7 +156,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                         <FormControl isInvalid={!!errors.description}>
                             <FormLabel>Description</FormLabel>
                             <Textarea
-                                size={"lg"}
+                                size={"md"}
                                 {...register("description")}
                                 rows={5}
                                 placeholder="Here is a sample description of the expensee"

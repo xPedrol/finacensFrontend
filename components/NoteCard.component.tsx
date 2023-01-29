@@ -23,10 +23,21 @@ type NoteCardProps = {
     note: INote;
     refetchNotes: () => void;
     openModal: (id: string) => void;
+    onAlertModalClose: () => void;
+    openAlertModal: (id: string) => void;
+    onAlertModalOpen: () => void;
 }
-const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
+const NoteCard = ({
+                      note,
+                      refetchNotes,
+                      openModal,
+                      onAlertModalOpen,
+                      onAlertModalClose,
+                      openAlertModal
+                  }: NoteCardProps) => {
     const toast = useToast();
     const [isFixed, setIsFixed] = useState<boolean>(false);
+
     const toggleFixed = () => {
         apiToggleFixed(note.id as string).then((res) => {
             setIsFixed(!isFixed);
@@ -39,37 +50,21 @@ const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
             });
         });
     };
-    const deleteNote = () => {
-        apiDeleteNote(note.id as string).then((res) => {
-            toast({
-                title: "Note deleted",
-                description: "Note deleted successfully",
-                status: "success",
-                isClosable: true,
-            });
-            refetchNotes();
-        }).catch((err) => {
-            toast({
-                title: "Error",
-                description: "Error deleting note",
-                status: "error",
-                isClosable: true,
-            });
-        });
-    };
+
     useEffect(() => {
         setIsFixed(note.fixed || false);
     }, [note]);
     return (
-        <Card borderBottom={'3px solid'} borderBottomColor={note.color}>
+        <Card borderBottom={'1px solid'} boxShadow={'none'} border={'1px solid'} borderColor={'gray.200'}
+              borderBottomColor={note.color}>
             <CardBody>
                 <Stack spacing="3">
                     <Flex justify={'space-between'} align={'center'}>
-                        <Heading size="md">{note.title}</Heading>
+                        <Text size="md" fontWeight={600}>{note.title}</Text>
                         <Box onClick={toggleFixed}>
-                            {!isFixed ? <Icon as={BsPin} boxSize={'25px'} color={'gray.400'}
-                                                 cursor={'pointer'}></Icon> :
-                                <Icon as={BsPinFill} boxSize={'25px'} color={'gray.400'} cursor={'pointer'}></Icon>}
+                            {!isFixed ? <Icon as={BsPin} boxSize={'20px'} color={note.color}
+                                              cursor={'pointer'}></Icon> :
+                                <Icon as={BsPinFill} boxSize={'20px'} color={note.color} cursor={'pointer'}></Icon>}
                         </Box>
                     </Flex>
                     {note.description &&
@@ -79,13 +74,12 @@ const NoteCard = ({note, refetchNotes, openModal}: NoteCardProps) => {
                     }
                 </Stack>
             </CardBody>
-            {/*<Divider color={'gray.300'} w={'93%'} mx={'auto'}/>*/}
             <CardFooter justify={'flex-end'} p={'13px'}>
                 <ButtonGroup spacing="2" size={'sm'} variant={'outline'}>
-                    <Button colorScheme="blue" onClick={() => openModal(note.id as string)}>
+                    <Button colorScheme="gray" variant={'ghost'} onClick={() => openModal(note.id as string)}>
                         <FaRegPaperPlane/>
                     </Button>
-                    <Button colorScheme="red" onClick={deleteNote}>
+                    <Button colorScheme="red" variant={'ghost'} onClick={() => openAlertModal(note.id as string)}>
                         <FiTrash/>
                     </Button>
                 </ButtonGroup>

@@ -30,9 +30,9 @@ const DefaultTable = ({
 }: TableProps) => {
   return (
     <TableContainer>
-      <Table variant={variant} colorScheme="gray">
+      <Table variant={variant} colorScheme="gray" size={'md'}>
         {caption && <TableCaption>{caption}</TableCaption>}
-        <Thead>
+        <Thead bg={'#fafafa'}>
           <Tr>
             {columns.map((column: ColumnProps) => (
               <Th key={column.key}>{column.title}</Th>

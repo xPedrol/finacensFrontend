@@ -52,12 +52,12 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
     }, [note]);
     const isLoaded = creating || (!creating && !!note);
     return (
-        <Grid templateColumns="repeat(12, 1fr)" gap={6}>
+        <Grid templateColumns="repeat(12, 1fr)" gap={4}>
             <GridItem colSpan={{base: 12}}>
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.title}>
                         <FormLabel>Title</FormLabel>
-                        <InputGroup size={"lg"}>
+                        <InputGroup size={"md"}>
                             <Input
                                 type="text"
                                 {...register("title", {required: true})}
@@ -71,7 +71,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.date}>
                         <FormLabel>Date</FormLabel>
-                        <InputGroup size={"lg"}>
+                        <InputGroup size={"md"}>
                             <Input type="date" {...register("date", {required: true})} />
                         </InputGroup>
                         <CustomFormErrorMessage/>
@@ -82,7 +82,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.color}>
                         <FormLabel>Color</FormLabel>
-                        <InputGroup size={"lg"}>
+                        <InputGroup size={"md"}>
                             <Input type="color" border={'none'} {...register("color", {required: true})} />
                         </InputGroup>
                         <CustomFormErrorMessage/>
@@ -93,8 +93,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.description}>
                         <FormLabel>Description</FormLabel>
-                        <Textarea
-                            size={"lg"}
+                        <Textarea size={'md'}
                             {...register("description")}
                             rows={5}
                             placeholder="Here is a sample description of the note"
@@ -105,7 +104,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
             </GridItem>
             <GridItem colSpan={12} as={Flex} justifyContent={"space-between"} alignItems={'flex-start'}>
                 <Checkbox size="lg" colorScheme="blue" {...register("fixed", {required: false})}>
-                    <Text fontSize={'15px'}>Fixed</Text>
+                    <FormLabel as={Text}>Fixed</FormLabel>
                 </Checkbox>
             </GridItem>
         </Grid>

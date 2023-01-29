@@ -10,7 +10,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay,
+    ModalOverlay, Text,
     useToast
 } from "@chakra-ui/react";
 import {Dayjs} from "dayjs";
@@ -89,8 +89,8 @@ const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
             <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
                 <ModalOverlay/>
                 <ModalContent>
-                    <ModalHeader className={"usePoppins"} fontWeight={700}>
-                        {creating ? 'New' : ''} Note {note ? ` - ${note.title}` : ''}
+                    <ModalHeader>
+                        <Text fontSize={'18px'}>{creating ? 'New' : ''} Note {note ? ` - ${note.title}` : ''}</Text>
                     </ModalHeader>
                     <ModalCloseButton/>
                     <Box as={"form"} onSubmit={form.handleSubmit(onSubmit)}>
@@ -98,10 +98,10 @@ const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
                             <UpdateNoteForm form={form} note={note} creating={creating}/>
                         </ModalBody>
                         <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={onClose}>
+                            <Button size={'sm'} colorScheme="red" mr={3} onClick={onClose} variant={'ghost'}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"blue"} type={"submit"}>
+                            <Button size={'sm'} colorScheme={"gray"} type={"submit"} variant={'ghost'}>
                                 Salvar
                             </Button>
                         </ModalFooter>
