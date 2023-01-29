@@ -53,13 +53,19 @@ export default function DefaultNavbar() {
                         <Text textTransform={'uppercase'} fontFamily={'Poppins'} fontWeight={600}
                               fontSize={'16px'}>Finances</Text>
                         <Hide below={'md'}>
-                            <svg data-testid="geist-icon" fill="none" height="32" shapeRendering="geometricPrecision"
-                                 style={{color: '#eaeaea'}}
-                                 stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1"
-                                 viewBox="0 0 24 24" width="32">
-                                <path d="M16.88 3.549L7.12 20.451"></path>
-                            </svg>
-                            <Text fontFamily={'Inter'}>pedrolucassantosferreira426@gmail.com</Text>
+                            {auth.user &&
+                                <>
+                                    <svg data-testid="geist-icon" fill="none" height="32"
+                                         shapeRendering="geometricPrecision"
+                                         style={{color: '#eaeaea'}}
+                                         stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                         strokeWidth="1"
+                                         viewBox="0 0 24 24" width="32">
+                                        <path d="M16.88 3.549L7.12 20.451"></path>
+                                    </svg>
+                                    <Text fontFamily={'Inter'}>{auth.user.email}</Text>
+                                </>
+                            }
                         </Hide>
                     </Flex>
                     <Flex align={'center'} gap={4}>
@@ -82,10 +88,10 @@ export default function DefaultNavbar() {
                             {auth?.isLoading ? (
                                 <Text>Loading...</Text>
                             ) : !auth || !auth.user ? (
-                                    <>
-                                        <Button as={Link} size={'sm'} href={'/login'}>Login</Button>
-                                        <Button as={Link} size={'sm'} href={'/register'}>Register</Button>
-                                    </>
+                                <>
+                                    <Button as={Link} size={'sm'} href={'/login'}>Login</Button>
+                                    <Button as={Link} size={'sm'} href={'/register'}>Register</Button>
+                                </>
                             ) : (
                                 <Menu>
                                     <MenuButton

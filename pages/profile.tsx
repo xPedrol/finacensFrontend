@@ -96,7 +96,7 @@ const Profile = () => {
                     <GridItem colSpan={12}>
                         <FormControl isInvalid={!!errors.name}>
                             <FormLabel>Name</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 <Input
                                     type="text"
                                     {...register("name", {required: true})}
@@ -108,7 +108,7 @@ const Profile = () => {
                     <GridItem colSpan={12}>
                         <FormControl isInvalid={!!errors.email}>
                             <FormLabel>Email</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 <Input type="email" {...register("email", {required: true})} />
                             </InputGroup>
                             <CustomFormErrorMessage/>
@@ -117,13 +117,13 @@ const Profile = () => {
                     <GridItem colSpan={12}>
                         <FormControl isInvalid={!!errors.picture}>
                             <FormLabel>Picture Link</FormLabel>
-                            <InputGroup size={"lg"}>
+                            <InputGroup size={"md"}>
                                 <Input type="text" {...register("picture")} />
                             </InputGroup>
                         </FormControl>
                     </GridItem>
                     <GridItem colSpan={12} as={Flex} justifyContent={"flex-end"} alignItems={'flex-start'}>
-                        <Button colorScheme="blue" size="md" type={"submit"}>
+                        <Button colorScheme="gray" variant={'ghost'} size="md" type={"submit"}>
                             Salvar
                         </Button>
                     </GridItem>
