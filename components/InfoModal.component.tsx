@@ -24,7 +24,7 @@ const InfoModal = ({title, info, isOpen, onClose}: PageProps) => {
     return (
         <>
 
-            <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
+            <Modal isOpen={isOpen} onClose={onClose} size={"lg"} isCentered>
                 <ModalOverlay/>
                 <ModalContent>
                     <ModalHeader>

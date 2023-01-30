@@ -86,7 +86,7 @@ const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
     return (
         <>
 
-            <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
+            <Modal isCentered isOpen={isOpen} onClose={onClose} size={"lg"}>
                 <ModalOverlay/>
                 <ModalContent>
                     <ModalHeader>

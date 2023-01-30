@@ -2,7 +2,7 @@ import {AxiosResponse} from "axios";
 import axiosClient from "../configs/httpRequest.config";
 import {IExpense} from "../models/Expense.model";
 
-export const apiExpenses = async (params?:any): Promise<AxiosResponse<IExpense[]>> => {
+export const apiExpenses = async (params?: any): Promise<AxiosResponse<IExpense[]>> => {
     return axiosClient.get<IExpense[]>(`/expenses`, {params});
 };
 
@@ -29,4 +29,10 @@ export const apiDeleteExpense = async (
     id: string
 ): Promise<AxiosResponse<IExpense>> => {
     return axiosClient.delete<IExpense>(`/expenses/${id}`);
+};
+
+export const apiExpenseCount = async (
+    params?: any
+): Promise<AxiosResponse<number>> => {
+    return axiosClient.get<number>(`/expenses/count`, {params});
 };

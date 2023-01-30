@@ -18,7 +18,7 @@ import {
     WrapItem
 } from "@chakra-ui/react";
 import {useQuery} from "react-query";
-import {apiDeleteExpense, apiExpenses} from "../../services/expense.service";
+import {apiDeleteExpense, apiExpenseCount, apiExpenses} from "../../services/expense.service";
 import Loading from "../../components/LoadingSpinner.component";
 import NoData from "../../components/NoData.component";
 import PageHeader from "../../components/PageHeader.component";
@@ -59,7 +59,6 @@ const ExpenseIndex = () => {
     const [options, setOptions] = useState<{ label: string, value: string }[]>([]);
     const period = useRef<string>('');
     const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
-    const [totalPages, setTotalPages] = useState<number>(0);
     const selectedExpense = useRef<string | null>(null);
     const openModal = (id: string) => {
         expenseId.current = id;
@@ -78,7 +77,7 @@ const ExpenseIndex = () => {
                 refetchExpensesStatistic();
                 onAlertModalClose();
                 selectedExpense.current = null;
-            }).catch((err) => {
+            }).catch(() => {
                 toast({
                     title: "Error",
                     description: "Error deleting expense",
@@ -86,7 +85,7 @@ const ExpenseIndex = () => {
                     isClosable: true,
                 });
             });
-        }else{
+        } else {
             onAlertModalClose();
             selectedExpense.current = null;
         }
@@ -99,6 +98,19 @@ const ExpenseIndex = () => {
             refetchExpensesStatistic();
         }
     };
+    const {
+        data: expensesTotalPages,
+        refetch: refetchExpensesCount
+    } = useQuery(["expensesTotalPages"], () => apiExpenseCount({
+        date: period.current,
+    }).then((res) => res.data), {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: true,
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        enabled: false,
+    });
     const {
         data: expenses,
         isLoading,
@@ -151,6 +163,7 @@ const ExpenseIndex = () => {
         }
         setOptions(newOptions);
         refetchExpenses();
+        refetchExpensesCount();
         refetchExpensesStatistic();
     }, []);
     useEffect(() => {
@@ -158,11 +171,13 @@ const ExpenseIndex = () => {
         if (router.query.page && page.current !== Number(router.query.page)) {
             page.current = Number(router.query.page);
             refetchExpenses();
+            refetchExpensesCount();
         }
     }, [router.query]);
     const onPeriodChange = (nPeriod: string) => {
         period.current = nPeriod;
         refetchExpenses();
+        refetchExpensesCount();
         refetchExpensesStatistic();
     };
     const handlePageClick = (event: any) => {
@@ -180,6 +195,7 @@ const ExpenseIndex = () => {
         <DefaultLayout>
             <PageHeader
                 title={"Expenses"}
+                subtitle={expensesTotalPages ? `${expensesTotalPages} records` : ''}
             >
                 <Button
                     onClick={() => openModal('new')}
@@ -237,7 +253,7 @@ const ExpenseIndex = () => {
                     <DefaultTable columns={tableColumns} variant={"simple"}>
                         {expenses.map((expense: IExpense) => (
                             <Tr key={expense.id} fontSize={'15px'}>
-                                <Td>{expense.amount.toLocaleString('pt-BR', {
+                                <Td color={expense.amount > 0 ? 'green.400' : 'red.400'}>{Math.abs(expense.amount).toLocaleString('pt-BR', {
                                     style: 'currency',
                                     currency: 'BRL',
                                 })}</Td>
@@ -295,7 +311,7 @@ const ExpenseIndex = () => {
             ) : (
                 <NoData/>
             )}
-            <Flex mt={'20px'} justify={{base:'center',sm:'flex-end'}}>
+            <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
                 <ReactPaginate
                     breakLabel="..."
                     nextLabel="Next"

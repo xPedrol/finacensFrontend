@@ -1,7 +1,7 @@
 import {AuthProvider} from "../contexts/auth.context";
 import DefaultLayout from "../components/Layout.component";
 import Seo from "../components/Seo.component";
-import {Box, Button, Flex, Grid, GridItem} from "@chakra-ui/react";
+import {Box, Button, Flex, Grid, GridItem, Text} from "@chakra-ui/react";
 import {useQuery} from "react-query";
 import {apiExpensesStatistic, apiMonthsBalance} from "../services/expenseStatistic.service";
 import StatisticCard from "../components/StatisticCard.component";
@@ -54,8 +54,10 @@ export default function Home() {
         <>
             <DefaultLayout>
                 <Seo title={"Dashboard"} description={"Dashboard page"}/>
-                <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'} mx={'auto'} w={'100%'} mt={'30px'}
-                      maxW={'6xl'}>
+                <Flex mt={'30px'}>
+                    <Text as={'small'}>Valores referentes ao mês atual</Text>
+                </Flex>
+                <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'}>
                     {expensesStatistic &&
                         <>
                             <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
@@ -71,7 +73,7 @@ export default function Home() {
                             <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard
                                     stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
-                                    status={'balance'} title={'Balance'}
+                                    status={balance([expensesStatistic.gains, expensesStatistic.losses]) < 0 ? 'loss' : 'gain'}title={'Balance'}
                                     icon={MdOutlineAccountBalance}/>
                             </GridItem>
                             <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
@@ -84,8 +86,8 @@ export default function Home() {
                     }
                 </Grid>
                 <PageHeader
-                    title={"Ganhos e Despesas"}
-                    subtitle={"Ganhos e Despesas por mês"}
+                    title={"Gains and Losses"}
+                    subtitle={"Gains and losses per months"}
                 >
                     <Button
                         size={"sm"}

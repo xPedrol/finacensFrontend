@@ -59,7 +59,7 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
     };
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
+            <Modal isCentered isOpen={isOpen} onClose={onClose} size={"lg"}>
                 <ModalOverlay/>
                 <ModalContent>
                     <Box as={"form"} onSubmit={handleSubmit(onSubmit)}>

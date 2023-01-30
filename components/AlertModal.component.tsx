@@ -17,7 +17,7 @@ type AlertModalProps = {
 const AlertModal = ({title, message, isOpen,onClose}:AlertModalProps) => {
     const cancelRef:any = useRef()
     return (
-        <AlertDialog
+        <AlertDialog isCentered
             isOpen={isOpen}
             leastDestructiveRef={cancelRef}
             onClose={onClose}

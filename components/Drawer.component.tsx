@@ -74,18 +74,14 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
     }, [isOpen]);
     return (
         <>
-            <Drawer onClose={onClose} isOpen={isOpen} size={'md'}>
+            <Drawer onClose={onClose} isOpen={isOpen} size={'sm'}>
                 <DrawerOverlay/>
                 <DrawerContent>
                     <DrawerCloseButton size={'lg'}/>
-                    <DrawerHeader fontFamily={'Poppins'} fontSize={'24px'}>Visão Geral</DrawerHeader>
+                    <DrawerHeader fontSize={'20px'}>Drawer</DrawerHeader>
                     <DrawerBody>
-                        <Alert status="info">
-                            <AlertIcon/>
-                            Aqui é possivel acompanhar cronologicamente as suas atividades e suas metas.
-                        </Alert>
                         <Flex align={'center'} justify={'space-between'} mt={'20px'}>
-                            <Heading size="xs" textTransform="uppercase">
+                            <Heading size="xs">
                                 Expenses and Goals
                             </Heading>
                             <Button size={'xs'} onClick={() => openModal('new')}>Novo</Button>
@@ -135,7 +131,7 @@ export const DefaultDrawer = ({isOpen, onOpen, onClose}: DrawerProps) => {
                             }
                         </Stack>
                         <Flex align={'center'} justify={'space-between'} mt={'30px'}>
-                            <Heading size="xs" textTransform="uppercase">
+                            <Heading size="xs">
                                 Next notes
                             </Heading>
                         </Flex>
@@ -166,28 +162,24 @@ const GoalStack = ({month}: GoalStackProps) => {
         if (goal) {
             const percentage = Math.abs(month.losses / goal.amount);
             console.log(percentage);
-            if (percentage > 100) {
-                setPercentage(100);
-            } else {
-                const value = (percentage * 100);
-                setPercentage(value);
-            }
+            const value = (percentage * 100);
+            setPercentage(value);
         }
     }, [month, goal]);
     return (
         <>
             {goal ?
                 <>
-                    <Progress value={percentage} size="xs" colorScheme="blue"/>
+                    <Progress value={percentage} size="xs" colorScheme="gray"/>
                     <Text fontSize="13px" mt={'5px'}>
-                        Sua meta é gastar até <Text as={'span'}
-                                                    color={getCurrencyColor(goal.amount)}>{currencyFormat(goal.amount)}</Text> — {percentage}%
-                        da meta foi gasta.
+                        Your goal is not to spend more than <Text as={'span'}
+                                                            color={getCurrencyColor(goal.amount)}>{currencyFormat(goal.amount)}</Text> — {percentage}%
+                        reached.
                     </Text>
                 </>
                 :
                 <Text fontSize="sm">
-                    Você não tem uma meta para este mês
+                    No goal set for this month.
                 </Text>
             }
         </>
