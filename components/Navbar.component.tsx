@@ -35,6 +35,7 @@ export default function DefaultNavbar() {
     const {toggleColorMode} = useColorMode();
     const auth = useAuth();
     const router = useRouter();
+    const navItemBorderBottomColor = useColorModeValue("gray.400", "gray.500");
     return (
         <Box>
             <Flex
@@ -125,7 +126,7 @@ export default function DefaultNavbar() {
                             <Link href={navItem.href ?? '#'} key={navItem.label}>
                                 <Text
                                     borderBottom={router.pathname === navItem.href ? '2px solid' : 'none'}
-                                    borderBottomColor={useColorModeValue("gray.400", "gray.500")}
+                                    borderBottomColor={navItemBorderBottomColor}
                                     p={'10px'}>{navItem.label}</Text>
                             </Link> : null
                     )}
