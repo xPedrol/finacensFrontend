@@ -161,7 +161,6 @@ const GoalStack = ({month}: GoalStackProps) => {
     useEffect(() => {
         if (goal) {
             const percentage = Math.abs(month.losses / goal.amount);
-            console.log(percentage);
             const value = (percentage * 100);
             setPercentage(value);
         }

@@ -38,12 +38,9 @@ import {useRouter} from "next/router";
 import InfoModal from "../../components/InfoModal.component";
 import {AiOutlineInfoCircle} from "react-icons/ai";
 import AlertModal from "../../components/AlertModal.component";
+import {pageCount} from "../../utils/pagination.utils";
 
 const info = "Ao organizar suas despesas, as pessoas ganham uma visão clara e detalhada de onde estão gastando seu dinheiro, o que lhes permite tomar decisões financeiras conscientes e bem informadas. Isso é crucial para alcançar metas financeiras, controlar gastos e manter a saúde financeira. Além disso, ao acompanhar suas despesas, é possível identificar áreas onde é possível economizar e fazer ajustes para atingir seus objetivos financeiros de maneira mais eficiente.";
-const pageBreadcrumb = [
-    {title: "Home", link: "/"},
-    {title: "Expenses", link: "/expenses"},
-];
 
 const tableColumns = [
     {title: "Value", key: "value"},
@@ -167,7 +164,6 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic();
     }, []);
     useEffect(() => {
-        console.log('listening', router.query.page, page.current);
         if (router.query.page && page.current !== Number(router.query.page)) {
             page.current = Number(router.query.page);
             refetchExpenses();
@@ -181,9 +177,7 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic();
     };
     const handlePageClick = (event: any) => {
-        console.log('Pages: ', event.selected, page.current);
         if (event.selected === page.current) return;
-        console.log('handleClick', event.selected);
         router.push({
             pathname: '/expenses',
             query: {page: event.selected},
@@ -311,29 +305,31 @@ const ExpenseIndex = () => {
             ) : (
                 <NoData/>
             )}
-            <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
-                <ReactPaginate
-                    breakLabel="..."
-                    nextLabel="Next"
-                    pageRangeDisplayed={3}
-                    pageCount={10}
-                    forcePage={page.current}
-                    previousLabel={'Previous'}
-                    pageClassName={styles.pageItem}
-                    pageLinkClassName={styles.pageLink}
-                    previousClassName={styles.pageItem}
-                    previousLinkClassName={styles.pageLink}
-                    nextClassName={styles.pageItem}
-                    nextLinkClassName={styles.pageLink}
-                    breakClassName={styles.pageItem}
-                    breakLinkClassName={styles.pageLink}
-                    containerClassName={`${styles.pagination} ${styles.paginationSm}`}
-                    activeClassName={styles.active}
-                    onPageChange={handlePageClick}
-                    // @ts-ignore
-                    renderOnZeroPageCount={null}
-                />
-            </Flex>
+            {typeof expensesTotalPages === 'number' && (
+                <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
+                    <ReactPaginate
+                        breakLabel="..."
+                        nextLabel="Next"
+                        pageRangeDisplayed={3}
+                        pageCount={pageCount(expensesTotalPages)}
+                        forcePage={page.current}
+                        previousLabel={'Previous'}
+                        pageClassName={styles.pageItem}
+                        pageLinkClassName={styles.pageLink}
+                        previousClassName={styles.pageItem}
+                        previousLinkClassName={styles.pageLink}
+                        nextClassName={styles.pageItem}
+                        nextLinkClassName={styles.pageLink}
+                        breakClassName={styles.pageItem}
+                        breakLinkClassName={styles.pageLink}
+                        containerClassName={`${styles.pagination} ${styles.paginationSm}`}
+                        activeClassName={styles.active}
+                        onPageChange={handlePageClick}
+                        // @ts-ignore
+                        renderOnZeroPageCount={null}
+                    />
+                </Flex>
+            )}
             <UpdateExpenseModal expenseId={expenseId.current} onClose={onCloseModal} isOpen={isOpen}/>
             <InfoModal info={info} title={'Expenses'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
             <AlertModal title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
