@@ -20,7 +20,7 @@ const styles = {
             fontFamily: "body",
             fontWeight: 500,
             color: mode("gray.800", "whiteAlpha.900")(props),
-            bg: mode("#fff", "gray.900")(props),
+            bg: mode("#fff", "#111111")(props),
             lineHeight: "base",
         },
         "*::placeholder": {
@@ -78,11 +78,39 @@ const Textarea = defineStyleConfig({
     },
 });
 const Card: any = defineStyleConfig({
-    baseStyle: {
-        container: {
-            // borderRadius: "0",
+    baseStyle: props => ({}),
+});
+
+const Modal: any = defineStyleConfig({
+    baseStyle: props => ({
+        dialog: {
+            bg: mode('white', '#1c1c1c')(props),
+        }
+    })
+});
+const Menu: any = defineStyleConfig({
+    baseStyle: props => ({
+        list: {
+            bg: mode('white', '#111111')(props),
+            minW: "140px",
         },
-    },
+        item: {
+            bg: mode('white', '#111111')(props),
+            px: '20px',
+            py: '7px',
+            fontSize: '14px',
+            _focus: {
+                bg: mode('gray.100', '#1c1c1c')(props),
+            },
+        }
+    })
+});
+const Drawer: any = defineStyleConfig({
+    baseStyle: props => ({
+        dialog: {
+            bg: mode('white', '#1c1c1c')(props),
+        }
+    })
 });
 export const themeConfig = extendTheme({
     fonts,
@@ -93,6 +121,10 @@ export const themeConfig = extendTheme({
         FormLabel,
         Select: Input,
         Textarea,
-        Input
+        Input,
+        Card,
+        Modal,
+        Drawer,
+        Menu
     },
 });

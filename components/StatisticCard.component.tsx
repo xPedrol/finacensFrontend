@@ -26,7 +26,7 @@ const StatisticCard = ({title, stat, status, icon}: Props) => {
             py={'3'}
             border={'1px solid'}
             w={'100%'}
-            borderColor={useColorModeValue('gray.100', 'gray.500')}
+            borderColor={useColorModeValue('gray.200', 'gray.700')}
             rounded={'lg'}>
             <Flex justifyContent={'space-between'}>
                 <Box ps={{base: 2, md: 4}}>

@@ -1,6 +1,6 @@
 import DefaultLayout from "../../components/Layout.component";
 import PageHeader from "../../components/PageHeader.component";
-import {Box, Button, Grid, GridItem, Icon, useDisclosure, useToast} from "@chakra-ui/react";
+import {Box, Button, Flex, Grid, GridItem, Icon, useDisclosure, useToast} from "@chakra-ui/react";
 import Seo from "../../components/Seo.component";
 import {useQuery} from "react-query";
 import {apiDeleteNote, apiNotes} from "../../services/note.service";
@@ -9,11 +9,16 @@ import {INote} from "../../models/Note.model";
 import NoData from "../../components/NoData.component";
 import NoteCard from "../../components/NoteCard.component";
 import {AuthProvider} from "../../contexts/auth.context";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import UpdateNoteModal from "../../components/UpdateNoteModal.component";
 import InfoModal from "../../components/InfoModal.component";
 import {AiOutlineInfoCircle} from "react-icons/ai";
 import AlertModal from "../../components/AlertModal.component";
+import {apiExpenseCount} from "../../services/expense.service";
+import ReactPaginate from "react-paginate";
+import {pageCount} from "../../utils/pagination.utils";
+import styles from "../../styles/Pagination.module.scss";
+import {useRouter} from "next/router";
 
 const info =
     "Fazer anotações permite que as pessoas tenham um registro claro de suas ideias e tarefas, o que as ajuda a se organizar e a priorizar suas atividades. Isso leva a uma melhor gestão do tempo e aumenta a produtividade, ajudando as pessoas a alcançar seus objetivos pessoais e profissionais de maneira mais eficiente.";
@@ -28,9 +33,18 @@ const NotesIndex = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [totalPages, setTotalPages] = useState<number>(0);
     const selectedNote = useRef<string | null>(null);
+    const router = useRouter();
+    const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
     const openModal = (id: string) => {
         selectedNote.current = id;
         onOpen();
+    };
+    const handlePageClick = (event: any) => {
+        if (event.selected === page.current) return;
+        router.push({
+            pathname: '/notes',
+            query: {page: event.selected},
+        }, undefined, {shallow: true});
     };
 
     const openAlertModal = (id: string) => {
@@ -64,11 +78,23 @@ const NotesIndex = () => {
                     isClosable: true,
                 });
             });
-        }else{
+        } else {
             onAlertModalClose();
             selectedNote.current = null;
         }
     };
+
+    const {
+        data: notesTotalPages,
+        refetch: refetchNotesCount
+    } = useQuery(["notesCount"], () => apiExpenseCount().then((res) => res.data), {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: true,
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        enabled: false,
+    });
 
     const {
         data: notes,
@@ -77,10 +103,21 @@ const NotesIndex = () => {
         refetch: refetchNotes,
     } = useQuery("notes", () => apiNotes().then((res) => res.data));
     const toast = useToast();
+    useEffect(() => {
+        refetchNotesCount();
+    }, []);
+    useEffect(() => {
+        if (router.query.page && page.current !== Number(router.query.page)) {
+            page.current = Number(router.query.page);
+            refetchNotes();
+            refetchNotesCount();
+        }
+    }, [router.query]);
     return (
         <DefaultLayout>
             <PageHeader
                 title={"Notes"}
+                subtitle={notesTotalPages ? `${notesTotalPages} records` : ''}
             >
                 <Button
                     onClick={() => openModal('new')}
@@ -102,13 +139,39 @@ const NotesIndex = () => {
                 <Grid templateColumns={'repeat(12,1fr)'} gap={6}>
                     {notes.map((note: INote) => (
                         <GridItem colSpan={{base: 12, md: 6, lg: 4}} key={note.id}>
-                            <NoteCard onAlertModalClose={onAlertModalClose} onAlertModalOpen={onAlertModalOpen} openAlertModal={openAlertModal}
+                            <NoteCard onAlertModalClose={onAlertModalClose} onAlertModalOpen={onAlertModalOpen}
+                                      openAlertModal={openAlertModal}
                                       refetchNotes={refetchNotes} openModal={openModal} note={note}/>
                         </GridItem>
                     ))}
                 </Grid>
             ) : (
                 <NoData message={'Nenhuma anotação foi encontrada'}/>
+            )}
+            {typeof notesTotalPages === 'number' && (
+                <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
+                    <ReactPaginate
+                        breakLabel="..."
+                        nextLabel="Next"
+                        pageRangeDisplayed={3}
+                        pageCount={pageCount(notesTotalPages)}
+                        forcePage={page.current}
+                        previousLabel={'Previous'}
+                        pageClassName={styles.pageItem}
+                        pageLinkClassName={styles.pageLink}
+                        previousClassName={styles.pageItem}
+                        previousLinkClassName={styles.pageLink}
+                        nextClassName={styles.pageItem}
+                        nextLinkClassName={styles.pageLink}
+                        breakClassName={styles.pageItem}
+                        breakLinkClassName={styles.pageLink}
+                        containerClassName={`${styles.pagination} ${styles.paginationSm}`}
+                        activeClassName={styles.active}
+                        onPageChange={handlePageClick}
+                        // @ts-ignore
+                        renderOnZeroPageCount={null}
+                    />
+                </Flex>
             )}
             <UpdateNoteModal noteId={selectedNote.current} onClose={onCloseModal} isOpen={isOpen}/>
             <InfoModal info={info} title={'Notes'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>

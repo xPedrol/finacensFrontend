@@ -6,7 +6,7 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr,
+  Tr, useColorModeValue,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
@@ -32,7 +32,7 @@ const DefaultTable = ({
     <TableContainer>
       <Table variant={variant} colorScheme="gray" size={'md'}>
         {caption && <TableCaption>{caption}</TableCaption>}
-        <Thead bg={'#fafafa'}>
+        <Thead>
           <Tr>
             {columns.map((column: ColumnProps) => (
               <Th key={column.key}>{column.title}</Th>

@@ -16,7 +16,7 @@ import {
     Stack,
     StackDivider,
     Text,
-    Tooltip, useDisclosure, Wrap, WrapItem
+    Tooltip, useColorModeValue, useDisclosure, Wrap, WrapItem
 } from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
 import {useQuery} from "react-query";

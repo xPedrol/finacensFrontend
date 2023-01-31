@@ -13,7 +13,7 @@ import {
     MdOutlineStickyNote2
 } from "react-icons/md";
 import balance from "../utils/numbersBalance.utils";
-import {apiCountNotes} from "../services/note.service";
+import {apiNotesCount} from "../services/note.service";
 import MyResponsiveBar from "../components/ChartTest.component";
 import PageHeader from "../components/PageHeader.component";
 import {useEffect, useState} from "react";
@@ -23,10 +23,14 @@ export default function Home() {
     const [formattedData, setFormattedData] = useState<{ month: string, value: string }[]>([]);
     const {
         data: expensesStatistic,
-    } = useQuery("expensesStatistic", () => apiExpensesStatistic().then((res) => res.data));
+    } = useQuery("expensesStatisticByYear", () => apiExpensesStatistic(
+        {
+            unit: "year"
+        }
+    ).then((res) => res.data));
     const {
         data: noteCount
-    } = useQuery("countNotes", () => apiCountNotes().then((res) => res.data));
+    } = useQuery("countNotes", () => apiNotesCount().then((res) => res.data));
     const {
         data: monthsBalance,
         refetch: refetchBalances,
@@ -55,7 +59,7 @@ export default function Home() {
             <DefaultLayout>
                 <Seo title={"Dashboard"} description={"Dashboard page"}/>
                 <Flex mt={'30px'}>
-                    <Text as={'small'}>Valores referentes ao mês atual</Text>
+                    <Text as={'small'}>Valores referentes ao ano atual</Text>
                 </Flex>
                 <Grid templateColumns="repeat(12, 1fr)" gap={6} mb={'30px'}>
                     {expensesStatistic &&
@@ -73,12 +77,13 @@ export default function Home() {
                             <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard
                                     stat={currentFormat(balance([expensesStatistic.gains, expensesStatistic.losses]))}
-                                    status={balance([expensesStatistic.gains, expensesStatistic.losses]) < 0 ? 'loss' : 'gain'}title={'Balance'}
+                                    status={balance([expensesStatistic.gains, expensesStatistic.losses]) < 0 ? 'loss' : 'gain'}
+                                    title={'Balance'}
                                     icon={MdOutlineAccountBalance}/>
                             </GridItem>
                             <GridItem colSpan={{base: 12, md: 6, lg: 3}}>
                                 <StatisticCard
-                                    stat={noteCount?._count}
+                                    stat={noteCount}
                                     status={'note'} title={'Notes'}
                                     icon={MdOutlineStickyNote2}/>
                             </GridItem>
@@ -101,7 +106,7 @@ export default function Home() {
                 </PageHeader>
                 {formattedData && formattedData.length > 0 &&
                     <Box overflow={'auto'}>
-                        <Flex ms={{base: 0,md: '100px'}} h={'400px'} flexDirection={{base: 'column'}}
+                        <Flex ms={{base: 0, md: '100px'}} h={'400px'} flexDirection={{base: 'column'}}
                               minW={'1000px'}>
                             <MyResponsiveBar data={formattedData} keys={["value"]} indexBy={"month"}/>
                         </Flex>

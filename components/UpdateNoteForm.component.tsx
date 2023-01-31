@@ -72,7 +72,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                     <FormControl isInvalid={!!errors.date}>
                         <FormLabel>Date</FormLabel>
                         <InputGroup size={"md"}>
-                            <Input type="date" {...register("date", {required: true})} />
+                            <Input type="datetime-local" {...register("date", {required: true})} />
                         </InputGroup>
                         <CustomFormErrorMessage/>
                     </FormControl>

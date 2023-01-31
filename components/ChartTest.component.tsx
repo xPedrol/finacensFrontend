@@ -1,4 +1,5 @@
 import {ResponsiveBar} from '@nivo/bar';
+import {useColorModeValue} from "@chakra-ui/react";
 
 // make sure parent container have a defined height when using
 // responsive component, otherwise height will be 0 and
@@ -45,12 +46,12 @@ const MyResponsiveBar = ({data,keys,indexBy}:ChartTestProps) => {
     return (
         <ResponsiveBar theme={{
             "background": "transparent",
-            "textColor": "#333333",
+            "textColor": useColorModeValue("#333333","#CBD5E0"),
             "fontSize": 11,
             "axis": {
                 "domain": {
                     "line": {
-                        "stroke": "#777777",
+                        "stroke": useColorModeValue("#333333","#CBD5E0"),
                         "strokeWidth": 1
                     }
                 },
@@ -62,18 +63,18 @@ const MyResponsiveBar = ({data,keys,indexBy}:ChartTestProps) => {
                 },
                 "ticks": {
                     "line": {
-                        "stroke": "#777777",
+                        "stroke": useColorModeValue("#777777","#CBD5E0"),
                         "strokeWidth": 1
                     },
                     "text": {
                         "fontSize": 11,
-                        "fill": "#333333"
+                        "fill": useColorModeValue("#333333","#CBD5E0")
                     }
                 }
             },
             "grid": {
                 "line": {
-                    "stroke": "#dddddd",
+                    "stroke": useColorModeValue("#dddddd",'RGBA(255, 255, 255, 0.16)'),
                     "strokeWidth": 1
                 }
             },

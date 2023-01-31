@@ -9,7 +9,7 @@ import {
     Heading,
     Icon,
     Stack,
-    Text,
+    Text, useColorModeValue,
     useToast
 } from "@chakra-ui/react";
 import {FiTrash} from "react-icons/fi";
@@ -18,6 +18,7 @@ import {apiDeleteNote, apiToggleFixed} from "../services/note.service";
 import {useEffect, useState} from "react";
 import {INote} from "../models/Note.model";
 import {BsPin, BsPinFill} from "react-icons/bs";
+import dayjs from "dayjs";
 
 type NoteCardProps = {
     note: INote;
@@ -29,10 +30,7 @@ type NoteCardProps = {
 }
 const NoteCard = ({
                       note,
-                      refetchNotes,
                       openModal,
-                      onAlertModalOpen,
-                      onAlertModalClose,
                       openAlertModal
                   }: NoteCardProps) => {
     const toast = useToast();
@@ -55,7 +53,8 @@ const NoteCard = ({
         setIsFixed(note.fixed || false);
     }, [note]);
     return (
-        <Card borderBottom={'1px solid'} boxShadow={'none'} border={'1px solid'} borderColor={'gray.200'}
+        <Card borderBottom={'1px solid'} boxShadow={'none'} border={'1px solid'} borderColor={useColorModeValue('gray.200', 'gray.700')}
+              bg={useColorModeValue("white", "#111111")}
               borderBottomColor={note.color}>
             <CardBody>
                 <Stack spacing="3">
@@ -74,7 +73,9 @@ const NoteCard = ({
                     }
                 </Stack>
             </CardBody>
-            <CardFooter justify={'flex-end'} p={'13px'}>
+            <CardFooter justify={'space-between'} p={'13px'}>
+                <Text fontSize={'12px'} alignSelf={'flex-end'}
+                      color={'gray.500'}>{dayjs(note.date).format('DD/MM/YYYY hh:mm')}</Text>
                 <ButtonGroup spacing="2" size={'sm'} variant={'outline'}>
                     <Button colorScheme="gray" variant={'ghost'} onClick={() => openModal(note.id as string)}>
                         <FaRegPaperPlane/>

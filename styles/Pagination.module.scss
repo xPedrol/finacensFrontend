@@ -4,57 +4,106 @@
   list-style: none;
 }
 
-.pageLink {
-  position: relative;
-  display: block;
-  color: var(--chakra-colors-gray-500);
-  text-decoration: none;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  border-inline: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-@media (max-width: 30em) {
-  .pageItem{
-    display: none;
-  }
-  .pageItem.active{
-    display: block;
-  }
-  .pageItem:first-child{
-    display: block;
-  }
-    .pageItem:last-child{
-        display: block;
-    }
+.darkPageLink {
+  color: #fff;
+  background-color: #111111;
+  border: 1px solid var(--chakra-colors-gray-700);
 }
 
-.pageItem:first-child{
-  border-top-left-radius: 0.25rem;
-  border-bottom-left-radius: 0.25rem;
+.darkPageItem:first-child {
+  border-left: 1px solid var(--chakra-colors-gray-700);
+}
+
+.darkPageItem:last-child {
+  border-right: 1px solid var(--chakra-colors-gray-700);
+}
+
+.darkPageLink:hover {
+  z-index: 2;
+  color: var(--chakra-colors-blue-400);
+  background-color: #1c1c1c;
+  border-color: var(--chakra-colors-gray-700);
+}
+
+.darkPageLink:focus {
+  color: var(--chakra-colors-blue-400);
+  background-color: #1c1c1c;
+}
+
+
+.lightPageLink {
+  color: var(--chakra-colors-gray-500);
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.lightPageItem:first-child {
   border-left: 1px solid #dee2e6;
 }
-.pageItem:last-child{
-  border-top-right-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem;
+
+.lightPageItem:last-child {
   border-right: 1px solid #dee2e6;
-  display: block;
 }
-@media (prefers-reduced-motion: reduce) {
-  .pageLink {
-    transition: none;
-  }
-}
-.pageLink:hover {
+
+.lightPageLink:hover {
   z-index: 2;
   color: var(--chakra-colors-blue-400);
   background-color: #e9ecef;
   border-color: #dee2e6;
 }
-.pageLink:focus {
-  z-index: 3;
+
+.lightPageLink:focus {
   color: var(--chakra-colors-blue-400);
   background-color: #e9ecef;
+}
+
+
+.pageLink {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  border-inline: none;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+@media (max-width: 30em) {
+  .pageItem {
+    display: none;
+  }
+  .pageItem.active {
+    display: block;
+  }
+  .pageItem:first-child {
+    display: block;
+  }
+  .pageItem:last-child {
+    display: block;
+  }
+}
+
+.pageItem:first-child {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.pageItem:last-child {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageLink {
+    transition: none;
+  }
+}
+
+.pageLink:hover {
+  z-index: 2;
+}
+
+.pageLink:focus {
+  z-index: 3;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
@@ -62,12 +111,14 @@
 .pageItem:not(:first-child) .pageLink {
   margin-left: -1px;
 }
+
 .pageItem.active .pageLink {
   z-index: 3;
   color: #fff;
   background-color: var(--chakra-colors-blue-500);
   border-color: var(--chakra-colors-blue-500);
 }
+
 .pageItem.disabled .pageLink {
   color: var(--chakra-colors-gray-200);
   pointer-events: none;
@@ -84,6 +135,7 @@
   border-top-left-radius: 0.25rem;
   border-bottom-left-radius: 0.25rem;
 }
+
 .pageItem:last-child .pageLink {
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
@@ -93,10 +145,12 @@
   padding: 0.75rem 1.5rem;
   font-size: 1.25rem;
 }
+
 .paginationLg .pageItem:first-child .pageLink {
   border-top-left-radius: 0.3rem;
   border-bottom-left-radius: 0.3rem;
 }
+
 .paginationLg .pageItem:last-child .pageLink {
   border-top-right-radius: 0.3rem;
   border-bottom-right-radius: 0.3rem;
@@ -105,10 +159,12 @@
 .paginationSm .pageLink {
   font-size: 0.875rem;
 }
+
 .paginationSm .pageItem:first-child .pageLink {
   border-top-left-radius: 0.2rem;
   border-bottom-left-radius: 0.2rem;
 }
+
 .paginationSm .pageItem:last-child .pageLink {
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;

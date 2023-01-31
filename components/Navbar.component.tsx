@@ -38,13 +38,13 @@ export default function DefaultNavbar() {
     return (
         <Box>
             <Flex
-                bg={useColorModeValue("white", "gray.800")}
+                bg={useColorModeValue("white", "#111111")}
                 color={useColorModeValue("gray.600", "white")}
                 minH={'60px'}
                 px={{base: 4}}
                 borderBottom={1}
                 borderStyle={'solid'}
-                borderColor={useColorModeValue("gray.200", "gray.900")}
+                borderColor={useColorModeValue("gray.200", "gray.700")}
                 justify={'center'}
                 flexDirection={'column'}
             >
@@ -112,7 +112,6 @@ export default function DefaultNavbar() {
                                                 Profile
                                             </MenuItem>
                                         </Link>
-                                        <MenuDivider/>
                                         <MenuItem onClick={auth.logout}>Logout</MenuItem>
                                     </MenuList>
                                 </Menu>
@@ -125,7 +124,8 @@ export default function DefaultNavbar() {
                         (navItem.auth && auth?.user) || !navItem.auth ?
                             <Link href={navItem.href ?? '#'} key={navItem.label}>
                                 <Text
-                                    borderBottom={router.pathname === navItem.href ? '2px solid black' : '2px solid transparent'}
+                                    borderBottom={router.pathname === navItem.href ? '2px solid' : 'none'}
+                                    borderBottomColor={useColorModeValue("gray.400", "gray.500")}
                                     p={'10px'}>{navItem.label}</Text>
                             </Link> : null
                     )}

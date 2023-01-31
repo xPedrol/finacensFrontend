@@ -36,6 +36,6 @@ export const apiToggleFixed = async (
     return axiosClient.put<INote>(`/notes/${id}/fixed`);
 };
 
-export const apiCountNotes = async (): Promise<AxiosResponse<{ _count: number }>> => {
-    return axiosClient.get<{ _count: number }>(`/notes/count`);
+export const apiNotesCount = async (): Promise<AxiosResponse<number>> => {
+    return axiosClient.get<number>(`/notes/count`);
 };

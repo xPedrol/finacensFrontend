@@ -98,7 +98,7 @@ const ExpenseIndex = () => {
     const {
         data: expensesTotalPages,
         refetch: refetchExpensesCount
-    } = useQuery(["expensesTotalPages"], () => apiExpenseCount({
+    } = useQuery(["expensesCount"], () => apiExpenseCount({
         date: period.current,
     }).then((res) => res.data), {
         refetchOnWindowFocus: false,
@@ -128,7 +128,9 @@ const ExpenseIndex = () => {
     const {
         data: expensesStatistic,
         refetch: refetchExpensesStatistic
-    } = useQuery(["expensesStatistic"], () => apiExpensesStatistic(period.current).then((res) => res.data), {
+    } = useQuery(["expensesStatisticByMonth"], () => apiExpensesStatistic({
+        date: period.current,
+    }).then((res) => res.data), {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
