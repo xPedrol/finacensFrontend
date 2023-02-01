@@ -1,7 +1,7 @@
 import {
     Avatar,
     Box,
-    Button, ButtonGroup,
+    Button,
     Collapse,
     Flex,
     Hide,
@@ -10,7 +10,6 @@ import {
     Link as ChakraLink,
     Menu,
     MenuButton,
-    MenuDivider,
     MenuItem,
     MenuList,
     Popover,
@@ -30,6 +29,7 @@ import {FaChevronDown} from "react-icons/fa";
 import {MdClear} from "react-icons/md";
 import {useRouter} from "next/router";
 
+const siteName = process.env.NEXT_PUBLIC_FULL_SITE_NAME as string;
 export default function DefaultNavbar() {
     const {isOpen, onToggle} = useDisclosure();
     const {toggleColorMode} = useColorMode();
@@ -52,7 +52,7 @@ export default function DefaultNavbar() {
                 <Flex justify={'space-between'} py={{base: 4}} pt={'30px'} px={{base: 0, sm: '30px'}}>
                     <Flex align={'center'}>
                         <Text textTransform={'uppercase'} fontFamily={'Poppins'} fontWeight={600}
-                              fontSize={'16px'}>Finances</Text>
+                              fontSize={'16px'}>{siteName}</Text>
                         <Hide below={'md'}>
                             {auth.user &&
                                 <>

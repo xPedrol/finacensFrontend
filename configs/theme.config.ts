@@ -59,11 +59,11 @@ const Input = defineStyleConfig({
     },
 });
 const FormLabel = defineStyleConfig({
-    baseStyle: {
+    baseStyle: props => ({
         fontSize: "13px",
         marginBottom: "2px",
-        color: "gray.600",
-    },
+        color: mode("gray.600", "gray.400")(props)
+    }),
 });
 const Textarea = defineStyleConfig({
     sizes: {

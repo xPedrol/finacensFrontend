@@ -34,12 +34,12 @@ const UpdateGoalForm = ({goal, creating, form}: PageData) => {
     }, [goal]);
     const isLoaded = creating || (!creating && !!goal);
     return (
-        <Grid templateColumns="repeat(12, 1fr)" gap={6}>
+        <Grid templateColumns="repeat(12, 1fr)" gap={4}>
             <GridItem colSpan={{base: 12}}>
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.amount}>
                         <FormLabel>Amount</FormLabel>
-                        <InputGroup size={"lg"}>
+                        <InputGroup size={"md"}>
                             <Input
                                 type="number"
                                 {...register("amount", {required: true})}
@@ -53,7 +53,7 @@ const UpdateGoalForm = ({goal, creating, form}: PageData) => {
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.date}>
                         <FormLabel>Date</FormLabel>
-                        <InputGroup size={"lg"}>
+                        <InputGroup size={"md"}>
                             <Input type="date" {...register("date", {required: true})} />
                         </InputGroup>
                         <CustomFormErrorMessage/>

@@ -21,6 +21,7 @@ import {
 import {useForm} from "react-hook-form";
 import {apiCreateTag} from "../services/tag.service";
 import generateRandomColor from "../utils/generateColor.utils";
+import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 
 type TagModalProps = {
     isOpen: boolean;
@@ -68,18 +69,18 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
                         </ModalHeader>
                         <ModalCloseButton/>
                         <ModalBody>
-                            <Grid templateColumns="repeat(12, 1fr)" gap={6}>
+                            <Grid templateColumns="repeat(12, 1fr)" gap={4}>
                                 <GridItem colSpan={{base: 12, md: 12}}>
                                     <FormControl isInvalid={!!errors.name}>
                                         <FormLabel>Name</FormLabel>
-                                        <InputGroup size={"lg"}>
+                                        <InputGroup size={"md"}>
                                             {/* eslint-disable-next-line react/no-children-prop */}
                                             <Input
                                                 type="text"
                                                 {...register("name", {required: true})}
                                             />
                                         </InputGroup>
-                                        <FormErrorMessage>Email is required.</FormErrorMessage>
+                                        <CustomFormErrorMessage/>
                                     </FormControl>
                                 </GridItem>
                                 <GridItem colSpan={12}>
@@ -87,21 +88,21 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
                                         <FormLabel>Description</FormLabel>
                                         <Textarea
                                             {...register("description", {required: true})}
-                                            size={"lg"}
+                                            size={"md"}
                                             rows={5}
                                             placeholder="Here is a sample description of the expensee"
                                         />
-                                        <FormErrorMessage>Email is required.</FormErrorMessage>
+                                        <CustomFormErrorMessage/>
                                     </FormControl>
                                 </GridItem>
                             </Grid>
                         </ModalBody>
 
                         <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={onClose}>
+                            <Button colorScheme="red" variant={'ghost'} size={'sm'} mr={3} onClick={onClose}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"blue"} type={"submit"}>
+                            <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}>
                                 Salvar
                             </Button>
                         </ModalFooter>

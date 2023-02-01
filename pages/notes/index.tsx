@@ -9,7 +9,7 @@ import {INote} from "../../models/Note.model";
 import NoData from "../../components/NoData.component";
 import NoteCard from "../../components/NoteCard.component";
 import {AuthProvider} from "../../contexts/auth.context";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 import UpdateNoteModal from "../../components/UpdateNoteModal.component";
 import InfoModal from "../../components/InfoModal.component";
 import {AiOutlineInfoCircle} from "react-icons/ai";
@@ -22,16 +22,12 @@ import {useRouter} from "next/router";
 
 const info =
     "Fazer anotações permite que as pessoas tenham um registro claro de suas ideias e tarefas, o que as ajuda a se organizar e a priorizar suas atividades. Isso leva a uma melhor gestão do tempo e aumenta a produtividade, ajudando as pessoas a alcançar seus objetivos pessoais e profissionais de maneira mais eficiente.";
-const pageBreadcrumb = [
-    {title: "Home", link: "/"},
-    {title: "Notes", link: "/notes"},
-];
+
 
 const NotesIndex = () => {
     const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
     const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const [totalPages, setTotalPages] = useState<number>(0);
     const selectedNote = useRef<string | null>(null);
     const router = useRouter();
     const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
@@ -99,7 +95,6 @@ const NotesIndex = () => {
     const {
         data: notes,
         isLoading,
-        isFetched,
         refetch: refetchNotes,
     } = useQuery("notes", () => apiNotes().then((res) => res.data));
     const toast = useToast();
@@ -126,6 +121,14 @@ const NotesIndex = () => {
                     variant="outline"
                 >
                     Adicionar
+                </Button>
+                <Button
+                    onClick={() => openModal('new')}
+                    size={"sm"}
+                    colorScheme={'gray'}
+                    variant="outline"
+                >
+                    Adicionar Grupo
                 </Button>
                 <Button size={"sm"}
                         colorScheme={'gray'} onClick={onInfoModalOpen}

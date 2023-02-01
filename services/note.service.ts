@@ -39,3 +39,9 @@ export const apiToggleFixed = async (
 export const apiNotesCount = async (): Promise<AxiosResponse<number>> => {
     return axiosClient.get<number>(`/notes/count`);
 };
+
+export const apiRemoveFromNoteGroup = async (
+    id: string
+): Promise<AxiosResponse<INote>> => {
+    return axiosClient.put<INote>(`/notes/${id}/group`);
+};

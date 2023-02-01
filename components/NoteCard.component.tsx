@@ -19,6 +19,7 @@ import {useEffect, useState} from "react";
 import {INote} from "../models/Note.model";
 import {BsPin, BsPinFill} from "react-icons/bs";
 import dayjs from "dayjs";
+import {DATE_TIME_OUTPUT_FORMAT} from "../const/date.const";
 
 type NoteCardProps = {
     note: INote;
@@ -53,17 +54,16 @@ const NoteCard = ({
         setIsFixed(note.fixed || false);
     }, [note]);
     return (
-        <Card borderBottom={'1px solid'} boxShadow={'none'} border={'1px solid'} borderColor={useColorModeValue('gray.200', 'gray.700')}
-              bg={useColorModeValue("white", "#111111")}
-              borderBottomColor={note.color}>
+        <Card boxShadow={'none'} border={'1px solid'} borderColor={useColorModeValue('gray.200', 'gray.700')}
+              bg={useColorModeValue("white", "#111111")}>
             <CardBody>
                 <Stack spacing="3">
                     <Flex justify={'space-between'} align={'center'}>
                         <Text size="md" fontWeight={600}>{note.title}</Text>
                         <Box onClick={toggleFixed}>
-                            {!isFixed ? <Icon as={BsPin} boxSize={'20px'} color={note.color}
+                            {!isFixed ? <Icon as={BsPin} boxSize={'20px'}
                                               cursor={'pointer'}></Icon> :
-                                <Icon as={BsPinFill} boxSize={'20px'} color={note.color} cursor={'pointer'}></Icon>}
+                                <Icon as={BsPinFill} boxSize={'20px'} cursor={'pointer'}></Icon>}
                         </Box>
                     </Flex>
                     {note.description &&
@@ -75,7 +75,7 @@ const NoteCard = ({
             </CardBody>
             <CardFooter justify={'space-between'} p={'13px'}>
                 <Text fontSize={'12px'} alignSelf={'flex-end'}
-                      color={'gray.500'}>{dayjs(note.date).format('DD/MM/YYYY hh:mm')}</Text>
+                      color={'gray.500'}>{dayjs(note.date).format(DATE_TIME_OUTPUT_FORMAT)}</Text>
                 <ButtonGroup spacing="2" size={'sm'} variant={'outline'}>
                     <Button colorScheme="gray" variant={'ghost'} onClick={() => openModal(note.id as string)}>
                         <FaRegPaperPlane/>

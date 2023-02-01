@@ -95,10 +95,10 @@ const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
                             <UpdateGoalForm form={form} goal={goal} creating={creating}/>
                         </ModalBody>
                         <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={onClose}>
+                            <Button colorScheme="red" variant={'ghost'} size={'sm'} mr={3} onClick={onClose}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"blue"} type={"submit"}>
+                            <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}>
                                 Salvar
                             </Button>
                         </ModalFooter>

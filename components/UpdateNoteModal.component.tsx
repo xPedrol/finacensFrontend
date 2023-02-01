@@ -26,7 +26,6 @@ type PageProps = {
 type FormData = {
     title: string;
     description: string;
-    color: string;
     fixed: boolean;
     date: Dayjs;
 }

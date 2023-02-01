@@ -2,20 +2,21 @@ import {UseFormReturn} from "react-hook-form";
 import {INote} from "../models/Note.model";
 import dayjs, {Dayjs} from "dayjs";
 import {
-    Button,
     Checkbox,
     Flex,
     FormControl,
-    FormErrorMessage,
-    FormLabel, Grid,
+    FormLabel,
+    Grid,
     GridItem,
     Input,
-    InputGroup,
-    Skeleton, Text,
+    InputGroup, Select,
+    Skeleton,
+    Text,
     Textarea
 } from "@chakra-ui/react";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {useEffect} from "react";
+import {DATE_TIME_INPUT_FORMAT} from "../const/date.const";
 
 type PageData = {
     note: INote | null | undefined
@@ -26,14 +27,14 @@ type PageData = {
 type FormData = {
     title: string;
     description: string;
-    color: string;
     fixed: boolean;
     date: Dayjs;
+
+    noteGroupId: string;
 }
 const UpdateNoteForm = ({note, creating, form}: PageData) => {
     const {
         register,
-        handleSubmit,
         reset,
         formState: {errors},
     } = form;
@@ -42,11 +43,11 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
             reset({});
         } else {
             reset({
-               title: note.title,
+                title: note.title,
                 description: note.description,
-                color: note.color,
                 fixed: note.fixed,
-                date: dayjs(note.date).format("YYYY-MM-DD")
+                date: dayjs(note.date).format(DATE_TIME_INPUT_FORMAT),
+                noteGroupId: note.noteGroupId,
             });
         }
     }, [note]);
@@ -67,7 +68,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                     </FormControl>
                 </Skeleton>
             </GridItem>
-            <GridItem colSpan={{base: 12, md: 8}}>
+            <GridItem colSpan={12}>
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
                     <FormControl isInvalid={!!errors.date}>
                         <FormLabel>Date</FormLabel>
@@ -78,12 +79,13 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                     </FormControl>
                 </Skeleton>
             </GridItem>
-            <GridItem colSpan={{base: 12, md: 4}}>
+            <GridItem colSpan={12}>
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
-                    <FormControl isInvalid={!!errors.color}>
-                        <FormLabel>Color</FormLabel>
+                    <FormControl isInvalid={!!errors.date}>
+                        <FormLabel>Group</FormLabel>
                         <InputGroup size={"md"}>
-                            <Input type="color" border={'none'} {...register("color", {required: true})} />
+                            <Select  {...register("noteGroupId")} placeholder={'Select a group...'}>
+                            </Select>
                         </InputGroup>
                         <CustomFormErrorMessage/>
                     </FormControl>
@@ -94,9 +96,9 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                     <FormControl isInvalid={!!errors.description}>
                         <FormLabel>Description</FormLabel>
                         <Textarea size={'md'}
-                            {...register("description")}
-                            rows={5}
-                            placeholder="Here is a sample description of the note"
+                                  {...register("description")}
+                                  rows={7}
+                                  placeholder="Here is a sample description of the note"
                         />
                         <CustomFormErrorMessage/>
                     </FormControl>

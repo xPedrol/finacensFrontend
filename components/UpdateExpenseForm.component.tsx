@@ -23,6 +23,7 @@ import {useQuery} from "react-query";
 import {apiTags} from "../services/tag.service";
 import TagModal from "./TagModal.component";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
+import {DATE_INPUT_FORMAT} from "../const/date.const";
 
 type PageData = {
     expense: IExpense | null | undefined
@@ -59,7 +60,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                 amount: Math.abs(expense.amount),
                 tagId: expense.tagId,
                 description: expense.description,
-                date: dayjs(expense.date).format("YYYY-MM-DD"),
+                date: dayjs(expense.date).format(DATE_INPUT_FORMAT),
                 category: expense.amount > 0 ? EnumCategory.GAIN : EnumCategory.LOSS,
             });
         }
