@@ -30,7 +30,7 @@ type FormData = {
     fixed: boolean;
     date: Dayjs;
 
-    noteGroupId: string;
+    noteGroupId?: string;
 }
 const UpdateNoteForm = ({note, creating, form}: PageData) => {
     const {
