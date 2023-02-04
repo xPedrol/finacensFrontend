@@ -2,7 +2,6 @@ import {
     Box,
     Button,
     FormControl,
-    FormErrorMessage,
     FormLabel,
     Grid,
     GridItem,
@@ -29,7 +28,7 @@ type TagModalProps = {
 };
 type FormData = {
     name: string;
-    description: string;
+    description?: string;
     color: string;
 };
 const TagModal = ({isOpen, onClose}: TagModalProps) => {
@@ -87,7 +86,7 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
                                     <FormControl isInvalid={!!errors.description}>
                                         <FormLabel>Description</FormLabel>
                                         <Textarea
-                                            {...register("description", {required: true})}
+                                            {...register("description")}
                                             size={"md"}
                                             rows={5}
                                             placeholder="Here is a sample description of the expensee"

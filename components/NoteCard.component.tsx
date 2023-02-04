@@ -6,20 +6,21 @@ import {
     CardBody,
     CardFooter,
     Flex,
-    Heading,
     Icon,
     Stack,
-    Text, useColorModeValue,
+    Text, Tooltip,
+    useColorModeValue,
     useToast
 } from "@chakra-ui/react";
 import {FiTrash} from "react-icons/fi";
 import {FaRegPaperPlane} from "react-icons/fa";
-import {apiDeleteNote, apiToggleFixed} from "../services/note.service";
+import {apiToggleFixed} from "../services/note.service";
 import {useEffect, useState} from "react";
 import {INote} from "../models/Note.model";
 import {BsPin, BsPinFill} from "react-icons/bs";
 import dayjs from "dayjs";
 import {DATE_TIME_OUTPUT_FORMAT} from "../const/date.const";
+import {AiOutlineTeam} from "react-icons/ai";
 
 type NoteCardProps = {
     note: INote;
@@ -77,11 +78,18 @@ const NoteCard = ({
                 <Text fontSize={'12px'} alignSelf={'flex-end'}
                       color={'gray.500'}>{dayjs(note.date).format(DATE_TIME_OUTPUT_FORMAT)}</Text>
                 <ButtonGroup spacing="2" size={'sm'} variant={'outline'}>
+                    <Tooltip label={'Add/Remove from group'}>
+                        <Button colorScheme="blue" variant={'ghost'}>
+                            <Icon boxSize={'18px'} as={AiOutlineTeam}></Icon>
+                        </Button>
+                    </Tooltip>
+                    <Tooltip label={'View/Edit note'}>
                     <Button colorScheme="gray" variant={'ghost'} onClick={() => openModal(note.id as string)}>
-                        <FaRegPaperPlane/>
+                        <Icon as={FaRegPaperPlane}></Icon>
                     </Button>
+                    </Tooltip>
                     <Button colorScheme="red" variant={'ghost'} onClick={() => openAlertModal(note.id as string)}>
-                        <FiTrash/>
+                        <Icon as={FiTrash}></Icon>
                     </Button>
                 </ButtonGroup>
             </CardFooter>

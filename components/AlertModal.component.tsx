@@ -33,10 +33,10 @@ const AlertModal = ({title, message, isOpen,onClose}:AlertModalProps) => {
                     </AlertDialogBody>
 
                     <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={onClose}>
+                        <Button variant={'ghost'} size={'sm'} ref={cancelRef} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button colorScheme="red" onClick={()=>onClose(true)} ml={3}>
+                        <Button colorScheme="red" variant={'ghost'} size={'sm'} onClick={()=>onClose(true)} ml={3}>
                             Delete
                         </Button>
                     </AlertDialogFooter>

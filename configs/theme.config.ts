@@ -88,6 +88,13 @@ const Modal: any = defineStyleConfig({
         }
     })
 });
+const Popover: any = defineStyleConfig({
+    baseStyle: props => ({
+        content: {
+            bg: mode('white', '#1c1c1c')(props),
+        }
+    })
+})
 const Menu: any = defineStyleConfig({
     baseStyle: props => ({
         list: {
@@ -125,6 +132,7 @@ export const themeConfig = extendTheme({
         Card,
         Modal,
         Drawer,
-        Menu
+        Menu,
+        Popover
     },
 });

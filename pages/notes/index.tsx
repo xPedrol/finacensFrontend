@@ -19,12 +19,14 @@ import ReactPaginate from "react-paginate";
 import {pageCount} from "../../utils/pagination.utils";
 import styles from "../../styles/Pagination.module.scss";
 import {useRouter} from "next/router";
+import UpdateNoteGroupPopover from "../../components/UpdateNoteGroupPopover.component";
 
 const info =
     "Fazer anotações permite que as pessoas tenham um registro claro de suas ideias e tarefas, o que as ajuda a se organizar e a priorizar suas atividades. Isso leva a uma melhor gestão do tempo e aumenta a produtividade, ajudando as pessoas a alcançar seus objetivos pessoais e profissionais de maneira mais eficiente.";
 
 
 const NotesIndex = () => {
+    const {isOpen: isPopoverOpen, onOpen: onPopoverOpen, onClose: onPopoverClose} = useDisclosure();
     const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
     const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -123,13 +125,14 @@ const NotesIndex = () => {
                     Adicionar
                 </Button>
                 <Button
-                    onClick={() => openModal('new')}
+                    onClick={() => onPopoverOpen()}
                     size={"sm"}
                     colorScheme={'gray'}
                     variant="outline"
                 >
                     Adicionar Grupo
                 </Button>
+                <UpdateNoteGroupPopover isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose}/>
                 <Button size={"sm"}
                         colorScheme={'gray'} onClick={onInfoModalOpen}
                         variant="ghost">

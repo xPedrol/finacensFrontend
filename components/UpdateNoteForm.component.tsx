@@ -26,7 +26,7 @@ type PageData = {
 
 type FormData = {
     title: string;
-    description: string;
+    description?: string;
     fixed: boolean;
     date: Dayjs;
 

@@ -3,16 +3,12 @@ import {
     Button,
     Flex,
     FormControl,
-    FormErrorMessage,
-    Heading,
-    Icon,
-    IconProps,
     Input,
     InputGroup,
     InputRightElement,
     Stack,
     Text,
-    useBreakpointValue,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import DefaultLayout from "../components/Layout.component";
 import Seo from "../components/Seo.component";
@@ -30,6 +26,8 @@ type LoginProps = {
     password: string;
 };
 export default function Login() {
+    const titleBg = useColorModeValue('gray.300', 'gray.600');
+    const buttonGradient = useColorModeValue("linear(to-r, gray.100,gray.500)", "linear(to-r, gray.900,gray.500)");
     const {
         register,
         handleSubmit,
@@ -72,7 +70,7 @@ export default function Login() {
         if (router.query.registered) {
             setRegistered(true);
         }
-    }, []);
+    }, [router.query.registered]);
     return (
         <DefaultLayout>
             <Seo title={"Login"} description={"Login page"}/>
@@ -111,8 +109,9 @@ export default function Login() {
                 >
                     <Stack spacing={4}>
                         <Text fontSize={'32px'} fontWeight={800} letterSpacing={'-.049375rem'}>Log in to
-                            <Text as={'span'} bg={'gray.300'} ms={'5px'} p={'5px'} borderRadius={'xl'}>Finances</Text>
-                            <Text as={'span'} bg={'gray.300'} ms={'5px'} py={'5px'} px={'20px'} borderRadius={'xl'}>!</Text>
+                            <Text as={'span'} bg={titleBg} ms={'5px'} p={'5px'} borderRadius={'xl'}>Finances</Text>
+                            <Text as={'span'} bg={titleBg} ms={'5px'} py={'5px'}
+                                  px={'20px'} borderRadius={'xl'}>!</Text>
                         </Text>
                         <Text color={"gray.500"} fontSize={{base: "sm", sm: "md"}}>
                             Welcome! Please enter your email and password to access your
@@ -171,7 +170,7 @@ export default function Login() {
                             bgGradient={
                                 loginLoading
                                     ? "linear(to-r, gray.400,gray.400)"
-                                    : "linear(to-r, gray.100,gray.500)"
+                                    : buttonGradient
                             }
                             color={"white"}
                             _hover={{
@@ -189,27 +188,5 @@ export default function Login() {
         </DefaultLayout>
     );
 }
-
-export const Blur = (props: IconProps) => {
-    return (
-        <Icon
-            width={useBreakpointValue({base: "100%", md: "40vw", lg: "30vw"})}
-            zIndex={useBreakpointValue({base: -1, md: -1, lg: 0})}
-            height="560px"
-            viewBox="0 0 528 560"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
-            <circle cx="71" cy="61" r="111" fill="#F56565"/>
-            <circle cx="244" cy="106" r="139" fill="#ED64A6"/>
-            <circle cy="291" r="139" fill="#ED64A6"/>
-            <circle cx="80.5" cy="189.5" r="101.5" fill="#ED8936"/>
-            <circle cx="196.5" cy="317.5" r="101.5" fill="#ECC94B"/>
-            <circle cx="70.5" cy="458.5" r="101.5" fill="#48BB78"/>
-            <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1"/>
-        </Icon>
-    );
-};
 
 export {getServerSideProps} from "./_app";
