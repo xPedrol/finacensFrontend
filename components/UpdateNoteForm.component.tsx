@@ -28,7 +28,7 @@ type FormData = {
     title: string;
     description?: string;
     fixed: boolean;
-    date: Dayjs;
+    date?: Dayjs;
 
     noteGroupId?: string;
 }
@@ -73,7 +73,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
                     <FormControl isInvalid={!!errors.date}>
                         <FormLabel>Date</FormLabel>
                         <InputGroup size={"md"}>
-                            <Input type="datetime-local" {...register("date", {required: true})} />
+                            <Input type="datetime-local" {...register("date")} />
                         </InputGroup>
                         <CustomFormErrorMessage/>
                     </FormControl>
@@ -81,7 +81,7 @@ const UpdateNoteForm = ({note, creating, form}: PageData) => {
             </GridItem>
             <GridItem colSpan={12}>
                 <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
-                    <FormControl isInvalid={!!errors.date}>
+                    <FormControl isInvalid={!!errors.noteGroupId}>
                         <FormLabel>Group</FormLabel>
                         <InputGroup size={"md"}>
                             <Select  {...register("noteGroupId")} placeholder={'Select a group...'}>

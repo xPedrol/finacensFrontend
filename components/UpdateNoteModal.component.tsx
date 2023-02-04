@@ -27,7 +27,7 @@ type FormData = {
     title: string;
     description?: string;
     fixed: boolean;
-    date: Dayjs;
+    date?: Dayjs;
 }
 const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
     const router = useRouter();
