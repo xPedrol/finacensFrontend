@@ -20,6 +20,7 @@ import {pageCount} from "../../utils/pagination.utils";
 import styles from "../../styles/Pagination.module.scss";
 import {useRouter} from "next/router";
 import UpdateNoteGroupPopover from "../../components/UpdateNoteGroupPopover.component";
+import SwitchNoteGroupModalComponent from "../../components/SwitchNoteGroupModal.component";
 
 const info =
     "Fazer anotações permite que as pessoas tenham um registro claro de suas ideias e tarefas, o que as ajuda a se organizar e a priorizar suas atividades. Isso leva a uma melhor gestão do tempo e aumenta a produtividade, ajudando as pessoas a alcançar seus objetivos pessoais e profissionais de maneira mais eficiente.";
@@ -29,12 +30,17 @@ const NotesIndex = () => {
     const {isOpen: isPopoverOpen, onOpen: onPopoverOpen, onClose: onPopoverClose} = useDisclosure();
     const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
     const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
+    const {
+        isOpen: isSwitchNoteGroupModalOpen,
+        onOpen: onSwitchNoteGroupModalOpen,
+        onClose: onSwitchNoteGroupModalClose
+    } = useDisclosure();
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const selectedNote = useRef<string | null>(null);
+    const selectedNote = useRef<INote | null>(null);
     const router = useRouter();
     const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
-    const openModal = (id: string) => {
-        selectedNote.current = id;
+    const openModal = (note: INote) => {
+        selectedNote.current = note as INote;
         onOpen();
     };
     const handlePageClick = (event: any) => {
@@ -46,7 +52,7 @@ const NotesIndex = () => {
     };
 
     const openAlertModal = (id: string) => {
-        selectedNote.current = id;
+        selectedNote.current = {id} as INote;
         onAlertModalOpen();
     };
     const onCloseModal = (props?: any) => {
@@ -56,9 +62,20 @@ const NotesIndex = () => {
             refetchNotes();
         }
     };
+    const openSwitchNoteGroupModal = (note: INote) => {
+        selectedNote.current = note as INote;
+        onSwitchNoteGroupModalOpen();
+    };
+    const onCloseSwitchNoteGroupModal = (props?: any) => {
+        onSwitchNoteGroupModalClose();
+        selectedNote.current = null;
+        if (props?.success) {
+            refetchNotes();
+        }
+    };
     const closeAlertModal = (next: any) => {
-        if (next === true && selectedNote.current) {
-            apiDeleteNote(selectedNote.current as string).then((res) => {
+        if (next === true && selectedNote.current?.id) {
+            apiDeleteNote(selectedNote.current.id as string).then((res) => {
                 toast({
                     title: "Note deleted",
                     description: "Note deleted successfully",
@@ -117,7 +134,7 @@ const NotesIndex = () => {
                 subtitle={notesTotalPages ? `${notesTotalPages} records` : ''}
             >
                 <Button
-                    onClick={() => openModal('new')}
+                    onClick={() => openModal({id: 'new'} as INote)}
                     size={"sm"}
                     colorScheme={'gray'}
                     variant="outline"
@@ -147,6 +164,7 @@ const NotesIndex = () => {
                         <GridItem colSpan={{base: 12, md: 6, lg: 4}} key={note.id}>
                             <NoteCard onAlertModalClose={onAlertModalClose} onAlertModalOpen={onAlertModalOpen}
                                       openAlertModal={openAlertModal}
+                                      openSwitchNoteGroupModal={openSwitchNoteGroupModal}
                                       refetchNotes={refetchNotes} openModal={openModal} note={note}/>
                         </GridItem>
                     ))}
@@ -179,7 +197,13 @@ const NotesIndex = () => {
                     />
                 </Flex>
             )}
-            <UpdateNoteModal noteId={selectedNote.current} onClose={onCloseModal} isOpen={isOpen}/>
+            {selectedNote.current &&
+                <>
+                    <UpdateNoteModal note={selectedNote.current} onClose={onCloseModal} isOpen={isOpen}/>
+                    <SwitchNoteGroupModalComponent isOpen={isSwitchNoteGroupModalOpen}
+                                                   onClose={onCloseSwitchNoteGroupModal}
+                                                   note={selectedNote.current}/>
+                </>}
             <InfoModal info={info} title={'Notes'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
             <AlertModal title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
         </DefaultLayout>

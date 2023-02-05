@@ -17,9 +17,10 @@ import {Dayjs} from "dayjs";
 import UpdateNoteForm from "./UpdateNoteForm.component";
 import {useQuery} from "react-query";
 import {apiCreateNote, apiNote, apiUpdateNote} from "../services/note.service";
+import {INote} from "../models/Note.model";
 
 type PageProps = {
-    noteId: string | null | undefined;
+    note: INote | null;
     isOpen: boolean;
     onClose: (props?: any) => void;
 }
@@ -29,7 +30,7 @@ type FormData = {
     fixed: boolean;
     date?: Dayjs;
 }
-const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
+const UpdateNoteModal = ({note, isOpen, onClose}: PageProps) => {
     const router = useRouter();
 
     const [creating, setCreating] = useState<boolean>(true);
@@ -37,32 +38,18 @@ const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
 
     const toast = useToast();
 
-    const {
-        data: note,
-        isLoading: noteLoading,
-        isFetched: noteFetched,
-    } = useQuery(
-        ["note", noteId],
-        () => apiNote(noteId as string).then((res) => res.data),
-        {
-            enabled: !creating && !!noteId,
-            onSuccess: (data) => {
-
-            },
-        }
-    );
     useEffect(() => {
-        if (noteId && noteId !== "new") {
+        if (note?.id && note?.id !== "new") {
             setCreating(false);
         } else {
             form.reset({});
             setCreating(true);
         }
-    }, [noteId]);
+    }, [note?.id]);
     const onSubmit = async (data: FormData) => {
         let request =
-            !creating && noteId
-                ? apiUpdateNote(noteId as string, data as any)
+            !creating && note?.id
+                ? apiUpdateNote(note?.id as string, data as any)
                 : apiCreateNote(data as any);
         request
             .then(() => {
@@ -89,7 +76,8 @@ const UpdateNoteModal = ({noteId, isOpen, onClose}: PageProps) => {
                 <ModalOverlay/>
                 <ModalContent>
                     <ModalHeader>
-                        <Text fontSize={'18px'}>{creating ? 'New' : ''} Note {note ? ` - ${note.title}` : ''}</Text>
+                        {creating ? 'New' : ''} Note
+                        <Text as={'p'} fontSize={'13px'}>{note?.title}</Text>
                     </ModalHeader>
                     <ModalCloseButton/>
                     <Box as={"form"} onSubmit={form.handleSubmit(onSubmit)}>

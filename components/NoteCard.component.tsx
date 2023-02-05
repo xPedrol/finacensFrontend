@@ -8,7 +8,8 @@ import {
     Flex,
     Icon,
     Stack,
-    Text, Tooltip,
+    Text,
+    Tooltip,
     useColorModeValue,
     useToast
 } from "@chakra-ui/react";
@@ -25,15 +26,17 @@ import {AiOutlineTeam} from "react-icons/ai";
 type NoteCardProps = {
     note: INote;
     refetchNotes: () => void;
-    openModal: (id: string) => void;
+    openModal: (note: INote) => void;
     onAlertModalClose: () => void;
     openAlertModal: (id: string) => void;
     onAlertModalOpen: () => void;
+    openSwitchNoteGroupModal: (note: INote) => void;
 }
 const NoteCard = ({
                       note,
                       openModal,
-                      openAlertModal
+                      openAlertModal,
+                      openSwitchNoteGroupModal
                   }: NoteCardProps) => {
     const toast = useToast();
     const [isFixed, setIsFixed] = useState<boolean>(false);
@@ -60,7 +63,11 @@ const NoteCard = ({
             <CardBody>
                 <Stack spacing="3">
                     <Flex justify={'space-between'} align={'center'}>
-                        <Text size="md" fontWeight={600}>{note.title}</Text>
+                        <Box>
+                            <Text size="md" fontWeight={600}>{note.title}</Text>
+                            {note?.noteGroup && <Text as={'p'} fontWeight={400} fontSize={'12px'}
+                                                      color={'gray.400'}>Group {note.noteGroup.name}</Text>}
+                        </Box>
                         <Box onClick={toggleFixed}>
                             {!isFixed ? <Icon as={BsPin} boxSize={'20px'}
                                               cursor={'pointer'}></Icon> :
@@ -76,17 +83,18 @@ const NoteCard = ({
             </CardBody>
             <CardFooter justify={'space-between'} p={'13px'}>
                 <Text fontSize={'12px'} alignSelf={'flex-end'}
-                      color={'gray.500'}>{dayjs(note.date).format(DATE_TIME_OUTPUT_FORMAT)}</Text>
+                      color={'gray.400'}>{dayjs(note.date).format(DATE_TIME_OUTPUT_FORMAT)}</Text>
                 <ButtonGroup spacing="2" size={'sm'} variant={'outline'}>
                     <Tooltip label={'Add/Remove from group'}>
-                        <Button colorScheme="blue" variant={'ghost'}>
+                        <Button colorScheme="blue" variant={'ghost'}
+                                onClick={() => openSwitchNoteGroupModal(note)}>
                             <Icon boxSize={'18px'} as={AiOutlineTeam}></Icon>
                         </Button>
                     </Tooltip>
                     <Tooltip label={'View/Edit note'}>
-                    <Button colorScheme="gray" variant={'ghost'} onClick={() => openModal(note.id as string)}>
-                        <Icon as={FaRegPaperPlane}></Icon>
-                    </Button>
+                        <Button colorScheme="gray" variant={'ghost'} onClick={() => openModal(note)}>
+                            <Icon as={FaRegPaperPlane}></Icon>
+                        </Button>
                     </Tooltip>
                     <Button colorScheme="red" variant={'ghost'} onClick={() => openAlertModal(note.id as string)}>
                         <Icon as={FiTrash}></Icon>

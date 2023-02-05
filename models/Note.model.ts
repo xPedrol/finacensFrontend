@@ -1,4 +1,5 @@
 import {Dayjs} from "dayjs";
+import {INoteGroup} from "./NoteGroup.model";
 
 export interface INote {
     id?: string;
@@ -9,4 +10,6 @@ export interface INote {
     color?: string;
     fixed?: boolean;
     noteGroupId?: string;
+
+    noteGroup?: INoteGroup;
 }

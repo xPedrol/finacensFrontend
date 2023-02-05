@@ -40,8 +40,21 @@ export const apiNotesCount = async (): Promise<AxiosResponse<number>> => {
     return axiosClient.get<number>(`/notes/count`);
 };
 
+export const apiAddToNoteGroup = async (
+    id: string,
+    noteGroupId: string
+): Promise<AxiosResponse<INote>> => {
+    return axiosClient.put<INote>(`/notes/${id}/group/${noteGroupId}`);
+};
 export const apiRemoveFromNoteGroup = async (
     id: string
 ): Promise<AxiosResponse<INote>> => {
-    return axiosClient.put<INote>(`/notes/${id}/group`);
+    return axiosClient.get<INote>(`/notes/${id}/group/delete`);
+};
+
+export const apiSwitchNoteGroup = async (
+    id: string,
+    noteGroupId: string
+): Promise<AxiosResponse<INote>> => {
+    return axiosClient.get<INote>(`/notes/${id}/group/${noteGroupId}`);
 };
