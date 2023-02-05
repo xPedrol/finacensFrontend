@@ -25,6 +25,7 @@ import {pageCount} from "../utils/pagination.utils";
 import styles from "../styles/Pagination.module.scss";
 import {INoteGroup} from "../models/NoteGroup.model";
 import {apiRemoveFromNoteGroup, apiSwitchNoteGroup} from "../services/note.service";
+import NoData from "./NoData.component";
 
 type SwitchNoteGroupModalProps = {
     isOpen: boolean;
@@ -115,6 +116,7 @@ const SwitchNoteGroupModal = ({isOpen, onClose, note}: SwitchNoteGroupModalProps
                                         </ListItem>
                                     );
                                 })}
+                                {noteGroups && noteGroups.length === 0 && <NoData/>}
                             </List>
                             {typeof noteGroupsTotalPages === 'number' && noteGroupsTotalPages > 0 && (
                                 <Flex mt={'20px'} justify={{base: 'center', sm: 'center'}}>
