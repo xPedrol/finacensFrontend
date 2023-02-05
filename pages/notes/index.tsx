@@ -3,7 +3,7 @@ import PageHeader from "../../components/PageHeader.component";
 import {Box, Button, Flex, Grid, GridItem, Icon, useDisclosure, useToast} from "@chakra-ui/react";
 import Seo from "../../components/Seo.component";
 import {useQuery} from "react-query";
-import {apiDeleteNote, apiNotes} from "../../services/note.service";
+import {apiDeleteNote, apiNotes, apiNotesCount} from "../../services/note.service";
 import Loading from "../../components/LoadingSpinner.component";
 import {INote} from "../../models/Note.model";
 import NoData from "../../components/NoData.component";
@@ -102,7 +102,7 @@ const NotesIndex = () => {
     const {
         data: notesTotalPages,
         refetch: refetchNotesCount
-    } = useQuery(["notesCount"], () => apiExpenseCount().then((res) => res.data), {
+    } = useQuery(["notesCount"], () => apiNotesCount().then((res) => res.data), {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: true,
