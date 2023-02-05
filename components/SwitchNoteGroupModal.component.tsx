@@ -116,7 +116,7 @@ const SwitchNoteGroupModal = ({isOpen, onClose, note}: SwitchNoteGroupModalProps
                                     );
                                 })}
                             </List>
-                            {typeof noteGroupsTotalPages === 'number' && (
+                            {typeof noteGroupsTotalPages === 'number' && noteGroupsTotalPages > 0 && (
                                 <Flex mt={'20px'} justify={{base: 'center', sm: 'center'}}>
                                     <ReactPaginate
                                         breakLabel="..."

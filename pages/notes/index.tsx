@@ -172,7 +172,7 @@ const NotesIndex = () => {
             ) : (
                 <NoData message={'Nenhuma anotação foi encontrada'}/>
             )}
-            {typeof notesTotalPages === 'number' && (
+            {typeof notesTotalPages === 'number' && notesTotalPages > 0 && (
                 <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
                     <ReactPaginate
                         breakLabel="..."

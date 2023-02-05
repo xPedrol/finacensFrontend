@@ -307,7 +307,7 @@ const ExpenseIndex = () => {
             ) : (
                 <NoData/>
             )}
-            {typeof expensesTotalPages === 'number' && (
+            {typeof expensesTotalPages === 'number' && expensesTotalPages > 0 && (
                 <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
                     <ReactPaginate
                         breakLabel="..."
