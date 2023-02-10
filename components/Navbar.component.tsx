@@ -347,5 +347,10 @@ const NAV_ITEMS: Array<NavItem> = [
         //         href: "/notes/new",
         //     },
         // ],
+    },
+    {
+        label: "Tags",
+        auth: true,
+        href: "/tags",
     }
 ];

@@ -1,32 +1,38 @@
-import { AxiosResponse } from "axios";
+import {AxiosResponse} from "axios";
 import axiosClient from "../configs/httpRequest.config";
-import { ITag } from "../models/Tag.model";
+import {ITag} from "../models/Tag.model";
 
-export const apiTags = async (): Promise<AxiosResponse<ITag[]>> => {
-  return axiosClient.get<ITag[]>(`/tags`);
+export const apiTags = async (params?: any): Promise<AxiosResponse<ITag[]>> => {
+    return axiosClient.get<ITag[]>(`/tags`, {params});
 };
 
 export const apiTag = async (
-  id: string
+    id: string
 ): Promise<AxiosResponse<ITag>> => {
-  return axiosClient.get<ITag>(`/tags/${id}`);
+    return axiosClient.get<ITag>(`/tags/${id}`);
 };
 
 export const apiCreateTag = async (
-  expense: ITag
+    expense: ITag
 ): Promise<AxiosResponse<ITag>> => {
-  return axiosClient.post<ITag>(`/tags/create`, expense);
+    return axiosClient.post<ITag>(`/tags/create`, expense);
 };
 
 export const apiUpdateTag = async (
-  id: string,
-  expense: ITag
+    id: string,
+    expense: ITag
 ): Promise<AxiosResponse<ITag>> => {
-  return axiosClient.put<ITag>(`/tags/${id}`, expense);
+    return axiosClient.put<ITag>(`/tags/${id}`, expense);
 };
 
 export const apiDeleteTag = async (
-  id: string
+    id: string
 ): Promise<AxiosResponse<ITag>> => {
-  return axiosClient.delete<ITag>(`/tags/${id}`);
+    return axiosClient.delete<ITag>(`/tags/${id}`);
+};
+
+export const apiTagCount = async (
+    params?: any
+): Promise<AxiosResponse<number>> => {
+    return axiosClient.get<number>(`/tags/count`, {params});
 };
