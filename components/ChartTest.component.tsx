@@ -44,6 +44,7 @@ type ChartTestProps = {
 }
 const MyResponsiveBar = ({data,keys,indexBy}:ChartTestProps) => {
     return (
+        // @ts-ignore
         <ResponsiveBar theme={{
             "background": "transparent",
             "textColor": useColorModeValue("#333333","#CBD5E0"),

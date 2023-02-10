@@ -1,6 +1,6 @@
 import {UseFormReturn} from "react-hook-form";
 import {IExpense} from "../models/Expense.model";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import dayjs from "dayjs";
 import {categories, EnumCategory} from "../enum/Category.enum";
 import {
@@ -18,12 +18,12 @@ import {
     Textarea,
     useDisclosure
 } from "@chakra-ui/react";
-import {AiOutlinePlus} from "react-icons/ai";
 import {useQuery} from "react-query";
 import {apiTags} from "../services/tag.service";
 import TagModal from "./TagModal.component";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {DATE_INPUT_FORMAT} from "../const/date.const";
+import {ITag} from "../models/Tag.model";
 
 type PageData = {
     expense: IExpense | null | undefined
@@ -38,7 +38,8 @@ type FormData = {
     category?: EnumCategory;
 };
 const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const {isOpen: isTagModalOpen, onOpen: onTagModalOpen, onClose: onTagModalClose} = useDisclosure();
+    const selectedTag = useRef<string | null>(null);
     const {
         register,
         handleSubmit,
@@ -46,7 +47,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
         formState: {errors},
     } = form;
 
-    const {
+    let {
         data: tags,
         isLoading: tagsLoading,
         isFetched: tagsFetched,
@@ -65,11 +66,21 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
             });
         }
     }, [expense]);
-    const closeTagModal = () => {
-        onClose();
+    const closeTagModal = (tag?: ITag) => {
+        onTagModalClose();
         refetchTags();
+        if (tag) {
+            selectedTag.current = tag.id as string;
+        }
     };
     const isLoaded = creating || (!creating && !!expense);
+    useEffect(() => {
+        if (selectedTag.current) {
+            form.setValue("tagId", selectedTag.current);
+        } else {
+            selectedTag.current = null;
+        }
+    }, [tags]);
     return (
         <>
             <Grid templateColumns="repeat(12, 1fr)" gap={4}>
@@ -121,7 +132,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                                     <Button
                                         h="1.75rem"
                                         size="sm"
-                                        onClick={onOpen}
+                                        onClick={onTagModalOpen}
                                     >
                                         Novo
                                     </Button>
@@ -167,7 +178,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                     </Skeleton>
                 </GridItem>
             </Grid>
-            <TagModal isOpen={isOpen} onClose={closeTagModal}/>
+            <TagModal isOpen={isTagModalOpen} onClose={closeTagModal}/>
         </>
     );
 };

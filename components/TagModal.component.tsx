@@ -21,10 +21,11 @@ import {useForm} from "react-hook-form";
 import {apiCreateTag} from "../services/tag.service";
 import generateRandomColor from "../utils/generateColor.utils";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
+import {ITag} from "../models/Tag.model";
 
 type TagModalProps = {
     isOpen: boolean;
-    onClose: () => void;
+    onClose: (tag?: ITag) => void;
 };
 type FormData = {
     name: string;
@@ -40,14 +41,14 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
     const toast = useToast();
     const onSubmit = async (data: FormData) => {
         data.color = generateRandomColor();
-        await apiCreateTag(data)
-            .then(() => {
+        apiCreateTag(data)
+            .then((result) => {
                 toast({
                     title: "Tag criada com sucesso",
                     status: "success",
                     isClosable: true,
                 });
-                onClose();
+                onClose(result.data);
             })
             .catch(() => {
                 toast({
@@ -62,7 +63,7 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
             <Modal isCentered isOpen={isOpen} onClose={onClose} size={"lg"}>
                 <ModalOverlay/>
                 <ModalContent>
-                    <Box as={"form"} onSubmit={handleSubmit(onSubmit)}>
+                    <Box>
                         <ModalHeader className={"usePoppins"} fontWeight={700}>
                             Tag
                         </ModalHeader>
@@ -98,10 +99,11 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
                         </ModalBody>
 
                         <ModalFooter>
-                            <Button colorScheme="red" variant={'ghost'} size={'sm'} mr={3} onClick={onClose}>
+                            <Button colorScheme="red" variant={'ghost'} size={'sm'} mr={3} onClick={() => onClose()}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}>
+                            <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}
+                                    onClick={handleSubmit(onSubmit)}>
                                 Salvar
                             </Button>
                         </ModalFooter>

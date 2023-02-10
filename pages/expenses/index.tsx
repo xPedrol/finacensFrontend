@@ -39,6 +39,7 @@ import InfoModal from "../../components/InfoModal.component";
 import {AiOutlineInfoCircle} from "react-icons/ai";
 import AlertModal from "../../components/AlertModal.component";
 import {pageCount} from "../../utils/pagination.utils";
+import {DATE_OUTPUT_FORMAT} from "../../const/date.const";
 
 const info = "Ao organizar suas despesas, as pessoas ganham uma visão clara e detalhada de onde estão gastando seu dinheiro, o que lhes permite tomar decisões financeiras conscientes e bem informadas. Isso é crucial para alcançar metas financeiras, controlar gastos e manter a saúde financeira. Além disso, ao acompanhar suas despesas, é possível identificar áreas onde é possível economizar e fazer ajustes para atingir seus objetivos financeiros de maneira mais eficiente.";
 
@@ -254,7 +255,7 @@ const ExpenseIndex = () => {
                                     currency: 'BRL',
                                 })}</Td>
                                 <Td>
-                                    {expense ? dayjs(expense?.date)?.format("DD/MM/YYYY") : (
+                                    {expense && expense.date ? dayjs(expense.date).format(DATE_OUTPUT_FORMAT) : (
                                         <Tag colorScheme={"red"}>Não definido</Tag>
                                     )}
                                 </Td>
