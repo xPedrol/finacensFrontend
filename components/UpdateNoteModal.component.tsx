@@ -1,4 +1,3 @@
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {
@@ -10,13 +9,13 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay, Text,
+    ModalOverlay,
+    Text,
     useToast
 } from "@chakra-ui/react";
 import {Dayjs} from "dayjs";
 import UpdateNoteForm from "./UpdateNoteForm.component";
-import {useQuery} from "react-query";
-import {apiCreateNote, apiNote, apiUpdateNote} from "../services/note.service";
+import {apiCreateNote, apiUpdateNote} from "../services/note.service";
 import {INote} from "../models/Note.model";
 
 type PageProps = {
@@ -31,7 +30,7 @@ type FormData = {
     date?: Dayjs;
 }
 const UpdateNoteModal = ({note, isOpen, onClose}: PageProps) => {
-    const router = useRouter();
+    const [submitting, setSubmitting] = useState<boolean>(false);
 
     const [creating, setCreating] = useState<boolean>(true);
     const form = useForm<FormData>();
@@ -47,6 +46,7 @@ const UpdateNoteModal = ({note, isOpen, onClose}: PageProps) => {
         }
     }, [note?.id]);
     const onSubmit = async (data: FormData) => {
+        setSubmitting(true);
         let request =
             !creating && note?.id
                 ? apiUpdateNote(note?.id as string, data as any)
@@ -66,7 +66,7 @@ const UpdateNoteModal = ({note, isOpen, onClose}: PageProps) => {
                     status: "error",
                     isClosable: true,
                 });
-            });
+            }).catch(() => setSubmitting(false));
     };
 
     return (
@@ -88,7 +88,7 @@ const UpdateNoteModal = ({note, isOpen, onClose}: PageProps) => {
                             <Button size={'sm'} colorScheme="red" mr={3} onClick={onClose} variant={'ghost'}>
                                 Fechar
                             </Button>
-                            <Button size={'sm'} colorScheme={"gray"} type={"submit"} variant={'ghost'}>
+                            <Button size={'sm'} colorScheme={"gray"} type={"submit"} variant={'ghost'} isLoading={submitting}>
                                 Salvar
                             </Button>
                         </ModalFooter>

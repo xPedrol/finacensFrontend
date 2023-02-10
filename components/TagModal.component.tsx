@@ -22,6 +22,7 @@ import {apiCreateTag} from "../services/tag.service";
 import generateRandomColor from "../utils/generateColor.utils";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {ITag} from "../models/Tag.model";
+import {useState} from "react";
 
 type TagModalProps = {
     isOpen: boolean;
@@ -33,6 +34,7 @@ type FormData = {
     color: string;
 };
 const TagModal = ({isOpen, onClose}: TagModalProps) => {
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const {
         register,
         handleSubmit,
@@ -40,6 +42,7 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
     } = useForm<FormData>();
     const toast = useToast();
     const onSubmit = async (data: FormData) => {
+        setSubmitting(true);
         data.color = generateRandomColor();
         apiCreateTag(data)
             .then((result) => {
@@ -56,7 +59,7 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
                     status: "error",
                     isClosable: true,
                 });
-            });
+            }).finally(() => setSubmitting(false));
     };
     return (
         <>
@@ -103,6 +106,7 @@ const TagModal = ({isOpen, onClose}: TagModalProps) => {
                                 Fechar
                             </Button>
                             <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}
+                                    isLoading={submitting}
                                     onClick={handleSubmit(onSubmit)}>
                                 Salvar
                             </Button>

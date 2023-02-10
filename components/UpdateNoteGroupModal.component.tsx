@@ -18,6 +18,7 @@ import {
 import {useForm} from "react-hook-form";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {apiCreateNoteGroup} from "../services/noteGroup.service";
+import {useState} from "react";
 
 type PopoverProps = {
     isOpen: boolean;
@@ -27,7 +28,8 @@ type PopoverProps = {
 type formData = {
     name: string;
 }
-const UpdateNoteGroupPopover = ({isOpen, onOpen, onClose}: PopoverProps) => {
+const UpdateNoteGroupModal = ({isOpen, onClose}: PopoverProps) => {
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const {register, handleSubmit, formState: {errors}, reset} = useForm<formData>({});
     const toast = useToast();
     const closeModal = () => {
@@ -35,7 +37,8 @@ const UpdateNoteGroupPopover = ({isOpen, onOpen, onClose}: PopoverProps) => {
         onClose();
     };
     const onSubmit = async (data: formData) => {
-        apiCreateNoteGroup(data).then((res) => {
+        setSubmitting(true);
+        apiCreateNoteGroup(data).then(() => {
             toast({
                 title: "Note Group created.",
                 status: "success",
@@ -43,14 +46,14 @@ const UpdateNoteGroupPopover = ({isOpen, onOpen, onClose}: PopoverProps) => {
                 isClosable: true,
             });
             closeModal();
-        }).catch((err) => {
+        }).catch(() => {
             toast({
                 title: "Error",
                 description: "Error creating note group",
                 status: "error",
                 isClosable: true,
             });
-        });
+        }).finally(() => setSubmitting(false));
     };
     return <>
         <Modal isCentered isOpen={isOpen} onClose={closeModal} size={"lg"}>
@@ -83,7 +86,8 @@ const UpdateNoteGroupPopover = ({isOpen, onOpen, onClose}: PopoverProps) => {
                         <Button colorScheme="red" variant={'ghost'} size={'sm'} mr={3} onClick={closeModal}>
                             Fechar
                         </Button>
-                        <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}>
+                        <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}
+                                isLoading={submitting}>
                             Salvar
                         </Button>
                     </ModalFooter>
@@ -93,4 +97,4 @@ const UpdateNoteGroupPopover = ({isOpen, onOpen, onClose}: PopoverProps) => {
     </>;
 };
 
-export default UpdateNoteGroupPopover;
+export default UpdateNoteGroupModal;

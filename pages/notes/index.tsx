@@ -19,7 +19,7 @@ import ReactPaginate from "react-paginate";
 import {pageCount} from "../../utils/pagination.utils";
 import styles from "../../styles/Pagination.module.scss";
 import {useRouter} from "next/router";
-import UpdateNoteGroupPopover from "../../components/UpdateNoteGroupPopover.component";
+import UpdateNoteGroupModal from "../../components/UpdateNoteGroupModal.component";
 import SwitchNoteGroupModalComponent from "../../components/SwitchNoteGroupModal.component";
 
 const info =
@@ -149,7 +149,7 @@ const NotesIndex = () => {
                 >
                     Adicionar Grupo
                 </Button>
-                <UpdateNoteGroupPopover isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose}/>
+                <UpdateNoteGroupModal isOpen={isPopoverOpen} onOpen={onPopoverOpen} onClose={onPopoverClose}/>
                 <Button size={"sm"}
                         colorScheme={'gray'} onClick={onInfoModalOpen}
                         variant="ghost">

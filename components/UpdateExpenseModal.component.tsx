@@ -1,4 +1,3 @@
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {
     Box,
@@ -9,7 +8,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay, Text,
+    ModalOverlay,
+    Text,
     useToast
 } from "@chakra-ui/react";
 import {useQuery} from "react-query";
@@ -32,24 +32,18 @@ type FormData = {
     category?: EnumCategory;
 };
 const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
-    const router = useRouter();
-
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const [creating, setCreating] = useState<boolean>(true);
     const form = useForm<FormData>();
 
     const toast = useToast();
     const {
         data: expense,
-        isLoading: expenseLoading,
-        isFetched: expenseFetched,
     } = useQuery(
         ["expense", expenseId],
         () => apiExpense(expenseId as string).then((res) => res.data),
         {
-            enabled: !creating && !!expenseId,
-            onSuccess: (data) => {
-
-            },
+            enabled: !creating && !!expenseId
         }
     );
     useEffect(() => {
@@ -61,6 +55,7 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
         }
     }, [expenseId]);
     const onSubmit = async (data: FormData) => {
+        setSubmitting(true);
         if (data.category === EnumCategory.LOSS) {
             data.amount = -Math.abs(data.amount);
         }
@@ -84,7 +79,7 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                     status: "error",
                     isClosable: true,
                 });
-            });
+            }).finally(() => setSubmitting(false));
     };
     return (
         <>
@@ -93,7 +88,8 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                 <ModalOverlay/>
                 <ModalContent>
                     <ModalHeader>
-                        <Text fontSize={'18px'}>{creating ? 'New' : ''} Expense {expense ? ` - ${currentFormat(expense.amount)}` : ''}</Text>
+                        <Text
+                            fontSize={'18px'}>{creating ? 'New' : ''} Expense {expense ? ` - ${currentFormat(expense.amount)}` : ''}</Text>
                     </ModalHeader>
                     <ModalCloseButton/>
                     <Box as={"form"} onSubmit={form.handleSubmit(onSubmit)}>
@@ -104,7 +100,8 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                             <Button colorScheme="red" mr={3} onClick={onClose} size={'sm'} variant={'ghost'}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"gray"} type={"submit"} size={'sm'} variant={'ghost'}>
+                            <Button colorScheme={"gray"} type={"submit"} size={'sm'} variant={'ghost'}
+                                    isLoading={submitting}>
                                 Salvar
                             </Button>
                         </ModalFooter>

@@ -1,4 +1,3 @@
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {
@@ -28,7 +27,7 @@ type FormData = {
     date: Dayjs;
 }
 const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
-    const router = useRouter();
+    const [submitting, setSubmitting] = useState<boolean>(false);
 
     const [creating, setCreating] = useState<boolean>(true);
     const form = useForm<FormData>();
@@ -58,6 +57,7 @@ const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
         }
     }, [goalId]);
     const onSubmit = async (data: FormData) => {
+        setSubmitting(true);
         let request =
             !creating && goalId
                 ? apiUpdateGoal(goalId as string, data as any)
@@ -77,7 +77,7 @@ const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
                     status: "error",
                     isClosable: true,
                 });
-            });
+            }).finally(() => setSubmitting(false));
     };
 
     return (
@@ -98,7 +98,7 @@ const UpdateGoalModal = ({goalId, isOpen, onClose}: PageProps) => {
                             <Button colorScheme="red" variant={'ghost'} size={'sm'} mr={3} onClick={onClose}>
                                 Fechar
                             </Button>
-                            <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"}>
+                            <Button colorScheme={"gray"} variant={'ghost'} size={'sm'} type={"submit"} isLoading={submitting}>
                                 Salvar
                             </Button>
                         </ModalFooter>
