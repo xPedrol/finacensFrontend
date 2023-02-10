@@ -47,8 +47,7 @@ const TagIndex = () => {
                 onAlertModalClose();
                 selectedTag.current = null;
             }).catch((err) => {
-                console.log(err.response.data)
-                if (err.response.data.showError) {
+                if (err.response && err.response.data && err.response.data.showError) {
                     toast({
                         title: "Error",
                         description: err.response.data.message,
@@ -116,7 +115,7 @@ const TagIndex = () => {
     useEffect(() => {
         if (router.query.page && page.current !== Number(router.query.page)) {
             page.current = Number(router.query.page);
-            refetchTagsCount();
+            refetchTags();
             refetchTagsCount();
         }
     }, [router.query]);
