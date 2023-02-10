@@ -24,6 +24,8 @@ import NoData from "../../components/NoData.component";
 import PageHeader from "../../components/PageHeader.component";
 import {IExpense} from "../../models/Expense.model";
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import StatisticCard from "../../components/StatisticCard.component";
 import {apiExpensesStatistic} from "../../services/expenseStatistic.service";
 import {FiTrash} from "react-icons/fi";
@@ -255,7 +257,7 @@ const ExpenseIndex = () => {
                                     currency: 'BRL',
                                 })}</Td>
                                 <Td>
-                                    {expense && expense.date ? dayjs(expense.date).format(DATE_OUTPUT_FORMAT) : (
+                                    {expense && expense.date ? dayjs(expense.date).utc().format(DATE_OUTPUT_FORMAT) : (
                                         <Tag colorScheme={"red"}>Não definido</Tag>
                                     )}
                                 </Td>
