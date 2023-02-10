@@ -2,6 +2,8 @@ import {UseFormReturn} from "react-hook-form";
 import {IExpense} from "../models/Expense.model";
 import {useEffect, useRef} from "react";
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import {categories, EnumCategory} from "../enum/Category.enum";
 import {
     Button,
@@ -61,7 +63,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                 amount: Math.abs(expense.amount),
                 tagId: expense.tagId,
                 description: expense.description,
-                date: dayjs(expense.date).format(DATE_INPUT_FORMAT),
+                date: dayjs(expense.date).utc().format(DATE_INPUT_FORMAT),
                 category: expense.amount > 0 ? EnumCategory.GAIN : EnumCategory.LOSS,
             });
         }
