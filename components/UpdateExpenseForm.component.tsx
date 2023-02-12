@@ -177,7 +177,7 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                     </Skeleton>
                 </GridItem>
             </Grid>
-            <UpdateTagModal isOpen={isTagModalOpen} onClose={closeTagModal}/>
+            <UpdateTagModal tag={null} isOpen={isTagModalOpen} onClose={closeTagModal}/>
         </>
     );
 };
