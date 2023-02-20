@@ -167,8 +167,7 @@ const TagIndex = () => {
                         {tags.map((tag: ITag) => (
                             <Tr key={tag.id} fontSize={'15px'}>
                                 <Td>
-                                    <Tag size={'md'} variant="solid"
-                                         bg={tag.color}>{tag.name}</Tag>
+                                    <Tag size={'md'} variant="solid" background={'transparent'} color={tag.color} border={`1px solid ${tag.color}`}>{tag.name}</Tag>
                                 </Td>
                                 <Td>
                                     {dayjs(tag.createdAt).format(DATE_TIME_OUTPUT_FORMAT)}

@@ -307,8 +307,7 @@ const ExpenseIndex = () => {
                                 </Td>
                                 <Td>
                                     {expense.tag ?
-                                        <Tag size={'md'} variant="solid"
-                                             bg={expense.tag.color}>{expense.tag.name}</Tag> :
+                                        <Tag size={'md'} variant="solid" background={'transparent'} color={expense.tag.color} border={`1px solid ${expense.tag.color}`}>{expense.tag.name}</Tag> :
                                         <Tag colorScheme={"red"}>Não definido</Tag>}
                                 </Td>
                                 <Td>
