@@ -7,7 +7,8 @@ import {
     Button,
     Flex,
     Grid,
-    GridItem, Icon,
+    GridItem,
+    Icon,
     Select,
     Tag,
     Td,
@@ -25,7 +26,6 @@ import PageHeader from "../../components/PageHeader.component";
 import {IExpense} from "../../models/Expense.model";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 import StatisticCard from "../../components/StatisticCard.component";
 import {apiExpensesStatistic} from "../../services/expenseStatistic.service";
 import {FiTrash} from "react-icons/fi";
@@ -42,6 +42,11 @@ import {AiOutlineInfoCircle} from "react-icons/ai";
 import AlertModal from "../../components/AlertModal.component";
 import {pageCount} from "../../utils/pagination.utils";
 import {DATE_OUTPUT_FORMAT} from "../../const/date.const";
+import {IExpensesGroup} from "../../models/ExpensesGroup.model";
+import ExpensesDetailedView from "../../components/ExpensesDetailedView.component";
+import {generateExpensesGroup} from "../../utils/groupBy.utils";
+
+dayjs.extend(utc);
 
 const info = "Ao organizar suas despesas, as pessoas ganham uma visão clara e detalhada de onde estão gastando seu dinheiro, o que lhes permite tomar decisões financeiras conscientes e bem informadas. Isso é crucial para alcançar metas financeiras, controlar gastos e manter a saúde financeira. Além disso, ao acompanhar suas despesas, é possível identificar áreas onde é possível economizar e fazer ajustes para atingir seus objetivos financeiros de maneira mais eficiente.";
 
@@ -55,10 +60,13 @@ const ExpenseIndex = () => {
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
     const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
+    const [expensesGroup, setExpensesGroup] = useState<IExpensesGroup[]>([]);
+    const [detailedView, setDetailedView] = useState<boolean>(false);
     const router = useRouter();
     const [options, setOptions] = useState<{ label: string, value: string }[]>([]);
     const period = useRef<string>('');
     const page = useRef<number>(router.query.page ? Number(router.query.page) : 0);
+    const pageSize = useRef<number>(router.query.pageSize ? Number(router.query.pageSize) : 20);
     const selectedExpense = useRef<string | null>(null);
     const openModal = (id: string) => {
         expenseId.current = id;
@@ -66,15 +74,15 @@ const ExpenseIndex = () => {
     };
     const closeAlertModal = (next: any) => {
         if (next === true && selectedExpense.current) {
-            apiDeleteExpense(selectedExpense.current).then((res) => {
+            apiDeleteExpense(selectedExpense.current).then(() => {
                 toast({
                     title: "Expense deleted",
                     description: "Expense deleted successfully",
                     status: "success",
                     isClosable: true,
                 });
-                refetchExpenses();
-                refetchExpensesStatistic();
+                refetchExpenses().then();
+                refetchExpensesStatistic().then();
                 onAlertModalClose();
                 selectedExpense.current = null;
             }).catch(() => {
@@ -94,8 +102,8 @@ const ExpenseIndex = () => {
         onClose();
         expenseId.current = null;
         if (props?.success) {
-            refetchExpenses();
-            refetchExpensesStatistic();
+            refetchExpenses().then();
+            refetchExpensesStatistic().then();
         }
     };
     const {
@@ -114,11 +122,11 @@ const ExpenseIndex = () => {
     const {
         data: expenses,
         isLoading,
-        isFetched,
         refetch: refetchExpenses,
     } = useQuery(["expenses"], () => apiExpenses({
         date: period.current,
-        page: page.current
+        page: page.current,
+        pageSize: pageSize.current,
     }).then((res) => res.data), {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
@@ -164,29 +172,41 @@ const ExpenseIndex = () => {
             period.current = (`${dayjs().month() + 1}-01-${dayjs().year()}`);
         }
         setOptions(newOptions);
-        refetchExpenses();
-        refetchExpensesCount();
-        refetchExpensesStatistic();
+        refetchExpenses().then();
+        refetchExpensesCount().then();
+        refetchExpensesStatistic().then();
     }, []);
     useEffect(() => {
         if (router.query.page && page.current !== Number(router.query.page)) {
             page.current = Number(router.query.page);
-            refetchExpenses();
-            refetchExpensesCount();
+            refetchExpenses().then();
+            refetchExpensesCount().then();
         }
     }, [router.query]);
+    useEffect(() => {
+        if (detailedView) {
+            page.current = 0;
+            pageSize.current = 1000;
+            refetchExpenses().then((res) => {
+                if (res.data) {
+                    setExpensesGroup(generateExpensesGroup(res.data));
+                    console.log(generateExpensesGroup(res.data));
+                }
+            });
+        }
+    }, [detailedView])
     const onPeriodChange = (nPeriod: string) => {
         period.current = nPeriod;
-        refetchExpenses();
-        refetchExpensesCount();
-        refetchExpensesStatistic();
+        refetchExpenses().then();
+        refetchExpensesCount().then();
+        refetchExpensesStatistic().then();
     };
     const handlePageClick = (event: any) => {
         if (event.selected === page.current) return;
         router.push({
             pathname: '/expenses',
             query: {page: event.selected},
-        }, undefined, {shallow: true});
+        }, undefined, {shallow: true}).then();
     };
 
 
@@ -197,12 +217,20 @@ const ExpenseIndex = () => {
                 subtitle={expensesTotalPages ? `${expensesTotalPages} records` : ''}
             >
                 <Button
+                    onClick={()=>setDetailedView(!detailedView)}
+                    size={"sm"}
+                    colorScheme={'gray'}
+                    variant="outline"
+                >
+                    Change view
+                </Button>
+                <Button
                     onClick={() => openModal('new')}
                     size={"sm"}
                     colorScheme={'gray'}
                     variant="outline"
                 >
-                    Adicionar
+                    Add
                 </Button>
                 <Button size={"sm"}
                         colorScheme={'gray'} onClick={onInfoModalOpen}
@@ -248,8 +276,8 @@ const ExpenseIndex = () => {
             </Grid>
 
             {isLoading ? <Loading/> : expenses && expenses.length > 0 ? (
-                <>
-                    <DefaultTable columns={tableColumns} variant={"simple"}>
+
+                !detailedView ? <DefaultTable columns={tableColumns} variant={"simple"}>
                         {expenses.map((expense: IExpense) => (
                             <Tr key={expense.id} fontSize={'15px'}>
                                 <Td color={expense.amount > 0 ? 'green.400' : 'red.400'}>{Math.abs(expense.amount).toLocaleString('pt-BR', {
@@ -305,12 +333,13 @@ const ExpenseIndex = () => {
                                 </Td>
                             </Tr>
                         ))}
-                    </DefaultTable>
-                </>
+                    </DefaultTable> :
+                    <ExpensesDetailedView expensesGroup={expensesGroup}/>
+
             ) : (
                 <NoData/>
             )}
-            {typeof expensesTotalPages === 'number' && expensesTotalPages > 0 && (
+            {typeof expensesTotalPages === 'number' && expensesTotalPages > 0 && !detailedView && (
                 <Flex mt={'20px'} justify={{base: 'center', sm: 'flex-end'}}>
                     <ReactPaginate
                         breakLabel="..."
