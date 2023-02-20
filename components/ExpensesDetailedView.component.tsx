@@ -32,7 +32,7 @@ const ExpensesDetailedView = ({expensesGroup,openModal,deleteExpense}: ExpensesD
                 <Box key={group.date}>
                     <Text>{formatNumbersBalanceDate(group.date)}</Text>
                     <Divider/>
-                    <Grid templateColumns={'repeat(12,1fr)'} gap={4} my={'20px'} justifyItems={{base:'center',md:'flex-start'}}>
+                    <Grid templateColumns={'repeat(12,1fr)'} gap={4} my={'20px'}>
                         {group.expenses.map((expense) => (
                             <GridItem key={expense.id} colSpan={{base: 12,sm:6, md: 3, lg: 2}}>
                                 <Stat>

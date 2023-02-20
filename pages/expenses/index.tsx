@@ -115,7 +115,7 @@ const ExpenseIndex = () => {
         onClose();
         expenseId.current = null;
         if (props?.success) {
-            refetchExpenses().then();
+            handleExpenseRefetch();
             refetchExpensesStatistic().then();
         }
     };
