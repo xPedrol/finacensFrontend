@@ -14,7 +14,14 @@ export const months = [
 ];
 export const formatNumbersBalanceDate = (date: string) => {
     const dateArray = date.split('/');
-    const month = Number(dateArray[0]);
-    const year = dateArray[1];
-    return `${months[month - 1]} ${year}`;
+    if(dateArray.length !== 2) {
+        const day = Number(dateArray[0]);
+        const month = Number(dateArray[1]);
+        const year = dateArray[2];
+        return `${day} ${months[month - 1]} ${year}`;
+    }else {
+        const month = Number(dateArray[0]);
+        const year = dateArray[1];
+        return `${months[month - 1]} ${year}`;
+    }
 };

@@ -1,5 +1,6 @@
 import {Box, Flex, Icon, Stat, StatLabel, StatNumber, useColorModeValue,} from '@chakra-ui/react';
 import {IconType} from "react-icons";
+import {getStatusColor} from "../utils/handleColor.utils";
 
 type Props = {
     title: string;
@@ -8,18 +9,6 @@ type Props = {
     icon: IconType;
 }
 const StatisticCard = ({title, stat, status, icon}: Props) => {
-    const handleColor = (): string => {
-        switch (status) {
-            case 'gain':
-                return 'green.400';
-            case 'loss':
-                return 'red.400';
-            case 'note':
-                return 'gray.400';
-            default:
-                return 'gray.400';
-        }
-    };
     return (
         <Stat
             px={{base: 2, md: 2}}
@@ -35,7 +24,7 @@ const StatisticCard = ({title, stat, status, icon}: Props) => {
                     </StatLabel>
                     <StatNumber fontSize={'lg'} fontWeight={'bold'} fontFamily={'Poppins'}
                         // @ts-ignore
-                                color={handleColor}>
+                                color={getStatusColor(status)}>
                         {stat ?? '---'}
                     </StatNumber>
                 </Box>

@@ -61,7 +61,7 @@ const ExpenseIndex = () => {
     const {isOpen: isAlertModalOpen, onOpen: onAlertModalOpen, onClose: onAlertModalClose} = useDisclosure();
     const {isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose} = useDisclosure();
     const [expensesGroup, setExpensesGroup] = useState<IExpensesGroup[]>([]);
-    const [detailedView, setDetailedView] = useState<boolean>(false);
+    const [detailedView, setDetailedView] = useState<boolean>(true);
     const router = useRouter();
     const [options, setOptions] = useState<{ label: string, value: string }[]>([]);
     const period = useRef<string>('');
@@ -72,6 +72,19 @@ const ExpenseIndex = () => {
         expenseId.current = id;
         onOpen();
     };
+    const handleExpenseRefetch = () => {
+        if (detailedView) {
+            page.current = 0;
+            pageSize.current = 1000;
+            refetchExpenses().then((res) => {
+                if (res.data) {
+                    setExpensesGroup(generateExpensesGroup(res.data));
+                }
+            });
+        } else {
+            refetchExpensesCount().then();
+        }
+    };
     const closeAlertModal = (next: any) => {
         if (next === true && selectedExpense.current) {
             apiDeleteExpense(selectedExpense.current).then(() => {
@@ -81,7 +94,7 @@ const ExpenseIndex = () => {
                     status: "success",
                     isClosable: true,
                 });
-                refetchExpenses().then();
+                handleExpenseRefetch();
                 refetchExpensesStatistic().then();
                 onAlertModalClose();
                 selectedExpense.current = null;
@@ -177,27 +190,30 @@ const ExpenseIndex = () => {
         refetchExpensesStatistic().then();
     }, []);
     useEffect(() => {
-        if (router.query.page && page.current !== Number(router.query.page)) {
-            page.current = Number(router.query.page);
-            refetchExpenses().then();
-            refetchExpensesCount().then();
-        }
-    }, [router.query]);
-    useEffect(() => {
-        if (detailedView) {
+        if (!detailedView) {
+            if (router.query.page && page.current !== Number(router.query.page)) {
+                page.current = Number(router.query.page);
+                refetchExpenses().then();
+                refetchExpensesCount().then();
+            }
+        } else {
             page.current = 0;
             pageSize.current = 1000;
             refetchExpenses().then((res) => {
                 if (res.data) {
                     setExpensesGroup(generateExpensesGroup(res.data));
-                    console.log(generateExpensesGroup(res.data));
                 }
             });
+            refetchExpensesCount().then();
+
         }
-    }, [detailedView])
+    }, [router.query]);
+    useEffect(() => {
+        handleExpenseRefetch();
+    }, [detailedView]);
     const onPeriodChange = (nPeriod: string) => {
         period.current = nPeriod;
-        refetchExpenses().then();
+        handleExpenseRefetch();
         refetchExpensesCount().then();
         refetchExpensesStatistic().then();
     };
@@ -217,7 +233,7 @@ const ExpenseIndex = () => {
                 subtitle={expensesTotalPages ? `${expensesTotalPages} records` : ''}
             >
                 <Button
-                    onClick={()=>setDetailedView(!detailedView)}
+                    onClick={() => setDetailedView(!detailedView)}
                     size={"sm"}
                     colorScheme={'gray'}
                     variant="outline"
@@ -298,17 +314,6 @@ const ExpenseIndex = () => {
                                 <Td>
                                     <Wrap>
                                         <WrapItem>
-                                            {/*<Button*/}
-                                            {/*    fontWeight={500}*/}
-                                            {/*    colorScheme={"blue"}*/}
-                                            {/*    variant={"outline"}*/}
-                                            {/*    size={"sm"}*/}
-                                            {/*    href={`/expenses/${expense.id}`}*/}
-                                            {/*    as={Link}*/}
-                                            {/*>*/}
-                                            {/*    <FaRegPaperPlane/>*/}
-                                            {/*</Button>*/}
-
                                             <Button
                                                 fontWeight={500}
                                                 colorScheme={"gray"}
@@ -334,7 +339,8 @@ const ExpenseIndex = () => {
                             </Tr>
                         ))}
                     </DefaultTable> :
-                    <ExpensesDetailedView expensesGroup={expensesGroup}/>
+                    <ExpensesDetailedView deleteExpense={deleteExpense} openModal={openModal}
+                                          expensesGroup={expensesGroup}/>
 
             ) : (
                 <NoData/>
@@ -366,7 +372,8 @@ const ExpenseIndex = () => {
             )}
             <UpdateExpenseModal expenseId={expenseId.current} onClose={onCloseModal} isOpen={isOpen}/>
             <InfoModal info={info} title={'Expenses'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
-            <AlertModal title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
+            <AlertModal title={'Delete Expense'} btnTitle={'Delete'} btnColorScheme={'red'} isOpen={isAlertModalOpen}
+                        onClose={closeAlertModal}/>
         </DefaultLayout>
     );
 };

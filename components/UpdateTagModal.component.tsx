@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import {useForm} from "react-hook-form";
 import {apiCreateTag, apiUpdateTag} from "../services/tag.service";
-import generateRandomColor from "../utils/generateColor.utils";
+import generateRandomColor from "../utils/handleColor.utils";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {ITag} from "../models/Tag.model";
 import {useEffect, useState} from "react";
@@ -71,7 +71,6 @@ const UpdateTagModal = ({tag, isOpen, onClose}: TagModalProps) => {
         }).finally(() => setSubmitting(false));
     };
     useEffect(() => {
-        console.log(tag);
         if (tag?.id && tag?.id !== "new") {
             setCreating(false);
             reset({

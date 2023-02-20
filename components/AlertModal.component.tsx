@@ -10,11 +10,13 @@ import {Button} from "@chakra-ui/react";
 
 type AlertModalProps = {
     title: string;
+    btnTitle: string;
+    btnColorScheme: string;
     message?: string;
     isOpen: boolean;
     onClose: (props?: any) => void;
 }
-const AlertModal = ({title, message, isOpen,onClose}:AlertModalProps) => {
+const AlertModal = ({title, message, isOpen,onClose,btnTitle,btnColorScheme}:AlertModalProps) => {
     const cancelRef:any = useRef()
     return (
         <AlertDialog isCentered
@@ -25,7 +27,7 @@ const AlertModal = ({title, message, isOpen,onClose}:AlertModalProps) => {
             <AlertDialogOverlay>
                 <AlertDialogContent>
                     <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                        Delete Customer
+                        {title}
                     </AlertDialogHeader>
 
                     <AlertDialogBody>
@@ -36,8 +38,8 @@ const AlertModal = ({title, message, isOpen,onClose}:AlertModalProps) => {
                         <Button variant={'ghost'} size={'sm'} ref={cancelRef} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button colorScheme="red" variant={'ghost'} size={'sm'} onClick={()=>onClose(true)} ml={3}>
-                            Delete
+                        <Button colorScheme={btnColorScheme} variant={'ghost'} size={'sm'} onClick={()=>onClose(true)} ml={3}>
+                            {btnTitle}
                         </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
