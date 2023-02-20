@@ -245,7 +245,7 @@ const TagIndex = () => {
                 </Flex>
             )}
             <InfoModal info={info} title={'Tags'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
-            <AlertModal title={'Delete Tag'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
+            <AlertModal btnTitle={'Delete'} btnColorScheme={'red'} title={'Delete Tag'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
             {selectedTag.current &&
                 <UpdateTagModal tag={selectedTag.current} isOpen={isTagModalOpen} onClose={closeTagModal}/>
             }

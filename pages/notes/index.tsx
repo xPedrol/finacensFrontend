@@ -205,7 +205,7 @@ const NotesIndex = () => {
                                                    note={selectedNote.current}/>
                 </>}
             <InfoModal info={info} title={'Notes'} isOpen={isInfoModalOpen} onClose={onInfoModalClose}/>
-            <AlertModal title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
+            <AlertModal btnTitle={'Delete'} btnColorScheme={'red'} title={'Delete Note'} isOpen={isAlertModalOpen} onClose={closeAlertModal}/>
         </DefaultLayout>
     );
 };
