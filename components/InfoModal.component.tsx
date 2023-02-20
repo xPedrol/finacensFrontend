@@ -36,11 +36,8 @@ const InfoModal = ({title, info, isOpen, onClose}: PageProps) => {
                             {info}
                         </ModalBody>
                         <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={onClose} size={'sm'} variant={'ghost'}>
-                                Fechar
-                            </Button>
                             <Button colorScheme={"gray"} type={"button"} onClick={onClose} size={'sm'} variant={'ghost'}>
-                                Entendido <Icon as={BsEmojiSmile} boxSize={'18px'} ms={3}/>
+                                Entendido
                             </Button>
                         </ModalFooter>
                     </Box>
