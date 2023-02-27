@@ -3,6 +3,7 @@ import {IExpense} from "../models/Expense.model";
 import {useEffect, useRef} from "react";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import {categories, EnumCategory} from "../enum/Category.enum";
 import {
     Button,
@@ -25,7 +26,6 @@ import UpdateTagModal from "./UpdateTagModal.component";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {DATE_INPUT_FORMAT} from "../const/date.const";
 
-dayjs.extend(utc);
 
 type PageData = {
     expense: IExpense | null | undefined

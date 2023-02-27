@@ -15,7 +15,8 @@ import {
 import {formatNumbersBalanceDate} from "../utils/formatDate.utils";
 import currentFormat from "../utils/currentFormat.utils";
 import dayjs from "dayjs";
-import {DATE_TIME_OUTPUT_FORMAT} from "../const/date.const";
+import utc from 'dayjs/plugin/utc';
+import {DATE_OUTPUT_FORMAT, DATE_TIME_OUTPUT_FORMAT} from "../const/date.const";
 import {getStatusColor} from "../utils/handleColor.utils";
 import {FaRegPaperPlane} from "react-icons/fa";
 import {FiTrash} from "react-icons/fi";
@@ -63,7 +64,7 @@ const ExpensesDetailedView = ({expensesGroup,openModal,deleteExpense}: ExpensesD
                                     <StatNumber fontSize={'20px'}
                                                 color={getStatusColor(expense.amount)}>{currentFormat(expense.amount)}</StatNumber>
                                     <StatHelpText
-                                        fontSize={'12px'}>{dayjs(expense.date).format(DATE_TIME_OUTPUT_FORMAT)}</StatHelpText>
+                                        fontSize={'12px'}>{dayjs(expense.date).utc().format(DATE_OUTPUT_FORMAT)}</StatHelpText>
                                 </Stat>
                             </GridItem>
                         ))}
