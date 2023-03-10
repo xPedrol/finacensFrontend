@@ -1,8 +1,10 @@
 import {AxiosResponse} from "axios";
 import axiosClient from "../configs/httpRequest.config";
 import {ITag} from "../models/Tag.model";
+import {cleanObject} from "../utils/cleanObject.utils";
 
 export const apiTags = async (params?: any): Promise<AxiosResponse<ITag[]>> => {
+    params = cleanObject(params);
     return axiosClient.get<ITag[]>(`/tags`, {params});
 };
 

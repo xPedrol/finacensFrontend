@@ -1,9 +1,8 @@
 import {UseFormReturn} from "react-hook-form";
 import {IExpense} from "../models/Expense.model";
-import {useEffect, useRef} from "react";
+import {useEffect, useState} from "react";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 import {categories, EnumCategory} from "../enum/Category.enum";
 import {
     Button,
@@ -20,11 +19,15 @@ import {
     Textarea,
     useDisclosure
 } from "@chakra-ui/react";
-import {useQuery} from "react-query";
 import {apiTags} from "../services/tag.service";
 import UpdateTagModal from "./UpdateTagModal.component";
 import CustomFormErrorMessage from "./CustomFormErrorMessage.component";
 import {DATE_INPUT_FORMAT} from "../const/date.const";
+import useDebounce from "../hooks/useDebounce.hook";
+import {ITag} from "../models/Tag.model";
+import {cleanObject} from "../utils/cleanObject.utils";
+
+dayjs.extend(utc);
 
 
 type PageData = {
@@ -35,51 +38,74 @@ type PageData = {
 type FormData = {
     amount: number;
     tagId: string;
+    tag: ITag | null;
     description: string;
     date: string;
     category?: EnumCategory;
 };
 const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
     const {isOpen: isTagModalOpen, onOpen: onTagModalOpen, onClose: onTagModalClose} = useDisclosure();
-    const selectedTag = useRef<string | null>(null);
+    const [tags, setTags] = useState<ITag[]>([]);
+    const watchTagId = useDebounce(form.watch("tagId"), 500);
     const {
         register,
         reset,
-        formState: {errors},
+        formState: {errors, isSubmitted},
     } = form;
-
-    let {
-        data: tags,
-        refetch: refetchTags,
-    } = useQuery(["tags"], () => apiTags().then((res) => res.data));
+    const getTags = (clearParams = false) => {
+        if (clearParams) {
+            form.setValue('tag', null);
+        }
+        let request = apiTags({
+            name: watchTagId,
+            id: null
+        });
+        request = cleanObject(request);
+        request.then((res) => {
+            if (res.data) {
+                setTags(res.data);
+            }
+        });
+        return request;
+    };
+    const closeTagModal = (props?: any) => {
+        onTagModalClose();
+        getTags(true);
+        if (props && props.tag) {
+            form.setValue("tagId", props.tag.name);
+        }
+    };
     useEffect(() => {
         if (!expense) {
             reset({});
         } else {
             reset({
                 amount: Math.abs(expense.amount),
-                tagId: expense.tagId,
+                tagId: expense.tag ? expense.tag.name : '',
                 description: expense.description,
                 date: dayjs(expense.date).utc().format(DATE_INPUT_FORMAT),
                 category: expense.amount > 0 ? EnumCategory.GAIN : EnumCategory.LOSS,
             });
         }
     }, [expense]);
-    const closeTagModal = (props?: any) => {
-        onTagModalClose();
-        refetchTags();
-        if (props && props.tag) {
-            selectedTag.current = props.tag.id as string;
-        }
-    };
     const isLoaded = creating || (!creating && !!expense);
     useEffect(() => {
-        if (selectedTag.current) {
-            form.setValue("tagId", selectedTag.current);
+        if (watchTagId) {
+            getTags().then((res) => {
+                const tag = res.data.find((tag) => tag.name === watchTagId);
+                if (tag) {
+                    form.setValue("tag", tag);
+                } else {
+                    form.setValue("tag", null);
+                }
+            });
         } else {
-            selectedTag.current = null;
+            if (tags.length > 0) {
+                getTags();
+            }
+            form.setValue("tag", null);
         }
-    }, [tags]);
+    }, [watchTagId]);
     return (
         <>
             <Grid templateColumns="repeat(12, 1fr)" gap={4}>
@@ -113,20 +139,27 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                 </GridItem>
                 <GridItem colSpan={{base: 12}}>
                     <Skeleton isLoaded={isLoaded} minH="60px" borderRadius={'md'}>
-                        <FormControl isInvalid={!!errors.tagId}>
+                        <FormControl isInvalid={!!errors.tagId || (isSubmitted && !form.getValues('tag'))}>
                             <FormLabel>Tag</FormLabel>
                             <InputGroup size={"md"}>
-                                <Select
-                                    {...register("tagId", {required: true})}
-                                    placeholder="Select option..."
-                                >
-                                    {Array.isArray(tags) &&
-                                        tags.map((tag) => (
-                                            <option key={tag.id} value={tag.id}>
-                                                {tag.name}
-                                            </option>
-                                        ))}
-                                </Select>
+                                <Input {...register("tagId", {required: true})} list={'tagList'}
+                                       placeholder={'Escolha uma tag...'}/>
+                                <datalist id="tagList">
+                                    {tags && tags.map((tag) => (
+                                        <option key={tag.id} value={tag.name}/>
+                                    ))}
+                                </datalist>
+                                {/*<Select*/}
+                                {/*    {...register("tagId", {required: true})}*/}
+                                {/*    placeholder="Select option..."*/}
+                                {/*>*/}
+                                {/*    {Array.isArray(tags) &&*/}
+                                {/*        tags.map((tag) => (*/}
+                                {/*            <option key={tag.id} value={tag.id}>*/}
+                                {/*                {tag.name}*/}
+                                {/*            </option>*/}
+                                {/*        ))}*/}
+                                {/*</Select>*/}
                                 <InputRightElement width="5rem">
                                     <Button
                                         h="1.75rem"
@@ -137,7 +170,9 @@ const UpdateExpenseForm = ({expense, creating, form}: PageData) => {
                                     </Button>
                                 </InputRightElement>
                             </InputGroup>
-                            <CustomFormErrorMessage/>
+                            {errors.tagId ? <CustomFormErrorMessage/> :
+                                <CustomFormErrorMessage>Tag não encontrada</CustomFormErrorMessage>}
+
                         </FormControl>
                     </Skeleton>
                 </GridItem>

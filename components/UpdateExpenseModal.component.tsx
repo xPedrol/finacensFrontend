@@ -18,6 +18,7 @@ import UpdateExpenseForm from "./UpdateExpenseForm.component";
 import {EnumCategory} from "../enum/Category.enum";
 import {useForm} from "react-hook-form";
 import currentFormat from "../utils/currentFormat.utils";
+import {ITag} from "../models/Tag.model";
 
 type PageProps = {
     expenseId: string | null | undefined;
@@ -27,6 +28,7 @@ type PageProps = {
 type FormData = {
     amount: number;
     tagId: string;
+    tag: ITag | null;
     description: string;
     date: string;
     category?: EnumCategory;
@@ -55,11 +57,13 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
         }
     }, [expenseId]);
     const onSubmit = async (data: FormData) => {
+        if(!data.tag || !data.tag.id) return
         setSubmitting(true);
         if (data.category === EnumCategory.LOSS) {
             data.amount = -Math.abs(data.amount);
         }
         delete data.category;
+        data.tagId = data.tag.id;
         let request =
             !creating && expenseId
                 ? apiUpdateExpense(expenseId as string, data as any)
