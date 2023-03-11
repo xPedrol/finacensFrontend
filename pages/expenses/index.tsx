@@ -3,6 +3,7 @@ import DefaultLayout from "../../components/Layout.component";
 import DefaultTable from "../../components/Table.component";
 import Seo from "../../components/Seo.component";
 import styles from "../../styles/Pagination.module.scss";
+
 import {
     Button,
     Flex,
@@ -72,13 +73,36 @@ const ExpenseIndex = () => {
         expenseId.current = id;
         onOpen();
     };
-    const handleExpenseRefetch = () => {
+    const updateEditedExpense = (expense: IExpense) => {
+        if (detailedView) {
+            if(expenses) {
+                setExpensesGroup(generateExpensesGroup(expenses.map((e) => {
+                    if (e.id === expense.id) {
+                        e = expense;
+                    }
+                    return e;
+                })));
+            }
+        } else {
+            if (expenses) {
+                const index = expenses.findIndex((e) => e.id === expense.id);
+                if (index !== -1) {
+                    expenses[index] = expense;
+                }
+            }
+        }
+    };
+    const handleExpenseRefetch = (concat = true) => {
         if (detailedView) {
             page.current = 0;
             pageSize.current = 1000;
             refetchExpenses().then((res) => {
                 if (res.data) {
-                    setExpensesGroup(generateExpensesGroup(res.data));
+                    if (concat) {
+                        setExpensesGroup([...expensesGroup, ...generateExpensesGroup(res.data)]);
+                    } else {
+                        setExpensesGroup(generateExpensesGroup(res.data));
+                    }
                 }
             });
         } else {
@@ -115,7 +139,8 @@ const ExpenseIndex = () => {
         onClose();
         expenseId.current = null;
         if (props?.success) {
-            handleExpenseRefetch();
+            updateEditedExpense(props.expense);
+            // handleExpenseRefetch(false);
             refetchExpensesStatistic().then();
         }
     };
@@ -131,6 +156,7 @@ const ExpenseIndex = () => {
         refetchInterval: false,
         refetchIntervalInBackground: false,
         enabled: false,
+        placeholderData: 0,
     });
     const {
         data: expenses,
@@ -185,6 +211,7 @@ const ExpenseIndex = () => {
             period.current = (`${dayjs().month() + 1}-01-${dayjs().year()}`);
         }
         setOptions(newOptions);
+        if(detailedView) pageSize.current = 1000;
         refetchExpenses().then();
         refetchExpensesCount().then();
         refetchExpensesStatistic().then();
@@ -208,9 +235,9 @@ const ExpenseIndex = () => {
 
         }
     }, [router.query]);
-    useEffect(() => {
-        handleExpenseRefetch();
-    }, [detailedView]);
+    // useEffect(() => {
+    //     handleExpenseRefetch();
+    // }, [detailedView]);
     const onPeriodChange = (nPeriod: string) => {
         period.current = nPeriod;
         handleExpenseRefetch();
@@ -224,7 +251,6 @@ const ExpenseIndex = () => {
             query: {page: event.selected},
         }, undefined, {shallow: true}).then();
     };
-
 
     return (
         <DefaultLayout>
@@ -307,7 +333,7 @@ const ExpenseIndex = () => {
                                 </Td>
                                 <Td>
                                     {expense.tag ?
-                                        <Tag size={'md'} variant="solid" background={'transparent'} color={expense.tag.color} border={`1px solid ${expense.tag.color}`}>{expense.tag.name}</Tag> :
+                                        <Tag size={'md'} variant="subtle">{expense.tag.name}</Tag> :
                                         <Tag colorScheme={"red"}>Não definido</Tag>}
                                 </Td>
                                 <Td>
@@ -338,8 +364,8 @@ const ExpenseIndex = () => {
                             </Tr>
                         ))}
                     </DefaultTable> :
-                    <ExpensesDetailedView deleteExpense={deleteExpense} openModal={openModal}
-                                          expensesGroup={expensesGroup}/>
+                        <ExpensesDetailedView deleteExpense={deleteExpense} openModal={openModal}
+                                              expensesGroup={expensesGroup}/>
 
             ) : (
                 <NoData/>

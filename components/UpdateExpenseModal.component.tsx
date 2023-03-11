@@ -69,13 +69,13 @@ const UpdateExpenseModal = ({expenseId, isOpen, onClose}: PageProps) => {
                 ? apiUpdateExpense(expenseId as string, data as any)
                 : apiCreateExpense(data as any);
         request
-            .then(() => {
+            .then((data) => {
                 toast({
                     title: "Expense saved successfully.",
                     status: "success",
                     isClosable: true,
                 });
-                onClose({success: true});
+                onClose({success: true,expense: data.data});
             })
             .catch(() => {
                 toast({
